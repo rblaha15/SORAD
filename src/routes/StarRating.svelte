@@ -1,4 +1,5 @@
 <script lang="ts">
+
     let {
         value = $bindable(),
         id
@@ -10,13 +11,8 @@
 
 <div class="star-row">
     {#each Array(5) as _, i}
-        <label>
-            <input
-                    type="radio"
-                    value={i}
-                    name="star-rating-{id}"
-                    bind:group={value}
-            >
+        <label onpointerup={() => value = i}>
+            <input type="radio" value={i} name="star-rating-{id}" bind:group={value}>
             &starf;
         </label>
     {/each}
@@ -24,18 +20,20 @@
 
 <style>
     .star-row {
-        padding: 0 1rem;
-        margin: 0;
         display: flex;
+        margin: -.25rem 0;
 
         input {
             display: none;
+            margin: 0;
         }
 
         label {
             text-decoration: none;
             font-size: 2rem;
             color: gold;
+            cursor: pointer;
+            user-select: none;
         }
     }
 

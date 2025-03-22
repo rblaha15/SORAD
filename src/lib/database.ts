@@ -1,10 +1,8 @@
 import {supabase} from "$lib/supabase";
-import {studentId} from "$lib/auth";
 import seedrandom from "seedrandom"
 import type {Class, Rating, Student} from "$lib/schema";
-import {createWriteable} from "$lib/stores";
 
-const getMyself = async (): Promise<Student> => (
+const getMyself = async (studentId: number): Promise<Student> => (
     await supabase.from("student")
         .select("*")
         .eq("id", studentId)
@@ -34,13 +32,13 @@ export type Data = {
     students: Student[]
 }
 
-export const allData = async () => {
-    let myself = await getMyself();
+export const allData = async (myId: number): Promise<Data> => {
+    let myself = await getMyself(myId);
     return {
         myself: myself,
         myClass: await getMyClass(myself.class),
         students: await getStudentsToRate(myself.class),
-    } as const;
+    };
 }
 
 const shuffled = <T>(array: T[], random: () => number): T[] => array

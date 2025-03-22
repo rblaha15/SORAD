@@ -40,17 +40,3 @@ export const storeable: GetStoreable = <T>(key: string, defaultValue?: T) => {
 	};
 	return _storeable;
 };
-
-type CreateWriteableScope<T> = (update: (value: T) => void) => void
-type GetCreateWriteable = {
-	<T>(create: CreateWriteableScope<T>): Writable<T | undefined>;
-	<T>(create: CreateWriteableScope<T>, defaultValue: T): Writable<T>;
-};
-
-export const createWriteable: GetCreateWriteable = <T>(create: CreateWriteableScope<T>, defaultValue?: T) => {
-	const store = writable<T | undefined>(defaultValue);
-	create(value => {
-		store.set(value)
-	})
-	return store
-}
