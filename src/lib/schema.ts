@@ -67,8 +67,8 @@ export type Student = {
 export type Rating = {
     about: number
     by: number
-    liking: number
+    liking: -1 | 0 | 1 | 2 | 3 | 4
     likingReasoning: string
-    popularity: number
+    popularity: -1 | 0 | 1 | 2 | 3 | 4
     popularityReasoning: string
 }

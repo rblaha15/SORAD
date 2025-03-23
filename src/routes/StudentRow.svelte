@@ -1,28 +1,43 @@
 <script lang="ts">
-    import type {Student} from "$lib/schema";
-    import {storeable} from "$lib/stores";
+    import type {Rating, Student} from "$lib/schema";
     import StarRating from "./StarRating.svelte";
+    import {value} from "$lib/stores";
 
-    const {
-        student, myId
+    let {
+        student, rating = $bindable(), showErrors
     }: {
         student: Student,
-        myId: number,
+        rating: Rating,
+        showErrors: boolean,
     } = $props()
 
-    const liking = $derived(storeable<number>(`${myId}-${student.id}-liking`))
-    const popularity = $derived(storeable<number>(`${myId}-${student.id}-popularity`))
-    const likingReasoning = $derived(storeable(`${myId}-${student.id}-liking-reasoning`, ""))
-    const popularityReasoning = $derived(storeable(`${myId}-${student.id}-popularity-reasoning`, ""))
+    const property = <K extends keyof Rating>(key: K) => ({
+        get: () => rating[key],
+        set: (value: Rating[K]) => {
+            rating[key] = value;
+            rating = rating;
+        },
+    })
+    let l = value(property('liking'))
+    let lr = value(property('likingReasoning'))
+    let p = value(property('popularity'))
+    let pr = value(property('popularityReasoning'))
+
+    const lError = $derived(showErrors && l.current == -1)
+    const pError = $derived(showErrors && p.current == -1)
+    const lrError = $derived(showErrors && (l.current == 0 || l.current == 4) && lr.current == '')
+    const prError = $derived(showErrors && (p.current == 0 || p.current == 4) && pr.current == '')
 </script>
 
 <span class="student-name">{student.names} {student.surname}</span>
+
 <span class="title">Sympatie:</span>
-<span class="student-rating"><StarRating bind:value={$liking} id="{student.id}-1"/></span>
-<input bind:value={$likingReasoning} class="student-input"/>
+<span class="student-rating"><StarRating bind:value={l.current} error={lError}/></span>
+<input bind:value={lr.current} class="student-input" class:error={lrError}/>
+
 <span class="title">Vliv:</span>
-<span class="student-rating"><StarRating bind:value={$popularity} id="{student.id}-2"/></span>
-<input bind:value={$popularityReasoning} class="student-input"/>
+<span class="student-rating"><StarRating bind:value={p.current} error={pError}/></span>
+<input bind:value={pr.current} class="student-input" class:error={prError}/>
 
 <style>
     .student-name {
@@ -46,8 +61,24 @@
 
     .student-input {
         align-self: center;
+        margin: 1px;
+
+        &.error {
+            margin: 0;
+            border: 2px solid red;
+        }
+
         @media only screen and (min-width: 450px) {
-            margin-left: .375rem;
+            margin-left: calc(1px + .375rem);
+            &.error {
+                margin-left: .375rem;
+            }
+        }
+        @media only screen and (min-width: 550px) {
+            margin-bottom: calc(1px + .375rem);
+            &.error {
+                margin-bottom: .375rem;
+            }
         }
     }
 

@@ -1,17 +1,18 @@
 <script lang="ts">
-
     let {
-        value = $bindable(),
-        id
+        value = $bindable(), error
     }: {
-        value: number | undefined,
-        id: string
+        value: -1 | 0 | 1 | 2 | 3 | 4, error: boolean
     } = $props()
+
+    const id = $props.id()
+
+    const arr = Array(5).fill(0).map((_, i) => i as 0 | 1 | 2 | 3 | 4)
 </script>
 
 <div class="star-row">
-    {#each Array(5) as _, i}
-        <label onpointerup={() => value = i}>
+    {#each arr as i}
+        <label class:error onpointerup={() => value = i}>
             <input type="radio" value={i} name="star-rating-{id}" bind:group={value}>
             &starf;
         </label>
@@ -34,16 +35,20 @@
             color: gold;
             cursor: pointer;
             user-select: none;
+
+            &.error {
+                -webkit-text-stroke: 2px red;
+            }
         }
-    }
 
-    .star-row:not(:hover):not(:has(> label > input:checked)) label,
-    .star-row:not(:hover) label:has(input:checked) ~ label,
-    .star-row label:has(input:hover) ~ label {
-        color: white;
-    }
+        &:not(:hover):not(:has(> label > input:checked)) label,
+        &:not(:hover) label:has(input:checked) ~ label,
+        & label:has(input:hover) ~ label {
+            color: white;
+        }
 
-    .star-row:not(:hover) label:has(input:focus-visible) {
-        color: darkgreen;
+        &:not(:hover) label:has(input:focus-visible) {
+            color: darkgreen;
+        }
     }
 </style>

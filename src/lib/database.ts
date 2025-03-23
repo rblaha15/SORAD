@@ -67,3 +67,13 @@ export const getRatingGroups = (myself: Student, students: Student[]): Student[]
     groups[0] = [myself, ...groups[0]];
     return groups;
 }
+
+export const defaultRating = (by: number, about: number): Rating => ({
+    by, about,
+    liking: -1, likingReasoning: '',
+    popularity: -1, popularityReasoning: ''
+})
+
+export const validateRating = (r: Rating) =>
+    r.liking != -1 && ((r.liking != 0 && r.liking != 4) || r.likingReasoning != '') &&
+    r.popularity != -1 && ((r.popularity != 0 && r.popularity != 4) || r.popularityReasoning != '')

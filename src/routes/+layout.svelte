@@ -10,6 +10,7 @@
     {@render children?.()}
 </div>
 
+<!--suppress CssUnusedSymbol -->
 <style>
     :global {
         * {

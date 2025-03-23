@@ -1,83 +1,51 @@
 <script lang="ts">
-    import {allData, type Data, getRatingGroups} from '$lib/database';
-    import StudentRow from "./StudentRow.svelte";
-    import {storeable} from "$lib/stores";
-    import {derived} from "svelte/store";
+    import {allData, type Data} from '$lib/database';
+    import {derived as derivedStore} from "svelte/store";
     import {studentId} from "$lib/auth";
     import {browser} from "$app/environment";
+    import StudentGroup from "./StudentGroup.svelte";
+    import {storeable} from "$lib/stores";
+    import type {Rating} from "$lib/schema";
 
-    const data = derived(studentId, (id, set: (v: Data | undefined) => void) => {
+    const data = derivedStore(studentId, (id, set: (v: Data | undefined) => void) => {
         if (id != undefined) allData(id).then(v => set(v))
         else if (browser) window.location.replace('/login')
     }, undefined)
-    const className = () => $data!.myClass.name
-    const groups = () => getRatingGroups($data!.myself, $data!.students)
-    const currentGroup = storeable(`${$data?.myself?.id ?? ''}-currentGroup`, 0)
+
+    let start = $state(false)
+
+    const demoData: Data = {
+        students: [{id: -1, names: 'Jan', surname: 'Novák', class: -1, is_girl: false, student_number: -1}],
+        myself: {id: -1, names: 'Jan', surname: 'Novák', class: -1, is_girl: false, student_number: -1},
+        myClass: {id: -1, name: ''},
+    }
+    storeable<Rating[]>(`-1-ratings`, [
+        {
+            by: -1, about: -1, liking: 4, popularity: 1,
+            likingReasoning: 'Je to můj nejlepší kamarád', popularityReasoning: ''
+        }
+    ])
 </script>
 
 {#if $data === undefined}
     <span class="loader"></span>
 {:else}
-    <p class="class-title">Třída: {className()}</p>
+    <p class="class-title">Třída: {$data.myClass.name}</p>
     <button class="grey" onclick={$studentId = undefined}>Odhlásit</button>
-    <div class="student-group">
-        <span></span>
-        <span class="main-title">Sympatie</span>
-        <span class="main-title">Vliv</span>
-        {#each groups()[$currentGroup] as student}
-            <StudentRow {student} myId={$data.myself.id}/>
-        {/each}
-    </div>
-    <div class="button-row">
-        {#if $currentGroup !== 0}
-            <button class="grey" onclick={() => currentGroup.update(n => n - 1)}>Zpět</button>
-        {/if}
-        {#if $currentGroup !== 3}
-            <button onclick={() => currentGroup.update(n => n + 1)}>Další</button>
-        {:else}
-            <button class="red" onclick={() => {}}>Odeslat</button>
-        {/if}
-    </div>
+    {#if start}
+        <StudentGroup data={$data} cancel={() => start = false}/>
+    {:else}
+        <p>Tady bude nějaké info</p>
+
+        <StudentGroup data={demoData} cancel={() => {}} demo={true}/>
+
+        <button onclick={() => start = true}>Začít!</button>
+    {/if}
 {/if}
 
 <style>
-    .student-group {
-        display: grid;
-        grid-template-columns: 1fr;
-
-        .main-title {
-            display: none;
-        }
-
-        @media only screen and (min-width: 450px) {
-            grid-template-columns: 0fr 1fr;
-        }
-        @media only screen and (min-width: 550px) {
-            grid-template-columns: 0fr 0fr 1fr;
-        }
-        @media only screen and (min-width: 1100px) {
-            grid-template-columns: 0fr 0fr 1fr 0fr 1fr;
-
-            .main-title {
-                display: inline;
-                grid-area: auto / span 2;
-                margin-left: .5rem;
-            }
-        }
-    }
-
     .class-title {
         text-align: center;
         font-size: 2rem;
-    }
-
-    .button-row {
-        display: flex;
-        justify-content: end;
-
-        button {
-            margin-left: .5rem;
-            margin-top: .5rem;
-        }
     }
 </style>
