@@ -30,9 +30,9 @@
 <span class="student-name">{student.names} {student.surname}</span>
 
 <span class="title A">Vliv:</span>
-<span class="student-rating A"><StarRating bind:value={p.current} error={lError}/></span>
+<span class="student-rating A"><StarRating bind:value={p.current} error={pError}/></span>
 <span class="title B">Sympatie:</span>
-<span class="student-rating B"><StarRating bind:value={l.current} error={pError}/></span>
+<span class="student-rating B"><StarRating bind:value={l.current} error={lError}/></span>
 <span class="title C">Důvod:</span>
 <input bind:value={r.current} class="student-input" class:error={rError}/>
 

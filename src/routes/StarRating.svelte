@@ -37,7 +37,7 @@
             user-select: none;
 
             &.error {
-                -webkit-text-stroke: 2px red;
+                /*-webkit-text-stroke: 3px red;*/
             }
         }
 
@@ -45,6 +45,9 @@
         &:not(:hover) label:has(input:checked) ~ label,
         & label:has(input:hover) ~ label {
             color: white;
+            &.error {
+                color: red;
+            }
         }
 
         &:not(:hover) label:has(input:focus-visible) {
