@@ -55,6 +55,7 @@ export type Database = {
 export type Class = {
     id: number
     name: string
+    grade: number
 }
 export type Student = {
     class: number
@@ -68,7 +69,6 @@ export type Rating = {
     about: number
     by: number
     liking: -1 | 0 | 1 | 2 | 3 | 4
-    likingReasoning: string
     popularity: -1 | 0 | 1 | 2 | 3 | 4
-    popularityReasoning: string
+    reasoning: string
 }

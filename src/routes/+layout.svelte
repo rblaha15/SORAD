@@ -12,11 +12,16 @@
 
 <!--suppress CssUnusedSymbol -->
 <style>
+    .root {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
     :global {
         * {
             font-size: 1rem;
             text-size-adjust: 100%;
-            font-weight: 400;
             line-height: 1.5;
         }
 
@@ -68,7 +73,7 @@
         .loader {
             width: 32px;
             height: 32px;
-            border: 5px solid orangered;
+            border: 3px solid orangered;
             border-bottom-color: transparent;
             border-radius: 50%;
             display: inline-block;

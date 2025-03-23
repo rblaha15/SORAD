@@ -19,43 +19,97 @@
         },
     })
     let l = value(property('liking'))
-    let lr = value(property('likingReasoning'))
+    let r = value(property('reasoning'))
     let p = value(property('popularity'))
-    let pr = value(property('popularityReasoning'))
 
     const lError = $derived(showErrors && l.current == -1)
     const pError = $derived(showErrors && p.current == -1)
-    const lrError = $derived(showErrors && (l.current == 0 || l.current == 4) && lr.current == '')
-    const prError = $derived(showErrors && (p.current == 0 || p.current == 4) && pr.current == '')
+    const rError = $derived(showErrors && (l.current == 0 || l.current == 4) && r.current == '')
 </script>
 
 <span class="student-name">{student.names} {student.surname}</span>
 
-<span class="title">Sympatie:</span>
-<span class="student-rating"><StarRating bind:value={l.current} error={lError}/></span>
-<input bind:value={lr.current} class="student-input" class:error={lrError}/>
-
-<span class="title">Vliv:</span>
-<span class="student-rating"><StarRating bind:value={p.current} error={pError}/></span>
-<input bind:value={pr.current} class="student-input" class:error={prError}/>
+<span class="title A">Vliv:</span>
+<span class="student-rating A"><StarRating bind:value={p.current} error={lError}/></span>
+<span class="title B">Sympatie:</span>
+<span class="student-rating B"><StarRating bind:value={l.current} error={pError}/></span>
+<span class="title C">Důvod:</span>
+<input bind:value={r.current} class="student-input" class:error={rError}/>
 
 <style>
     .student-name {
         align-self: start;
         font-size: 1.5rem;
         margin-top: 1rem;
-        @media only screen and (min-width: 450px) {
-            grid-area: auto / span 2;
-        }
-        @media only screen and (min-width: 550px) {
+        @media only screen and (min-width: 400px) {
             grid-area: auto / span 3;
         }
-        @media only screen and (min-width: 1100px) {
+        @media only screen and (min-width: 500px) {
+            grid-area: auto / span 5;
+        }
+        @media only screen and (min-width: 800px) {
             font-size: 1.25rem;
             white-space: nowrap;
-            grid-area: span 1 / 1;
+            grid-area: auto / 1;
             align-self: center;
             margin-top: 0;
+        }
+    }
+
+    .title {
+        align-self: center;
+        margin-top: .2rem;
+        @media only screen and (min-width: 400px) {
+            margin: 0;
+            &.A {
+                grid-area: auto / span 2;
+            }
+
+            &.B {
+                grid-area: auto / 3;
+            }
+
+            &.C {
+                grid-area: auto / 1 / auto / 1;
+            }
+        }
+        @media only screen and (min-width: 500px) {
+            &.A {
+                grid-area: auto / 1;
+            }
+
+            margin-top: 0;
+            margin-right: .375rem;
+        }
+        @media only screen and (min-width: 800px) {
+            display: none;
+        }
+    }
+
+    .student-rating {
+        @media only screen and (min-width: 400px) {
+            &.A {
+                grid-area: auto / span 2;
+            }
+
+            &.B {
+                grid-area: auto / 3;
+            }
+        }
+        @media only screen and (min-width: 500px) {
+            &.A {
+                grid-area: auto / 2;
+            }
+
+            &.B {
+                grid-area: auto / 4;
+            }
+        }
+        @media only screen and (min-width: 800px) {
+            margin-left: .5rem;
+            &.A, &.B {
+                grid-area: auto / span 1;
+            }
         }
     }
 
@@ -68,40 +122,24 @@
             border: 2px solid red;
         }
 
-        @media only screen and (min-width: 450px) {
+        @media only screen and (min-width: 400px) {
+            grid-area: auto / span 2;
+
             margin-left: calc(1px + .375rem);
             &.error {
                 margin-left: .375rem;
             }
         }
-        @media only screen and (min-width: 550px) {
+        @media only screen and (min-width: 500px) {
+            grid-area: auto / span 3;
+
             margin-bottom: calc(1px + .375rem);
             &.error {
                 margin-bottom: .375rem;
             }
         }
-    }
-
-    .title {
-        align-self: center;
-        margin-top: .2rem;
-        @media only screen and (min-width: 450px) {
-            margin: 0;
-            grid-area: auto / span 2;
-        }
-        @media only screen and (min-width: 550px) {
-            grid-area: auto;
-            margin-top: 0;
-            margin-right: .375rem;
-        }
-        @media only screen and (min-width: 1100px) {
-            display: none;
-        }
-    }
-
-    .student-rating {
-        @media only screen and (min-width: 1100px) {
-            margin-left: .5rem;
+        @media only screen and (min-width: 800px) {
+            grid-area: auto / 4;
         }
     }
 </style>

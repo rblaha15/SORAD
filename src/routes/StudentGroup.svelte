@@ -4,13 +4,12 @@
     import type {Rating, Student} from "$lib/schema";
     import StudentRow from "./StudentRow.svelte";
 
-    let {data, cancel, demo = false}: { data: Data, cancel: () => void, demo?: boolean } = $props()
+    let {data, currentGroupNumber, anyError = $bindable(), showErrors}: { data: Data, currentGroupNumber: 0 | 1 | 2 | 3, anyError: boolean, showErrors: boolean } = $props()
 
     const myId = data.myself.id;
-    const currentGroupNumber = storeable(`${myId}-currentGroupNumber`, 0)
     const savedData = storeable<Rating[]>(`${myId}-ratings`, data.students.map(student => defaultRating(myId, student.id)))
 
-    const currentGroup = $derived(getRatingGroups(data.myself, data.students)[$currentGroupNumber])
+    const currentGroup = $derived(getRatingGroups(data.myself, data.students)[currentGroupNumber])
 
     const thisRating = (student: Student) => (r: Rating) => r.about == student.id;
 
@@ -23,41 +22,19 @@
         }),
     })))
 
-    let showErrors = $state(false)
-    const anyError = $derived(groupRatings.every(({rating}) => validateRating(rating.current)))
     $effect(() => {
-        if (!anyError) showErrors = false
+        anyError = !groupRatings.every(({rating}) => validateRating(rating.current))
     })
-
-    const back = () => currentGroupNumber.update(n => n - 1)
-    const next = () => !anyError
-        ? showErrors = true
-        : currentGroupNumber.update(n => n + 1)
-    const send = () => {
-        if (!$savedData.every(validateRating)) {
-            showErrors = true
-            return
-        }
-    }
 </script>
 <div class="student-group">
-    <span></span>
-    <span class="main-title">Sympatie</span>
-    <span class="main-title">Vliv</span>
+    <span class="main-title"></span>
+    <span class="main-title">Vliv:</span>
+    <span class="main-title">Sympatie:</span>
+    <span class="main-title">Důvod:</span>
     {#each groupRatings as {student, rating}}
         <StudentRow {student} bind:rating={rating.current} {showErrors}/>
     {/each}
 </div>
-{#if !demo}
-    <div class="button-row">
-        <button class="grey" onclick={$currentGroupNumber !== 0 ? back : cancel}>Zpět</button>
-        {#if $currentGroupNumber !== 3}
-            <button onclick={next}>Další</button>
-        {:else}
-            <button class="red" onclick={send}>Odeslat</button>
-        {/if}
-    </div>
-{/if}
 
 <style>
     .student-group {
@@ -68,30 +45,20 @@
             display: none;
         }
 
-        @media only screen and (min-width: 450px) {
-            grid-template-columns: 0fr 1fr;
+        @media only screen and (min-width: 400px) {
+            grid-template-columns: 0fr auto 50%;
+            grid-auto-flow: dense;
         }
-        @media only screen and (min-width: 550px) {
-            grid-template-columns: 0fr 0fr 1fr;
+        @media only screen and (min-width: 500px) {
+            grid-template-columns: 0fr 1fr 0fr 1fr;
         }
-        @media only screen and (min-width: 1100px) {
-            grid-template-columns: 0fr 0fr 1fr 0fr 1fr;
+        @media only screen and (min-width: 800px) {
+            grid-template-columns: 0fr 0fr 0fr 1fr;
 
             .main-title {
                 display: inline;
-                grid-area: auto / span 2;
                 margin-left: .5rem;
             }
-        }
-    }
-
-    .button-row {
-        display: flex;
-        justify-content: end;
-
-        button {
-            margin-left: .5rem;
-            margin-top: .5rem;
         }
     }
 </style>

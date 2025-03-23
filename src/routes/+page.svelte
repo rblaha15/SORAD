@@ -4,48 +4,88 @@
     import {studentId} from "$lib/auth";
     import {browser} from "$app/environment";
     import StudentGroup from "./StudentGroup.svelte";
-    import {storeable} from "$lib/stores";
-    import type {Rating} from "$lib/schema";
+    import Tutorial from "./Tutorial.svelte";
+    import {pushState} from "$app/navigation";
+    import {page} from "$app/state";
 
-    const data = derivedStore(studentId, (id, set: (v: Data | undefined) => void) => {
+    const classData = derivedStore(studentId, (id, set: (v: Data | undefined) => void) => {
         if (id != undefined) allData(id).then(v => set(v))
         else if (browser) window.location.replace('/login')
     }, undefined)
 
-    let start = $state(false)
+    const currentGroupNumber = $derived((browser ? page.state : {}).group ?? -1) as -1 | 0 | 1 | 2 | 3
 
-    const demoData: Data = {
-        students: [{id: -1, names: 'Jan', surname: 'Novák', class: -1, is_girl: false, student_number: -1}],
-        myself: {id: -1, names: 'Jan', surname: 'Novák', class: -1, is_girl: false, student_number: -1},
-        myClass: {id: -1, name: ''},
-    }
-    storeable<Rating[]>(`-1-ratings`, [
-        {
-            by: -1, about: -1, liking: 4, popularity: 1,
-            likingReasoning: 'Je to můj nejlepší kamarád', popularityReasoning: ''
+    let showErrors = $state(false)
+    let anyError = $state(false)
+    $effect(() => {
+        if (currentGroupNumber == -1) anyError = false
+        if (!anyError) showErrors = false
+    })
+
+    const back = () => pushState('', {group: currentGroupNumber - 1})
+    const next = () => anyError
+        ? showErrors = true
+        : pushState('', {group: currentGroupNumber + 1})
+    const send = () => {
+        if (anyError) {
+            showErrors = true
+            return
         }
-    ])
+    }
 </script>
 
-{#if $data === undefined}
+{#if $classData === undefined}
     <span class="loader"></span>
 {:else}
-    <p class="class-title">Třída: {$data.myClass.name}</p>
-    <button class="grey" onclick={$studentId = undefined}>Odhlásit</button>
-    {#if start}
-        <StudentGroup data={$data} cancel={() => start = false}/>
-    {:else}
-        <p>Tady bude nějaké info</p>
-
-        <StudentGroup data={demoData} cancel={() => {}} demo={true}/>
-
-        <button onclick={() => start = true}>Začít!</button>
-    {/if}
+    <p class="class-title">Třída: {$classData.myClass.name}</p>
+    <div class="content">
+        {#if currentGroupNumber === -1}
+            <Tutorial isGirl={$classData.myself.is_girl} grade={$classData.myClass.grade} />
+        {:else}
+            <StudentGroup {showErrors} bind:anyError data={$classData} currentGroupNumber={currentGroupNumber}/>
+        {/if}
+    </div>
+    <div class="button-row">
+        <button class="grey" onclick={$studentId = undefined}>Odhlásit</button>
+        {#if currentGroupNumber === -1}
+            <button onclick={() => pushState('', {group: 0})}>Začít!</button>
+        {:else}
+            <button class="grey" onclick={back}>Zpět</button>
+            {#if currentGroupNumber === 3}
+                <button class="red" onclick={send}>Odeslat</button>
+            {:else}
+                <button onclick={next}>Další</button>
+            {/if}
+        {/if}
+    </div>
 {/if}
 
 <style>
     .class-title {
         text-align: center;
         font-size: 2rem;
+        margin: 0;
+        padding: 1rem 1rem;
+    }
+
+    .content {
+        flex-grow: 1;
+        padding: 1rem 1rem 0;
+        overflow-y: auto;
+    }
+
+    .button-row {
+        display: flex;
+        background: black;
+        padding: 1rem 1rem;
+
+        button {
+            margin-left: .5rem;
+
+            &:first-child {
+                margin-right: auto;
+                margin-left: 0;
+            }
+        }
     }
 </style>
