@@ -1,24 +1,59 @@
 <script lang="ts">
-    import {studentId} from "$lib/auth";
-    import {browser} from "$app/environment";
+    import {getEmail, logInWithMS, logInWithStudentPassword} from "$lib/auth";
+    import {onMount} from "svelte";
 
     let value = $state('')
+    let error = $state<string>()
 
-    if ($studentId != undefined && browser)
-        window.location.replace('/');
+    onMount(async () => {
+        if (await getEmail()) window.location.replace(window.location.origin);
+    })
+
+    const logIn = async () => {
+        if (!await logInWithStudentPassword(value))
+            error = 'Kód, není správný. Prosím, zkontrolujte, že jste ho zadali správně.'
+    }
 </script>
 
-<label>
-    Zadej své ID:
-    <input type="text" bind:value />
-</label>
-<button onclick={() => {$studentId = Number(value); window.location.replace('/');}}>Potvrdit</button>
+<div class="content">
+    <form class="row" onsubmit={logIn}>
+        <p>{error}</p>
+        <label>
+            Zadej své ID:
+            <input bind:value type="text"/>
+        </label>
+        <button type="submit">Potvrdit</button>
+    </form>
+    <div class="row">
+        <hr/>
+        <span>nebo</span>
+        <hr/>
+    </div>
+    <button onclick={logInWithMS}>Přihlásit se pomocí školního MS účtu</button>
+</div>
 
 <style>
-    label {
-        display: block;
-    }
-    button {
-        margin-top: .5rem;
+    .content {
+        padding: 1rem;
+
+        form {
+            input {
+                margin: 0 .375rem;
+            }
+        }
+
+        label {
+            display: block;
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+
+            hr {
+                flex-grow: 1;
+                margin: 1rem;
+            }
+        }
     }
 </style>

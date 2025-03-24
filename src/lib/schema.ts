@@ -44,9 +44,30 @@ export type Database = {
                     },
                 ]
             }
+            student_password: {
+                Row: StudentPassword
+                Insert: StudentPassword
+                Update: Partial<StudentPassword>
+                Relationships: [
+                    {
+                        foreignKeyName: "student_password_email_fkey"
+                        columns: ["email"]
+                        isOneToOne: true
+                        referencedRelation: "student"
+                        referencedColumns: ["email"]
+                    },
+                ]
+            }
         }
         Views: Record<never, never>
-        Functions: Record<never, never>
+        Functions: {
+            get_email_by_password: {
+                Args: {
+                    p: string
+                }
+                Returns: string
+            }
+        }
         Enums: Record<never, never>
         CompositeTypes: Record<never, never>
     }
@@ -64,6 +85,11 @@ export type Student = {
     names: string
     student_number: number
     surname: string
+    email: string
+}
+export type StudentPassword = {
+    email: string
+    password: string
 }
 export type Rating = {
     about: number

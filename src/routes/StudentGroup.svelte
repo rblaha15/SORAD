@@ -1,30 +1,12 @@
 <script lang="ts">
-    import {type Data, defaultRating, getRatingGroups, validateRating} from "$lib/database";
-    import {storeable, value} from "$lib/stores";
     import type {Rating, Student} from "$lib/schema";
     import StudentRow from "./StudentRow.svelte";
 
-    let {data, currentGroupNumber, anyError = $bindable(), showErrors}: { data: Data, currentGroupNumber: 0 | 1 | 2 | 3, anyError: boolean, showErrors: boolean } = $props()
+    let {groupRatings, showErrors}: {
+        groupRatings: { student: Student, rating: { current: Rating } }[],
+        showErrors: boolean,
+    } = $props()
 
-    const myId = data.myself.id;
-    const savedData = storeable<Rating[]>(`${myId}-ratings`, data.students.map(student => defaultRating(myId, student.id)))
-
-    const currentGroup = $derived(getRatingGroups(data.myself, data.students)[currentGroupNumber])
-
-    const thisRating = (student: Student) => (r: Rating) => r.about == student.id;
-
-    const groupRatings = $derived(currentGroup.map(student => ({
-        student,
-        rating: value({
-            get: () => $savedData[$savedData.findIndex(thisRating(student))!],
-            set: newRating =>
-                $savedData = $savedData.toSpliced($savedData.findIndex(thisRating(student)), 1, newRating),
-        }),
-    })))
-
-    $effect(() => {
-        anyError = !groupRatings.every(({rating}) => validateRating(rating.current))
-    })
 </script>
 <div class="student-group">
     <span class="main-title"></span>

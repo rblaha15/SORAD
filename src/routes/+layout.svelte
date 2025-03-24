@@ -89,5 +89,12 @@
                 transform: rotate(360deg);
             }
         }
+
+        hr {
+            margin: 1rem 0;
+            border: 0;
+            border-top: 1px solid;
+            opacity: .25;
+        }
     }
 </style>
