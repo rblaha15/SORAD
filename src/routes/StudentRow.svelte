@@ -14,8 +14,10 @@
     const property = <K extends keyof Rating>(key: K) => ({
         get: () => rating[key],
         set: (value: Rating[K]) => {
-            rating[key] = value;
-            rating = rating;
+            rating = {
+                ...rating,
+                [key]: value,
+            };
         },
     })
     let l = value(property('liking'))

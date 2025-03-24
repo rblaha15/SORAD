@@ -36,6 +36,8 @@
         'Nejvíce<br/>sympatický',
     )}
     <p>Poté prosím vysvětl{ete}, proč js{i} u druhé otázky zvolil{a} právě tuto odpověď (obzvlášť, pokud js{i} zaškrtl{a} 1 nebo 5)</p>
+    <br />
+    <p>Všechny odpovědi se průběžně ukládají do prohlížeče, takže o ně nepřijde{te}, pokud např. ztratí{te} připojení k internetu.</p>
 </div>
 
 <style>
