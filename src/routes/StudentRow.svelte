@@ -24,7 +24,7 @@
 
     const lError = $derived(showErrors && l.current == -1)
     const pError = $derived(showErrors && p.current == -1)
-    const rError = $derived(showErrors && (l.current == 0 || l.current == 4) && r.current == '')
+    const rError = $derived(showErrors && (l.current == 0 || l.current == 4) && !r.current)
 </script>
 
 <span class="student-name">{student.names} {student.surname}</span>

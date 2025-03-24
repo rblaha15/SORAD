@@ -25,8 +25,8 @@
         margin: -.25rem 0;
 
         input {
-            display: none;
-            margin: 0;
+            width: 0;
+            position: absolute;
         }
 
         label {
@@ -36,8 +36,8 @@
             cursor: pointer;
             user-select: none;
 
-            &.error {
-                /*-webkit-text-stroke: 3px red;*/
+            &:has(> input:focus-visible) {
+                color: darkgreen !important;
             }
         }
 
@@ -48,10 +48,6 @@
             &.error {
                 color: red;
             }
-        }
-
-        &:not(:hover) label:has(input:focus-visible) {
-            color: darkgreen;
         }
     }
 </style>

@@ -75,4 +75,4 @@ export const defaultRating = (by: number, about: number): Rating => ({
 
 export const validateRating = (r: Rating) =>
     r.liking != -1 && r.popularity != -1 &&
-    ((r.liking != 0 && r.liking != 4) || r.reasoning != '')
+    ((r.liking != 0 && r.liking != 4) || r.reasoning)
