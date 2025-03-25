@@ -177,8 +177,15 @@ const database: Database = {
             if (error) throw error
         },
 
+        getClassRatings: async classId => {
+            const {data, error} = await client.from('rating').select('*, student!by()')
+                .eq('student.class', classId)
+            if (error) throw error
+            return data
+        },
+
         addStudents: async students => {
-            let {error} = await client.from('student').insert(students)
+            const {error} = await client.from('student').insert(students)
             if (error) throw error
         },
         updateStudents: async students => {
@@ -187,17 +194,17 @@ const database: Database = {
         },
         removeStudents: async studentIds => {
             const {error} = await client.from('student').delete()
-                .containedBy('id', studentIds)
+                .in('id', studentIds)
             if (error) throw error
         },
 
         addStudentPasswords: async studentPasswords => {
-            let {error} = await client.from('student_password').insert(studentPasswords)
+            const {error} = await client.from('student_password').insert(studentPasswords)
             if (error) throw error
         },
         getStudentPasswords: async studentEmails => {
             const {data, error} = await client.from('student_password').select('*')
-                .containedBy('email', studentEmails)
+                .in('email', studentEmails)
             if (error) throw error
             return data
         },

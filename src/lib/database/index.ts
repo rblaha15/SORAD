@@ -20,6 +20,8 @@ export interface Database {
         deleteClass: (classId: number) => Promise<void>
         updateClass: (klass: Class) => Promise<void>
 
+        getClassRatings: (classId: number) => Promise<Rating[]>
+
         addStudents: (students: Student[]) => Promise<void>
         updateStudents: (students: Student[]) => Promise<void>
         removeStudents: (studentIds: number[]) => Promise<void>
@@ -54,7 +56,7 @@ export type StudentPassword = {
 export type Rating = {
     about: number
     by: number
-    liking: -1 | 0 | 1 | 2 | 3 | 4
-    popularity: -1 | 0 | 1 | 2 | 3 | 4
+    liking: number
+    popularity: number
     reasoning: string
 }

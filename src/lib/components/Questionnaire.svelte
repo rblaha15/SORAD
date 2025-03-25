@@ -55,7 +55,11 @@
     {/snippet}
     {#snippet content()}
         {#if data.alreadyRated}
+            <p>Js{i} přihlášen jako {data.myself.names} {data.myself.surname}.</p>
             <p>Hotovo! {tve} odpovědi byly odeslány.</p>
+        {:else if !data.myClass.enabled}
+            <p>Js{i} přihlášen jako {data.myself.names} {data.myself.surname}.</p>
+            <p>V této třídě aktuálně neprobíhá sběr dat.</p>
         {:else if currentGroupNumber === -1}
             <p>Js{i} přihlášen jako {data.myself.names} {data.myself.surname}.</p>
             <Tutorial isGirl={data.myself.is_girl} grade={data.myClass.grade}/>
@@ -72,7 +76,7 @@
         {/if}
     {/snippet}
     {#snippet buttons()}
-        {#if data.alreadyRated}{:else if currentGroupNumber === -1}
+        {#if data.alreadyRated || !data.myClass.enabled}{:else if currentGroupNumber === -1}
             <button onclick={() => pushState('', {group: 0})}>Začít!</button>
         {:else}
             <button class="grey" onclick={back}>Zpět</button>
