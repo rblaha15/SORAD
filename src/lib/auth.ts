@@ -8,7 +8,7 @@ export const logInWithMS = async (url: string) => {
     const { error } = await supabase.auth.signInWithOAuth({
         provider: 'azure',
         options: {
-            redirectTo: url + '/login?azure-success',
+            redirectTo: 'https://so-ra-d.web.app' + '/login?azure-success',
             scopes: 'email',
         }
     })
