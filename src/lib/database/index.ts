@@ -3,7 +3,7 @@ export interface Database {
     getEmailByPassword: (password: string) => Promise<string>
 
     getMyClass: (classId: number) => Promise<Class>
-    getStudentsToRate: (classId: number) => Promise<Student[]>
+    getStudentsOfClass: (classId: number) => Promise<Student[]>
     getAlreadyRated: (studentId: number) => Promise<boolean>
     rate: (ratings: Rating[]) => Promise<void>
 
@@ -13,6 +13,22 @@ export interface Database {
         logInWithStudentPassword: (password: string) => Promise<boolean>
         logOut: () => Promise<void>
     }
+
+    admin: {
+        getClasses: () => Promise<Class[]>
+        addClass: (klass: Class) => Promise<void>
+        deleteClass: (classId: number) => Promise<void>
+        updateClass: (klass: Class) => Promise<void>
+
+        addStudents: (students: Student[]) => Promise<void>
+        updateStudents: (students: Student[]) => Promise<void>
+        removeStudents: (studentIds: number[]) => Promise<void>
+
+        addStudentPasswords: (studentPasswords: StudentPassword[]) => Promise<void>
+        getStudentPasswords: (studentEmails: string[]) => Promise<StudentPassword[]>
+
+        createStudentAccounts: (students: { email: string, password: string }[]) => Promise<void>
+    }
 }
 
 
@@ -20,6 +36,7 @@ export type Class = {
     id: number
     name: string
     grade: number
+    enabled: boolean
 }
 export type Student = {
     class: number

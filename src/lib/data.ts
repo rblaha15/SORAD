@@ -19,7 +19,7 @@ export const allData = async (email: string): Promise<Data | undefined> => {
     return {
         myself: myself,
         myClass: await database.getMyClass(myself.class),
-        students: await database.getStudentsToRate(myself.class),
+        students: await database.getStudentsOfClass(myself.class),
         alreadyRated: await database.getAlreadyRated(myself.id),
     };
 }

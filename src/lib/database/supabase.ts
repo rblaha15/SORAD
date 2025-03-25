@@ -1,5 +1,5 @@
-import {createClient} from "@supabase/supabase-js";
-import type {Class, Database, Rating, Student, StudentPassword} from "$lib/database/index";
+import {createClient} from '@supabase/supabase-js';
+import type {Class, Database, Rating, Student, StudentPassword} from '$lib/database';
 
 type DatabaseSchema = {
     public: {
@@ -16,18 +16,18 @@ type DatabaseSchema = {
                 Update: Partial<Rating>
                 Relationships: [
                     {
-                        foreignKeyName: "rating_about_fkey"
-                        columns: ["about"]
+                        foreignKeyName: 'rating_about_fkey'
+                        columns: ['about']
                         isOneToOne: false
-                        referencedRelation: "student"
-                        referencedColumns: ["id"]
+                        referencedRelation: 'student'
+                        referencedColumns: ['id']
                     },
                     {
-                        foreignKeyName: "rating_by_fkey"
-                        columns: ["by"]
+                        foreignKeyName: 'rating_by_fkey'
+                        columns: ['by']
                         isOneToOne: false
-                        referencedRelation: "student"
-                        referencedColumns: ["id"]
+                        referencedRelation: 'student'
+                        referencedColumns: ['id']
                     },
                 ]
             }
@@ -39,11 +39,11 @@ type DatabaseSchema = {
                 Update: Partial<Student>
                 Relationships: [
                     {
-                        foreignKeyName: "student_class_fkey"
-                        columns: ["class"]
+                        foreignKeyName: 'student_class_fkey'
+                        columns: ['class']
                         isOneToOne: false
-                        referencedRelation: "class"
-                        referencedColumns: ["id"]
+                        referencedRelation: 'class'
+                        referencedColumns: ['id']
                     },
                 ]
             }
@@ -53,11 +53,11 @@ type DatabaseSchema = {
                 Update: Partial<StudentPassword>
                 Relationships: [
                     {
-                        foreignKeyName: "student_password_email_fkey"
-                        columns: ["email"]
+                        foreignKeyName: 'student_password_email_fkey'
+                        columns: ['email']
                         isOneToOne: true
-                        referencedRelation: "student"
-                        referencedColumns: ["email"]
+                        referencedRelation: 'student'
+                        referencedColumns: ['email']
                     },
                 ]
             }
@@ -81,44 +81,43 @@ const client = createClient<DatabaseSchema>(
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptYmdqbWlscHJlb21icXB6dGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEzMjQ0NDIsImV4cCI6MjA1NjkwMDQ0Mn0.Vr69TqY4bcTFFCbC7TBA69eWEeNhgkRXre53h5qfO-Q'
 )
 
+const createRandomPassword = () =>
+    [...Array(6)].map(() => Math.random().toString(36)[2] || '0').join('').toUpperCase()
+
 const database: Database = {
     getStudentByEmail: async email => {
-        const {data, error} = await client.from("student")
-            .select("*")
-            .eq("email", email)
+        const {data, error} = await client.from('student').select('*')
+            .eq('email', email)
             .single()
         if (error) throw error
         else return data
     },
     getEmailByPassword: async password => {
-        const {data, error} = await client.rpc("get_email_by_password", {p: password})
+        const {data, error} = await client.rpc('get_email_by_password', {p: password})
         if (error) throw error
         return data
     },
     getMyClass: async klass => {
-        const {data, error} = await client.from("class")
-            .select("*")
-            .eq("id", klass)
+        const {data, error} = await client.from('class').select('*')
+            .eq('id', klass)
             .single()
         if (error) throw error
         return data
     },
-    getStudentsToRate: async klass => {
-        const {data, error} = await client.from("student")
-            .select("*")
-            .eq("class", klass)
+    getStudentsOfClass: async klass => {
+        const {data, error} = await client.from('student').select('*')
+            .eq('class', klass)
         if (error) throw error
         return data
     },
     getAlreadyRated: async studentId => {
-        const {count, error} = await client.from("rating")
-            .select("", {count: 'exact'})
-            .eq("by", studentId)
+        const {count, error} = await client.from('rating').select("", {count: 'exact'})
+            .eq('by', studentId)
         if (error) throw error
         return (count ?? 0) > 0
     },
     rate: async ratings => {
-        const { error } = await client.from("rating")
+        const {error} = await client.from('rating')
             .insert(ratings)
         if (error) throw error
     },
@@ -126,11 +125,10 @@ const database: Database = {
     auth: {
         getEmail: async () => (await client.auth.getUser())?.data?.user?.email ?? null,
         logInWithMS: async () => {
-            console.log(window.location.origin + '/login?azure-success')
             const {error} = await client.auth.signInWithOAuth({
                 provider: 'azure',
                 options: {
-                    redirectTo: window.location.origin + '/login?azure-success',
+                    redirectTo: window.location.href,
                     scopes: 'email',
                 }
             })
@@ -157,6 +155,58 @@ const database: Database = {
             if (error) console.error(error)
             else window.location.reload();
         }
+    },
+
+    admin: {
+        getClasses: async () => {
+            const {data, error} = await client.from('class').select('*')
+            if (error) throw error
+            return data
+        },
+        addClass: async klass => {
+            const {error} = await client.from('class').insert(klass)
+            if (error) throw error
+        },
+        deleteClass: async classId => {
+            const {error} = await client.from('class').delete()
+                .eq('id', classId)
+            if (error) throw error
+        },
+        updateClass: async klass => {
+            const {error} = await client.from('class').update(klass)
+            if (error) throw error
+        },
+
+        addStudents: async students => {
+            let {error} = await client.from('student').insert(students)
+            if (error) throw error
+        },
+        updateStudents: async students => {
+            const {error} = await client.from('student').upsert(students)
+            if (error) throw error
+        },
+        removeStudents: async studentIds => {
+            const {error} = await client.from('student').delete()
+                .containedBy('id', studentIds)
+            if (error) throw error
+        },
+
+        addStudentPasswords: async studentPasswords => {
+            let {error} = await client.from('student_password').insert(studentPasswords)
+            if (error) throw error
+        },
+        getStudentPasswords: async studentEmails => {
+            const {data, error} = await client.from('student_password').select('*')
+                .containedBy('email', studentEmails)
+            if (error) throw error
+            return data
+        },
+
+        createStudentAccounts: async students => {
+            for (const student of students) {
+                await client.auth.signUp(student)
+            }
+        },
     }
 }
 
