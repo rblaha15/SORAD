@@ -3,12 +3,12 @@
     import {page} from "$app/state";
     import {pushState} from "$app/navigation";
     import Tutorial from "./Tutorial.svelte";
-    import StudentGroup from "./StudentGroup.svelte";
     import {storeable, value} from "$lib/stores";
     import type {Rating, Student} from "$lib/schema";
     import {type Data, defaultRating, getRatingGroups, validateRating} from "$lib/data";
     import {rate} from "$lib/database";
     import {logOut} from "$lib/auth";
+    import StudentRow from "$lib/components/StudentRow.svelte";
 
     let {data}: { data: Data } = $props()
 
@@ -57,7 +57,15 @@
     {:else if currentGroupNumber === -1}
         <Tutorial isGirl={data.myself.is_girl} grade={data.myClass.grade}/>
     {:else}
-        <StudentGroup {showErrors} {groupRatings}/>
+        <div class="student-group">
+            <span class="main-title"></span>
+            <span class="main-title">Vliv:</span>
+            <span class="main-title">Sympatie:</span>
+            <span class="main-title">Důvod:</span>
+            {#each groupRatings as {student, rating}}
+                <StudentRow {student} bind:rating={rating.current} {showErrors}/>
+            {/each}
+        </div>
     {/if}
 </div>
 <div class="button-row">
@@ -86,6 +94,31 @@
         flex-grow: 1;
         padding: 1rem 1rem 0;
         overflow-y: auto;
+
+        .student-group {
+            display: grid;
+            grid-template-columns: 1fr;
+
+            .main-title {
+                display: none;
+            }
+
+            @media only screen and (min-width: 400px) {
+                grid-template-columns: 0fr auto 50%;
+                grid-auto-flow: dense;
+            }
+            @media only screen and (min-width: 500px) {
+                grid-template-columns: 0fr 1fr 0fr 1fr;
+            }
+            @media only screen and (min-width: 800px) {
+                grid-template-columns: 0fr 0fr 0fr 1fr;
+
+                .main-title {
+                    display: inline;
+                    margin-left: .5rem;
+                }
+            }
+        }
     }
 
     .button-row {

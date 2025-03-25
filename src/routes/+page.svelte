@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Questionnaire from "./Questionnaire.svelte";
+    import Questionnaire from "$lib/components/Questionnaire.svelte";
     import {onMount} from "svelte";
     import {getEmail} from "$lib/auth";
     import {allData, type Data} from "$lib/data";
