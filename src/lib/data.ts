@@ -1,6 +1,6 @@
-import type {Class, Rating, Student} from "$lib/schema";
 import seedrandom from "seedrandom";
-import {getAlreadyRated, getMyClass, getStudentByEmail, getStudentsToRate} from "$lib/database";
+import {type Class, type Rating, type Student} from "$lib/database";
+import database from "$lib/database/supabase";
 
 export const isAdmin = (email: string) => email.endsWith('@gymceska.cz') || email == 'rblaha15@student.gymceska.cz'
 
@@ -14,13 +14,13 @@ export type Data = {
 export const allData = async (email: string): Promise<Data | undefined> => {
     if (!email.endsWith('@student.gymceska.cz')) return undefined
 
-    const myself = await getStudentByEmail(email)
+    const myself = await database.getStudentByEmail(email)
 
     return {
         myself: myself,
-        myClass: await getMyClass(myself.class),
-        students: await getStudentsToRate(myself.class),
-        alreadyRated: await getAlreadyRated(myself.id),
+        myClass: await database.getMyClass(myself.class),
+        students: await database.getStudentsToRate(myself.class),
+        alreadyRated: await database.getAlreadyRated(myself.id),
     };
 }
 

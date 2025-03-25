@@ -4,11 +4,11 @@
     import {pushState} from "$app/navigation";
     import Tutorial from "./Tutorial.svelte";
     import {storeable, value} from "$lib/stores";
-    import type {Rating, Student} from "$lib/schema";
     import {type Data, defaultRating, getRatingGroups, validateRating} from "$lib/data";
-    import {rate} from "$lib/database";
     import StudentRow from "$lib/components/StudentRow.svelte";
     import BasicLayout from "$lib/components/BasicLayout.svelte";
+    import database from "$lib/database/supabase";
+    import type {Rating, Student} from "$lib/database";
 
     let {data}: { data: Data } = $props()
 
@@ -42,7 +42,7 @@
         ? pushState('', {group: currentGroupNumber + 1})
         : showErrors = true
     const send = () => noError
-        ? rate($savedData)
+        ? database.rate($savedData)
         : showErrors = true
 
     const tve = data.myClass.grade > 4 ? 'Vaše' : 'Tvé'

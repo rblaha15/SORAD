@@ -1,6 +1,6 @@
 <script lang="ts">
     import type {Snippet} from "svelte";
-    import {logOut} from "$lib/auth";
+    import database from "$lib/database/supabase";
 
     const {
         title,
@@ -23,7 +23,7 @@
 {/if}
 {#if buttons}
     <div class="button-row">
-        <button class="grey" onclick={logOut}>Odhlásit</button>
+        <button class="grey" onclick={database.auth.logOut}>Odhlásit</button>
         {@render buttons()}
     </div>
 {/if}

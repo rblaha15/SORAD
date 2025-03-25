@@ -1,7 +1,7 @@
 <script lang="ts">
-    import type {Rating, Student} from "$lib/schema";
     import StarRating from "./StarRating.svelte";
     import {value} from "$lib/stores";
+    import type {Rating, Student} from "$lib/database";
 
     let {
         student, rating = $bindable(), showErrors

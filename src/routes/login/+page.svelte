@@ -1,16 +1,16 @@
 <script lang="ts">
-    import {getEmail, logInWithMS, logInWithStudentPassword} from "$lib/auth";
     import {onMount} from "svelte";
+    import database from "$lib/database/supabase";
 
     let value = $state('')
     let error = $state<string>()
 
     onMount(async () => {
-        if (await getEmail()) window.location.replace(window.location.origin);
+        if (await database.auth.getEmail()) window.location.replace(window.location.origin);
     })
 
     const logIn = async () => {
-        if (!await logInWithStudentPassword(value))
+        if (!await database.auth.logInWithStudentPassword(value))
             error = 'Kód, není správný. Prosím, zkontrolujte, že jste ho zadali správně.'
     }
 </script>
@@ -29,7 +29,7 @@
         <span>nebo</span>
         <hr/>
     </div>
-    <button onclick={() => logInWithMS(window.location.origin)}>Přihlásit se pomocí školního MS účtu</button>
+    <button onclick={database.auth.logInWithMS}>Přihlásit se pomocí školního MS účtu</button>
 </div>
 
 <style>

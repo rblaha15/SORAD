@@ -49,8 +49,3 @@ export const value = <T>(state: { get: () => T, set: (v: T) => void }) => ({
         state.set(v)
     },
 })
-export const readonlyValue = <T>(state: { get: () => T }) => ({
-    get current() {
-        return state.get()
-    },
-})
