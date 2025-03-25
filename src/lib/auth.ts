@@ -4,11 +4,11 @@ import {getEmailByPassword} from "$lib/database";
 
 export const getEmail = async () => (await supabase.auth.getUser())?.data?.user?.email
 
-export const logInWithMS = async () => {
+export const logInWithMS = async (url: string) => {
     const { error } = await supabase.auth.signInWithOAuth({
         provider: 'azure',
         options: {
-            redirectTo: window.location.origin + '/login?azure-success',
+            redirectTo: url + '/login?azure-success',
             scopes: 'email',
         }
     })

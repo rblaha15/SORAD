@@ -29,7 +29,7 @@
         <span>nebo</span>
         <hr/>
     </div>
-    <button onclick={logInWithMS}>Přihlásit se pomocí školního MS účtu</button>
+    <button onclick={() => logInWithMS(window.location.origin)}>Přihlásit se pomocí školního MS účtu</button>
 </div>
 
 <style>
