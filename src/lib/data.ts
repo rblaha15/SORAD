@@ -2,6 +2,8 @@ import type {Class, Rating, Student} from "$lib/schema";
 import seedrandom from "seedrandom";
 import {getAlreadyRated, getMyClass, getStudentByEmail, getStudentsToRate} from "$lib/database";
 
+export const isAdmin = (email: string) => email.endsWith('@gymceska.cz') || email == 'rblaha15@student.gymceska.cz'
+
 export type Data = {
     myself: Student
     myClass: Class

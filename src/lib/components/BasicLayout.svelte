@@ -1,0 +1,58 @@
+<script lang="ts">
+    import type {Snippet} from "svelte";
+    import {logOut} from "$lib/auth";
+
+    const {
+        title,
+        content,
+        buttons,
+    }: {
+        title?: Snippet,
+        content?: Snippet,
+        buttons?: Snippet,
+    } = $props();
+</script>
+
+{#if title}
+    <h1 class="title">{@render title()}</h1>
+{/if}
+{#if content}
+    <div class="content">
+        {@render content()}
+    </div>
+{/if}
+{#if buttons}
+    <div class="button-row">
+        <button class="grey" onclick={logOut}>Odhlásit</button>
+        {@render buttons()}
+    </div>
+{/if}
+
+<style>
+    .title {
+        text-align: center;
+        margin: 0;
+        padding: 1rem 1rem;
+    }
+
+    .content {
+        flex-grow: 1;
+        padding: 1rem 1rem 0;
+        overflow-y: auto;
+    }
+
+    .button-row {
+        display: flex;
+        background: black;
+        padding: 1rem 1rem;
+
+        button {
+            margin-left: .5rem;
+
+            &:first-child {
+                margin-right: auto;
+                margin-left: 0;
+            }
+        }
+    }
+</style>

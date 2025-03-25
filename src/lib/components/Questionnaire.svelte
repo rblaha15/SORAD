@@ -7,8 +7,8 @@
     import type {Rating, Student} from "$lib/schema";
     import {type Data, defaultRating, getRatingGroups, validateRating} from "$lib/data";
     import {rate} from "$lib/database";
-    import {logOut} from "$lib/auth";
     import StudentRow from "$lib/components/StudentRow.svelte";
+    import BasicLayout from "$lib/components/BasicLayout.svelte";
 
     let {data}: { data: Data } = $props()
 
@@ -49,89 +49,64 @@
     const i = data.myClass.grade > 4 ? 'te' : 'i'
 </script>
 
-<p class="class-title">Třída: {data.myClass.name}</p>
-<div class="content">
-    <p>Js{i} přihlášen jako {data.myself.names} {data.myself.surname}.</p>
-    {#if data.alreadyRated}
-        <p>Hotovo! {tve} odpovědi byly odeslány.</p>
-    {:else if currentGroupNumber === -1}
-        <Tutorial isGirl={data.myself.is_girl} grade={data.myClass.grade}/>
-    {:else}
-        <div class="student-group">
-            <span class="main-title"></span>
-            <span class="main-title">Vliv:</span>
-            <span class="main-title">Sympatie:</span>
-            <span class="main-title">Důvod:</span>
-            {#each groupRatings as {student, rating}}
-                <StudentRow {student} bind:rating={rating.current} {showErrors}/>
-            {/each}
-        </div>
-    {/if}
-</div>
-<div class="button-row">
-    <button class="grey" onclick={logOut}>Odhlásit</button>
-    {#if data.alreadyRated}{:else if currentGroupNumber === -1}
-        <button onclick={() => pushState('', {group: 0})}>Začít!</button>
-    {:else}
-        <button class="grey" onclick={back}>Zpět</button>
-        {#if currentGroupNumber === 3}
-            <button class="red" onclick={send}>Odeslat</button>
+<BasicLayout>
+    {#snippet title()}
+        Třída: {data.myClass.name}
+    {/snippet}
+    {#snippet content()}
+        {#if data.alreadyRated}
+            <p>Hotovo! {tve} odpovědi byly odeslány.</p>
+        {:else if currentGroupNumber === -1}
+            <p>Js{i} přihlášen jako {data.myself.names} {data.myself.surname}.</p>
+            <Tutorial isGirl={data.myself.is_girl} grade={data.myClass.grade}/>
         {:else}
-            <button onclick={next}>Další</button>
+            <div class="student-group">
+                <span class="main-title"></span>
+                <span class="main-title">Vliv:</span>
+                <span class="main-title">Sympatie:</span>
+                <span class="main-title">Důvod:</span>
+                {#each groupRatings as {student, rating}}
+                    <StudentRow {student} bind:rating={rating.current} {showErrors}/>
+                {/each}
+            </div>
         {/if}
-    {/if}
-</div>
+    {/snippet}
+    {#snippet buttons()}
+        {#if data.alreadyRated}{:else if currentGroupNumber === -1}
+            <button onclick={() => pushState('', {group: 0})}>Začít!</button>
+        {:else}
+            <button class="grey" onclick={back}>Zpět</button>
+            {#if currentGroupNumber === 3}
+                <button class="red" onclick={send}>Odeslat</button>
+            {:else}
+                <button onclick={next}>Další</button>
+            {/if}
+        {/if}
+    {/snippet}
+</BasicLayout>
 
 <style>
-    .class-title {
-        text-align: center;
-        font-size: 2rem;
-        margin: 0;
-        padding: 1rem 1rem;
-    }
+    .student-group {
+        display: grid;
+        grid-template-columns: 1fr;
 
-    .content {
-        flex-grow: 1;
-        padding: 1rem 1rem 0;
-        overflow-y: auto;
+        .main-title {
+            display: none;
+        }
 
-        .student-group {
-            display: grid;
-            grid-template-columns: 1fr;
+        @media only screen and (min-width: 400px) {
+            grid-template-columns: 0fr auto 50%;
+            grid-auto-flow: dense;
+        }
+        @media only screen and (min-width: 500px) {
+            grid-template-columns: 0fr 1fr 0fr 1fr;
+        }
+        @media only screen and (min-width: 800px) {
+            grid-template-columns: 0fr 0fr 0fr 1fr;
 
             .main-title {
-                display: none;
-            }
-
-            @media only screen and (min-width: 400px) {
-                grid-template-columns: 0fr auto 50%;
-                grid-auto-flow: dense;
-            }
-            @media only screen and (min-width: 500px) {
-                grid-template-columns: 0fr 1fr 0fr 1fr;
-            }
-            @media only screen and (min-width: 800px) {
-                grid-template-columns: 0fr 0fr 0fr 1fr;
-
-                .main-title {
-                    display: inline;
-                    margin-left: .5rem;
-                }
-            }
-        }
-    }
-
-    .button-row {
-        display: flex;
-        background: black;
-        padding: 1rem 1rem;
-
-        button {
-            margin-left: .5rem;
-
-            &:first-child {
-                margin-right: auto;
-                margin-left: 0;
+                display: inline;
+                margin-left: .5rem;
             }
         }
     }

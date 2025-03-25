@@ -96,5 +96,9 @@
             border-top: 1px solid;
             opacity: .25;
         }
+
+        h1 {
+            font-size: 1.75rem;
+        }
     }
 </style>
