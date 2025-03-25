@@ -19,7 +19,7 @@
     {#snippet content()}
         <h5>Třídy:</h5>
         {#each classes as klass}
-            <p><a href="/admin/class/{klass.id}">{klass.name} ({klass.grade})</a></p>
+            <p><a href="/admin/class?id={klass.id}">{klass.name} ({klass.grade})</a></p>
         {/each}
     {/snippet}
     {#snippet buttons()}{/snippet}

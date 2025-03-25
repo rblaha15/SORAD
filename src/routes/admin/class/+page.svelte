@@ -3,7 +3,7 @@
     import type {Class, Rating, Student} from "$lib/database";
     import {onMount} from "svelte";
     import database from "$lib/database/supabase";
-    import type {PageProps} from "./$types";
+    import type {PageProps} from "../../../../.svelte-kit/types/src/routes";
     import {Chart} from "chart.js/auto";
 
     const {data}: PageProps = $props()
