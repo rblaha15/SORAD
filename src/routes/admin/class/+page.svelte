@@ -3,10 +3,11 @@
     import type {Class, Rating, Student} from "$lib/database";
     import {onMount} from "svelte";
     import database from "$lib/database/supabase";
-    import type {PageProps} from "../../../../.svelte-kit/types/src/routes";
     import {Chart} from "chart.js/auto";
+    import {browser} from "$app/environment";
+    import {page} from "$app/state";
 
-    const {data}: PageProps = $props()
+    const classId = browser ? Number(page.url.searchParams.get('id')) : null
 
     let canvas = $state() as HTMLCanvasElement;
     let klass = $state() as Class;
@@ -18,9 +19,9 @@
     let scores = $state<U[]>([]);
 
     const refresh = async () => {
-        klass = await database.getMyClass(Number(data.classId))
-        const r = await database.admin.getClassRatings(Number(data.classId))
-        const students = await database.getStudentsOfClass(Number(data.classId))
+        klass = await database.getMyClass(classId!)
+        const r = await database.admin.getClassRatings(classId!)
+        const students = await database.getStudentsOfClass(classId!)
         ratings = r.map(r => ({
             ...r, by: students.find(s => s.id == r.by)!, about: students.find(s => s.id == r.about)!
         }))
