@@ -118,7 +118,7 @@ const database: Database = {
     },
     rate: async ratings => {
         const {error} = await client.from('rating')
-            .insert(ratings)
+            .upsert(ratings)
         if (error) throw error
     },
 
