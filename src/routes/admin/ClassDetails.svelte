@@ -53,11 +53,11 @@
             {collapsed ? 'Zobrazit graf' : 'Skrýt graf'}
         {/snippet}
         <div class="chart">
-            <p style:grid-area="T">Nejvíce oblíbení</p>
-            <p style:grid-area="L">Nejméně vlivní</p>
+            <p style:grid-area="T">Nejvíce<br />oblíbení</p>
+            <p style:grid-area="L">Nejméně<br />vlivní</p>
             <div class="chart-container" style:grid-area="C"><canvas bind:this={canvas}></canvas></div>
-            <p style:grid-area="R">Nejvíce vlivní</p>
-            <p style:grid-area="B">Nejméně oblíbení</p>
+            <p style:grid-area="R">Nejvíce<br />vlivní</p>
+            <p style:grid-area="B">Nejméně<br />oblíbení</p>
         </div>
     </Collapsible>
 {/snippet}
@@ -78,7 +78,7 @@
             ". B .";
 
         .chart-container {
-            /*position: relative;*/
+            position: relative;
             width: 100%;
             /*max-width: 600px;*/
             /*max-height: 600px;*/
