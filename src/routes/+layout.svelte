@@ -25,6 +25,9 @@
             line-height: 1.5;
         }
 
+        a {
+            color: rgb(110, 168, 254);
+        }
 
         button, a.btn {
             background: none;

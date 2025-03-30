@@ -5,7 +5,7 @@
     import Tutorial from "./Tutorial.svelte";
     import {storeable, value} from "$lib/stores";
     import {type Data, defaultRating, getRatingGroups, validateRating} from "$lib/data";
-    import StudentRow from "$lib/components/StudentRow.svelte";
+    import StudentRow from "$lib/components/questionnaire/StudentRow.svelte";
     import BasicLayout from "$lib/components/BasicLayout.svelte";
     import database from "$lib/database/supabase";
     import type {Rating, Student} from "$lib/database";

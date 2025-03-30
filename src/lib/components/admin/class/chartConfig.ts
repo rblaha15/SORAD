@@ -97,7 +97,9 @@ export const chartConfig = (
                     label: item => {
                         const label = item.dataset.label!!;
                         const data = item.parsed;
-                        return `${label}: oblíbenost: ${data.x.toFixed(2)}, vliv: ${data.y.toFixed(2)}`;
+                        const liking = data.x.toFixed(2).replace('.', ',');
+                        const popularity = data.y.toFixed(2).replace('.', ',');
+                        return `${label}: oblíbenost: ${liking}, vliv: ${popularity}`;
                     },
                 },
                 caretPadding: 8,

@@ -1,9 +1,9 @@
 <script lang="ts">
     import {browser} from "$app/environment";
     import {page} from "$app/state";
-    import ClassDetails from "./ClassDetails.svelte";
-    import AdminOverview from "./AdminOverview.svelte";
-    import StudentDetails from "./StudentDetails.svelte";
+    import ClassDetails from "$lib/components/admin/class/ClassDetails.svelte";
+    import AdminOverview from "$lib/components/admin/AdminOverview.svelte";
+    import StudentDetails from "$lib/components/admin/class/student/StudentDetails.svelte";
 
     const classId = $derived(browser ? page.url.searchParams.get('class') : null)
     const studentId = $derived(browser ? page.url.searchParams.get('student') : null)

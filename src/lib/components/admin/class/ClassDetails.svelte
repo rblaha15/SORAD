@@ -1,21 +1,18 @@
 <script lang="ts">
     import BasicLayout from "$lib/components/BasicLayout.svelte";
     import type {Class} from "$lib/database";
-    import {chartConfig} from "./chartConfig.js";
-    import {Chart} from "chart.js/auto";
     import database from "$lib/database/supabase.js";
     import {onMount} from "svelte";
     import {averageBy, type RatingWithStudents, type StudentScore} from "$lib/data";
-    import {goto} from "$app/navigation";
     import Collapsible from "$lib/components/Collapsible.svelte";
+    import Chart from "./Chart.svelte";
+    import StudentsOverview from "$lib/components/admin/class/StudentsOverview.svelte";
 
-    let {classId}: { classId: number } = $props()
+    const {classId}: { classId: number } = $props()
 
-    let canvas = $state() as HTMLCanvasElement;
     let klass = $state() as Class;
     let ratings = $state<RatingWithStudents[]>([]);
     let scores = $state<StudentScore[]>([]);
-    let chart = $state<Chart>();
 
     const refresh = async () => {
         klass = await database.getMyClass(classId)
@@ -32,16 +29,8 @@
                 popularity: Number(averageBy(studentRatings, r => r.popularity).toFixed(2)),
             });
         })
-        chart?.destroy()
-        chart = new Chart(canvas, chartConfig(scores, s => {
-            goto(`/admin?class=${classId}&student=${s.id}`)
-        }));
     }
     onMount(refresh)
-    onMount(async () => {
-        const zoom = await import("chartjs-plugin-zoom");
-        Chart.register(zoom.default);
-    })
 </script>
 
 {#snippet title()}
@@ -52,13 +41,13 @@
         {#snippet label({collapsed})}
             {collapsed ? 'Zobrazit graf' : 'Skrýt graf'}
         {/snippet}
-        <div class="chart">
-            <p style:grid-area="T">Nejvíce<br />oblíbení</p>
-            <p style:grid-area="L">Nejméně<br />vlivní</p>
-            <div class="chart-container" style:grid-area="C"><canvas bind:this={canvas}></canvas></div>
-            <p style:grid-area="R">Nejvíce<br />vlivní</p>
-            <p style:grid-area="B">Nejméně<br />oblíbení</p>
-        </div>
+        <Chart {scores} {classId} />
+    </Collapsible>
+    <Collapsible>
+        {#snippet label({collapsed})}
+            {collapsed ? 'Zobrazit seznam žáků' : 'Skrýt seznam žáků'}
+        {/snippet}
+        <StudentsOverview {scores} {classId} />
     </Collapsible>
 {/snippet}
 {#snippet buttons()}{/snippet}
@@ -68,27 +57,3 @@
 {:else}
     <BasicLayout {buttons} {content} {title}/>
 {/if}
-
-<style>
-    .chart {
-        display: grid;
-        grid-template-areas:
-            ". T ."
-            "L C R"
-            ". B .";
-
-        .chart-container {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 1 / 1;
-            max-width: 500px;
-            max-height: 500px;
-        }
-
-        * {
-            align-self: center;
-            justify-self: center;
-            text-align: center;
-        }
-    }
-</style>
