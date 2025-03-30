@@ -5,8 +5,8 @@
     import AdminOverview from "./AdminOverview.svelte";
     import StudentDetails from "./StudentDetails.svelte";
 
-    const classId = browser ? page.url.searchParams.get('class') : null
-    const studentId = browser ? page.url.searchParams.get('student') : null
+    const classId = $derived(browser ? page.url.searchParams.get('class') : null)
+    const studentId = $derived(browser ? page.url.searchParams.get('student') : null)
 </script>
 
 {#if studentId !== null && classId !== null}

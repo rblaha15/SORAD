@@ -17,9 +17,7 @@
         klass = await database.getMyClass(classId)
         const r = await database.admin.getClassRatings(classId)
         const students = await database.getStudentsOfClass(classId)
-        console.log(students)
-        const student = students.find(s => s.id == studentId)
-        if (!student) return error(404)
+        const student = students.find(s => s.id == studentId)!
 
         ratingsWrote = r.filter(r => r.by == studentId).map(r => ({
             ...r, by: student, about: students.find(s => s.id == r.about)!
