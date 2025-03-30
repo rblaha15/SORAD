@@ -57,7 +57,7 @@ export type StudentPassword = {
 export type Rating = {
     about: number
     by: number
-    liking: number
-    popularity: number
+    sympathy: number
+    influence: number
     reasoning: string
 }

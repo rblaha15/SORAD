@@ -76,6 +76,7 @@
         {/if}
     {/snippet}
     {#snippet buttons()}
+        <button class="grey" onclick={database.auth.logOut} style="margin-right: 'auto';">Odhlásit</button>
         {#if data.alreadyRated || !data.myClass.enabled}{:else if currentGroupNumber === -1}
             <button onclick={() => pushState('', {group: 0})}>Začít!</button>
         {:else}

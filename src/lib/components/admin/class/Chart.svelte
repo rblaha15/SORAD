@@ -29,13 +29,13 @@
 </script>
 
 <div class="chart">
-    <p style:grid-area="T">Nejvíce<br/>oblíbení</p>
-    <p style:grid-area="L">Nejméně<br/>vlivní</p>
     <div class="chart-container" style:grid-area="C">
         <canvas bind:this={canvas}></canvas>
     </div>
-    <p style:grid-area="R">Nejvíce<br/>vlivní</p>
-    <p style:grid-area="B">Nejméně<br/>oblíbení</p>
+    <p style:grid-area="L">Nejvíce<br/> vlivní <br/>(1)</p>
+    <p style:grid-area="R">Nejméně<br/> vlivní <br/>(5)</p>
+    <p style:grid-area="T">Nejvíce<br/>oblíbení<br/>(1)</p>
+    <p style:grid-area="B">Nejméně<br/>oblíbení<br/>(5)</p>
 </div>
 
 <style>

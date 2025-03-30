@@ -16,15 +16,14 @@
 {#if title}
     <h1 class="title">{@render title()}</h1>
 {/if}
+{#if buttons}
+    <div class="button-row">
+        {@render buttons()}
+    </div>
+{/if}
 {#if content}
     <div class="content">
         {@render content()}
-    </div>
-{/if}
-{#if buttons}
-    <div class="button-row">
-        <button class="grey" onclick={database.auth.logOut}>Odhlásit</button>
-        {@render buttons()}
     </div>
 {/if}
 
@@ -32,26 +31,27 @@
     .title {
         text-align: center;
         margin: 0;
-        padding: 1rem 1rem;
+        padding: 1rem 1rem 0;
     }
 
     .content {
         flex-grow: 1;
-        padding: 1rem 1rem 0;
+        padding: 1rem 1rem;
         overflow-y: auto;
     }
 
     .button-row {
         display: flex;
         background: black;
-        padding: 1rem 1rem;
+        padding: 1rem 1rem 0;
 
-        button {
-            margin-left: .5rem;
+        :global {
+            button, a.btn {
+                margin-left: .5rem;
 
-            &:first-child {
-                margin-right: auto;
-                margin-left: 0;
+                &:first-child {
+                    margin-left: 0;
+                }
             }
         }
     }

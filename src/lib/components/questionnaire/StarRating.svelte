@@ -2,12 +2,12 @@
     let {
         value = $bindable(), error
     }: {
-        value: -1 | 0 | 1 | 2 | 3 | 4, error: boolean
+        value: number, error: boolean
     } = $props()
 
     const id = $props.id()
 
-    const arr = Array(5).fill(0).map((_, i) => i as 0 | 1 | 2 | 3 | 4)
+    const arr = Array(5).fill(0).map((_, i) => 5 - i as number)
 </script>
 
 <div class="star-row">

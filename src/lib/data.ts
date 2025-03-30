@@ -53,15 +53,42 @@ export const getRatingGroups = (myself: Student, students: Student[]): Student[]
 
 export const defaultRating = (by: number, about: number): Rating => ({
     by, about,
-    liking: -1, popularity: -1, reasoning: ''
+    influence: -1, sympathy: -1, reasoning: ''
 })
 
 export const validateRating = (r: Rating) =>
-    r.liking != -1 && r.popularity != -1 &&
-    ((r.liking != 0 && r.liking != 4) || r.reasoning)
+    r.influence != -1 && r.sympathy != -1 &&
+    ((r.influence != 0 && r.sympathy != 4) || r.reasoning)
 
 
-export type StudentScore = Student & Pick<Rating, 'liking' | 'popularity'>;
+export type StudentScore = Student & {
+    /** Index vlivu */
+    influence: number,
+    /** Index obliby */
+    popularity: number,
+    /** Index náklonnosti */
+    affection: number,
+    /** Index ovlivnitelnosti */
+    influenceability: number,
+    /** Celkové hodnocení */
+    overall: number,
+};
+
+export const getStudentScore = (
+    student: Student,
+    ratingsAbout: Omit<Rating, "by" | "about">[],
+    ratingsBy: Omit<Rating, "by" | "about">[]
+): StudentScore => {
+    const influence = Number(averageBy(ratingsAbout, r => r.influence).toFixed(2));
+    const popularity = Number(averageBy(ratingsAbout, r => r.sympathy).toFixed(2));
+    const affection = Number(averageBy(ratingsBy, r => r.sympathy).toFixed(2));
+    const influenceability = Number(averageBy(ratingsBy, r => r.influence).toFixed(2));
+    return ({
+        ...student, influence, popularity, affection, influenceability,
+        overall: (influence + popularity) / 2
+    });
+}
+
 export type RatingWithStudents = Omit<Rating, 'by' | 'about'> & { by: Student, about: Student };
 
 export const averageBy = <T>(array: T[], callback: (item: T, index: number, array: T[]) => number) =>

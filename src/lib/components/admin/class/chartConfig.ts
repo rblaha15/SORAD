@@ -7,8 +7,9 @@ const scaleOptions = (orientation: 'x' | 'y'): ScaleOptions<'linear'> => ({
     suggestedMin: 1,
     suggestedMax: 5,
     offset: true,
+    reverse: orientation == 'y',
     ticks: {
-        display: true,
+        display: false,
         align: 'center',
         color: 'white',
         stepSize: 1,
@@ -26,7 +27,7 @@ const scaleOptions = (orientation: 'x' | 'y'): ScaleOptions<'linear'> => ({
         width: 1,
     },
     grid: {
-        display: false,
+        display: true,
     },
 })
 
@@ -67,8 +68,7 @@ export const chartConfig = (
     type: 'scatter',
     data: {
         datasets: scores.map(student => ({
-            label: `${student.names} ${student.surname}`,
-            data: [{x: student.liking + 1, y: student.popularity + 1}],
+            data: [{x: student.influence, y: student.popularity}],
             backgroundColor: student.is_girl ? 'orangered' : 'dodgerblue',
             borderColor: student.is_girl ? 'orangered' : 'dodgerblue',
         })),
@@ -95,15 +95,20 @@ export const chartConfig = (
             tooltip: {
                 callbacks: {
                     label: item => {
-                        const label = item.dataset.label!!;
-                        const data = item.parsed;
-                        const liking = data.x.toFixed(2).replace('.', ',');
-                        const popularity = data.y.toFixed(2).replace('.', ',');
-                        return `${label}: oblíbenost: ${liking}, vliv: ${popularity}`;
+                        const score = scores[item.datasetIndex];
+                        const influence = score.influence.toFixed(2).replace('.', ',');
+                        const popularity = score.popularity.toFixed(2).replace('.', ',');
+                        const affection = score.affection.toFixed(2).replace('.', ',');
+                        const influenceability = score.influenceability.toFixed(2).replace('.', ',');
+                        return `${score.names} ${score.surname}: ` +
+                            `vliv: ${influence}, ` +
+                            `obliba: ${popularity}, ` +
+                            `náklonnost: ${affection}, ` +
+                            `ovlivnitelnost: ${influenceability}`;
                     },
                 },
                 caretPadding: 8,
-                backgroundColor: 'rgba(0, 0, 0, 0.2)'
+                backgroundColor: 'rgba(0, 0, 0, 0.8)'
             },
             legend: {
                 display: false,
@@ -119,17 +124,18 @@ export const chartConfig = (
                     },
                     wheel: {
                         enabled: true,
+                        modifierKey: 'ctrl',
                     },
                     mode: 'xy',
                 },
                 limits: {
                     x: {
-                        max: 5,
                         min: 1,
+                        max: 5,
                     },
                     y: {
-                        max: 5,
                         min: 1,
+                        max: 5,
                     },
                 },
             }

@@ -24,6 +24,8 @@
         <a class="btn" href="/admin/?class={klass.id}">{klass.name} ({klass.grade})</a>
     {/each}
 {/snippet}
-{#snippet buttons()}{/snippet}
+{#snippet buttons()}
+    <button class="grey" onclick={database.auth.logOut} style="margin-right: 'auto';">Odhlásit</button>
+{/snippet}
 
 <BasicLayout {title} {content} {buttons} />

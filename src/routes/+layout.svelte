@@ -26,51 +26,51 @@
         }
 
         a {
-            color: rgb(110, 168, 254);
+            color: dodgerblue;
         }
 
         button, a.btn {
             background: none;
-            border: deepskyblue 1px solid;
+            border: dodgerblue 1px solid;
             border-radius: 0.375rem;
-            color: deepskyblue;
+            color: dodgerblue;
             font-size: 1rem;
             padding: .5rem;
             cursor: pointer;
             text-decoration: none;
         }
 
-        button:hover {
-            background: deepskyblue;
+        button:hover, a.btn:hover {
+            background: dodgerblue;
             color: black;
         }
 
-        button.grey {
+        .grey {
             border-color: grey;
             color: grey;
         }
 
-        button.grey:hover {
+        .grey:hover {
             background: grey;
             color: black;
         }
 
-        button.white {
+        .white {
             border-color: white;
             color: white;
         }
 
-        button.white:hover {
+        .white:hover {
             background: white;
             color: black;
         }
 
-        button.red {
+        .red {
             border-color: orangered;
             color: orangered;
         }
 
-        button.red:hover {
+        .red:hover {
             background: orangered;
             color: black;
         }

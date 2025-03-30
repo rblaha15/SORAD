@@ -3,8 +3,8 @@
     import type {Class} from "$lib/database";
     import database from "$lib/database/supabase";
     import {onMount} from "svelte";
-    import {averageBy, type RatingWithStudents, type StudentScore} from "$lib/data";
-    import {error} from "@sveltejs/kit";
+    import {getStudentScore, type RatingWithStudents, type StudentScore} from "$lib/data";
+    import StudentsTable from "$lib/components/admin/class/StudentsTable.svelte";
 
     let {studentId, classId}: { studentId: number, classId: number } = $props()
 
@@ -25,11 +25,7 @@
         ratingsGot = r.filter(r => r.about == studentId).map(r => ({
             ...r, by: students.find(s => s.id == r.by)!, about: student,
         }))
-        score = {
-            ...student,
-            liking: Number(averageBy(ratingsGot, r => r.liking).toFixed(2)),
-            popularity: Number(averageBy(ratingsGot, r => r.popularity).toFixed(2)),
-        }
+        score = getStudentScore(student, ratingsGot, ratingsWrote)
     }
     onMount(refresh)
 </script>
@@ -38,8 +34,13 @@
     Třída: {klass.name} <br/>
     <span style="font-size: 1rem">{score.names} {score.surname}</span>
 {/snippet}
-{#snippet content()}{/snippet}
-{#snippet buttons()}{/snippet}
+{#snippet content()}
+    <StudentsTable {classId} scores={[score]} />
+{/snippet}
+{#snippet buttons()}
+    <button class="grey" onclick={() => window.history.back()}>Zpět</button>
+    <button class="grey" onclick={database.auth.logOut} style="margin-right: 'auto';">Odhlásit</button>
+{/snippet}
 
 {#if klass === undefined || score === undefined}
     <span class="loader"></span>

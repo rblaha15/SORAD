@@ -3,10 +3,10 @@
     import type {Class} from "$lib/database";
     import database from "$lib/database/supabase.js";
     import {onMount} from "svelte";
-    import {averageBy, type RatingWithStudents, type StudentScore} from "$lib/data";
+    import {getStudentScore, type RatingWithStudents, type StudentScore} from "$lib/data";
     import Collapsible from "$lib/components/Collapsible.svelte";
     import Chart from "./Chart.svelte";
-    import StudentsOverview from "$lib/components/admin/class/StudentsOverview.svelte";
+    import StudentsTable from "$lib/components/admin/class/StudentsTable.svelte";
 
     const {classId}: { classId: number } = $props()
 
@@ -21,14 +21,9 @@
         ratings = r.map(r => ({
             ...r, by: students.find(s => s.id == r.by)!, about: students.find(s => s.id == r.about)!
         }))
-        scores = students.map(s => {
-            const studentRatings = r.filter(r => r.about == s.id);
-            return ({
-                ...s,
-                liking: Number(averageBy(studentRatings, r => r.liking).toFixed(2)),
-                popularity: Number(averageBy(studentRatings, r => r.popularity).toFixed(2)),
-            });
-        })
+        scores = students.map(s =>
+            getStudentScore(s, r.filter(r => r.about == s.id), r.filter(r => r.by == s.id))
+        )
     }
     onMount(refresh)
 </script>
@@ -41,16 +36,19 @@
         {#snippet label({collapsed})}
             {collapsed ? 'Zobrazit graf' : 'Skrýt graf'}
         {/snippet}
-        <Chart {scores} {classId} />
+        <Chart {scores} {classId}/>
     </Collapsible>
     <Collapsible>
         {#snippet label({collapsed})}
             {collapsed ? 'Zobrazit seznam žáků' : 'Skrýt seznam žáků'}
         {/snippet}
-        <StudentsOverview {scores} {classId} />
+        <StudentsTable {scores} {classId}/>
     </Collapsible>
 {/snippet}
-{#snippet buttons()}{/snippet}
+{#snippet buttons()}
+    <button class="grey" onclick={() => window.history.back()}>Zpět</button>
+    <button class="grey" onclick={database.auth.logOut} style="margin-right: 'auto';">Odhlásit</button>
+{/snippet}
 
 {#if klass === undefined}
     <span class="loader"></span>
