@@ -7,6 +7,7 @@
     import {onMount} from "svelte";
     import {averageBy, type RatingWithStudents, type StudentScore} from "$lib/data";
     import {goto} from "$app/navigation";
+    import Collapsible from "$lib/components/Collapsible.svelte";
 
     let {classId}: { classId: number } = $props()
 
@@ -47,13 +48,18 @@
     Třída: {klass.name}
 {/snippet}
 {#snippet content()}
-    <div class="chart">
-        <p style:grid-area="T">Nejvíce oblíbení</p>
-        <p style:grid-area="L">Nejméně vlivní</p>
-        <div class="chart-container" style:grid-area="C"><canvas bind:this={canvas}></canvas></div>
-        <p style:grid-area="R">Nejvíce vlivní</p>
-        <p style:grid-area="B">Nejméně oblíbení</p>
-    </div>
+    <Collapsible>
+        {#snippet label({collapsed})}
+            {collapsed ? 'Zobrazit graf' : 'Skrýt graf'}
+        {/snippet}
+        <div class="chart">
+            <p style:grid-area="T">Nejvíce oblíbení</p>
+            <p style:grid-area="L">Nejméně vlivní</p>
+            <div class="chart-container" style:grid-area="C"><canvas bind:this={canvas}></canvas></div>
+            <p style:grid-area="R">Nejvíce vlivní</p>
+            <p style:grid-area="B">Nejméně oblíbení</p>
+        </div>
+    </Collapsible>
 {/snippet}
 {#snippet buttons()}{/snippet}
 
@@ -72,10 +78,10 @@
             ". B .";
 
         .chart-container {
-            position: relative;
+            /*position: relative;*/
             width: 100%;
-            max-width: 600px;
-            max-height: 600px;
+            /*max-width: 600px;*/
+            /*max-height: 600px;*/
         }
 
         * {

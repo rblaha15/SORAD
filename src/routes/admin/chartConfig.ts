@@ -132,5 +132,6 @@ export const chartConfig = (
                 },
             }
         },
+        animation: false,
     },
 })
