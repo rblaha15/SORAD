@@ -7,21 +7,22 @@
     import "chartjs-plugin-annotation";
     import {browser} from "$app/environment";
     import {page} from "$app/state";
-    import Annotation from "chartjs-plugin-annotation";
-
-    Chart.register(Annotation);
+    import {chartConfig, type StudentScore} from "./chartConfig";
 
     const classId = browser ? Number(page.url.searchParams.get('id')) : null
 
     let canvas = $state() as HTMLCanvasElement;
     let klass = $state() as Class;
-    type T = Exclude<Rating, 'by' | 'about'> & {
-        by: Student, about: Student,
-    };
-    type U = Student & Pick<Rating, 'liking' | 'popularity'>;
-    let ratings = $state<T[]>([]);
-    let scores = $state<U[]>([]);
+    type RatingWithStudents = Omit<Rating, 'by' | 'about'> & { by: Student, about: Student };
+    let ratings = $state<RatingWithStudents[]>([]);
+    let scores = $state<StudentScore[]>([]);
     let chart = $state<Chart>();
+
+    const averageBy = <T> (array: T[], callback: (item: T, index: number, array: T[]) => number) =>
+        sumBy(array, callback) / array.length;
+
+    const sumBy = <T> (array: T[], callback: (item: T, index: number, array: T[]) => number) =>
+        array.reduce((sum, item, index, array) => sum + callback(item, index, array), 0);
 
     const refresh = async () => {
         klass = await database.getMyClass(classId!)
@@ -34,136 +35,14 @@
             const studentRatings = r.filter(r => r.about == s.id);
             return ({
                 ...s,
-                liking: Number((studentRatings.reduce((s, r) => s + r.liking, 0) / studentRatings.length).toFixed(2)),
-                popularity: Number((studentRatings.reduce((s, r) => s + r.popularity, 0) / studentRatings.length).toFixed(2)),
+                liking: Number(averageBy(studentRatings, r => r.liking).toFixed(2)),
+                popularity: Number(averageBy(studentRatings, r => r.popularity).toFixed(2)),
             });
         })
         chart?.destroy()
-        chart = new Chart(canvas, {
-            type: 'scatter',
-            data: {
-                datasets: [{
-                    label: 'Scatter Dataset',
-                    data: scores.map(r => ({x: r.liking - 2, y: r.popularity - 2})),
-                    backgroundColor: 'white',
-                    pointRadius: 5
-                }]
-            },
-            options: {
-                scales: {
-                    x: {
-                        type: 'linear',
-                        position: 'bottom',
-                        min: -2,
-                        max: 2,
-                        ticks: {
-                            stepSize: 1,
-                            color: 'white',
-                        },
-                        grid: {
-                            drawTicks: false,
-                            drawOnChartArea: true,
-                            color: ctx => ctx.tick.value === 0 ? 'white' : 'transparent',
-                        },
-                    },
-                    y: {
-                        min: -2,
-                        max: 2,
-                        ticks: {
-                            stepSize: 1,
-                            color: 'white',
-                        },
-                        grid: {
-                            drawTicks: false,
-                            drawOnChartArea: true,
-                            color: ctx => ctx.tick.value === 0 ? 'white' : 'transparent'
-                        },
-                    },
-                },
-                layout: {
-                    padding: 40,
-                },
-                plugins: {
-                    tooltip: {
-                        callbacks: {
-                            label: function (tooltipItem) {
-                                const point = scores[tooltipItem.dataIndex];
-                                return `(${point.liking}, ${point.popularity}) - ${point.names} ${point.surname}`;
-                            },
-                        },
-                    },
-                    legend: {
-                        display: false,
-                    },
-                    annotation: {
-                        annotations: {
-                            topLabel: {
-                                type: 'label',
-                                xValue: 0,
-                                yValue: 1.9,
-                                content: 'Největší vliv',
-                                color: 'white',
-                                font: { size: 14 },
-                                position: 'center',
-                            },
-                            bottomLabel: {
-                                type: 'label',
-                                xValue: 0,
-                                yValue: -1.9,
-                                content: 'Nejmenší vliv',
-                                color: 'white',
-                                font: { size: 14 },
-                                position: 'center'
-                            },
-                            leftLabel: {
-                                type: 'label',
-                                xValue: -1.9,
-                                yValue: 0,
-                                content: 'Nejméně oblíbený',
-                                color: 'white',
-                                font: { size: 14 },
-                                position: 'center',
-                                rotation: -90,
-                            },
-                            rightLabel: {
-                                type: 'label',
-                                xValue: 1.9,
-                                yValue: 0,
-                                content: 'Nejvíce oblíbený',
-                                color: 'white',
-                                font: { size: 14 },
-                                position: 'center',
-                                rotation: 90,
-                            },
-                        }
-                    },
-                },
-            },
-            plugins: [Annotation]
-        });
+        chart = new Chart(canvas, chartConfig(scores));
     }
     onMount(refresh)
-
-    const d = async () => {
-        const students = await database.getStudentsOfClass(classId!)
-        const khv = students.flatMap(st => {
-            const e = Math.random() * 2
-            const f = Math.random() * 2
-            return students.map(st2 => {
-                const liking = Math.min(Math.max(Math.floor(Math.random() * e * 5), 0), 5);
-                const popularity = Math.min(Math.max(Math.floor(Math.random() * f * 5), 0), 5);
-                return {
-                    by: st2.id,
-                    about: st.id,
-                    liking: liking,
-                    popularity: popularity,
-                    reasoning: '',
-                }
-            })
-        })
-        await database.rate(khv)
-        await refresh()
-    }
 </script>
 {#if klass === undefined}
     <span class="loader"></span>
@@ -173,7 +52,6 @@
             Třída: {klass.name}
         {/snippet}
         {#snippet content()}
-            <button onclick={d}>D</button>
             <!--            <p>Hodnocení</p>-->
             <!--            {#each ratings as rating}-->
             <!--                <p>{rating.by.surname} -> {rating.about.surname}: {rating.popularity + 1}; {rating.liking + 1}-->
@@ -183,8 +61,37 @@
             <!--            {#each scores as score}-->
             <!--                <p>{score.surname}: {score.popularity + 1}; {score.liking + 1}</p>-->
             <!--            {/each}-->
-            <canvas bind:this={canvas}></canvas>
+            <div class="chart-holder">
+                <p class="top">Nejvíce oblíbení</p>
+                <p class="left">Nejméně vlivní</p>
+                <canvas width="500" height="500" bind:this={canvas}></canvas>
+                <p class="right">Nejvíce vlivní</p>
+                <p class="bottom">Nejméně oblíbení</p>
+            </div>
         {/snippet}
         {#snippet buttons()}{/snippet}
     </BasicLayout>
 {/if}
+
+<style>
+    .chart-holder {
+        display: grid;
+        position: relative;
+        width: 600px;
+        height: 600px;
+        grid-template-areas:
+            ". T ."
+            "L C R"
+            ". B .";
+        * {
+            align-self: center;
+            justify-self: center;
+            text-align: center;
+        }
+        .top { grid-area: T }
+        .bottom { grid-area: B }
+        .left { grid-area: L; rotate: -90deg }
+        .right { grid-area: R; rotate: 90deg }
+        canvas { grid-area: C }
+    }
+</style>
