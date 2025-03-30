@@ -80,8 +80,9 @@
         .chart-container {
             position: relative;
             width: 100%;
-            /*max-width: 600px;*/
-            /*max-height: 600px;*/
+            aspect-ratio: 1 / 1;
+            max-width: 500px;
+            max-height: 500px;
         }
 
         * {
