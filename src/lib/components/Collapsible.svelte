@@ -18,9 +18,31 @@
         collapsed = !collapsed;
 </script>
 
-<button onclick={toggle}>
+<button class="white" onclick={toggle}>
     {#if typeof label == 'string'}{label}{:else}{@render label({collapsed})}{/if}
 </button>
-<div style:display={collapsed ? 'none' : 'block'}>
+<div class={{hidden: collapsed}}>
     {@render content()}
 </div>
+
+<style>
+    button {
+        display: block;
+        margin-top: .375rem;
+        border: none;
+
+        &::before {
+            content: "⏶";
+            font-size: inherit;
+            color: inherit;
+            margin-right: .375rem;
+        }
+
+        &:has(+ .hidden)::before {
+            content: "⏷";
+        }
+    }
+    div.hidden {
+        display: none;
+    }
+</style>

@@ -5,7 +5,7 @@
     import {chartConfig} from "./chartConfig";
     import {goto} from "$app/navigation";
 
-    const {scores, classId}: { scores: StudentScore[], classId: number } = $props()
+    let {scores, classId}: { scores: StudentScore[], classId: number } = $props()
 
     let canvas = $state() as HTMLCanvasElement;
     let chart = $state<Chart>();
@@ -13,11 +13,18 @@
     onMount(async () => {
         const zoom = await import("chartjs-plugin-zoom");
         Chart.register(zoom.default);
+    })
 
-        chart?.destroy()
+    $effect(() => {
+        if (!canvas) return;
+
         chart = new Chart(canvas, chartConfig(scores, s => {
             goto(`/admin?class=${classId}&student=${s.id}`)
         }));
+
+        return () => {
+            chart?.destroy()
+        }
     })
 </script>
 

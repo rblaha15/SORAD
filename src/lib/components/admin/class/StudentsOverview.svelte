@@ -9,7 +9,7 @@
     <span>Oblíbenost</span>
     <span>Vliv</span>
     {#each scores as score}
-        <span><a href="/admin?class={classId}&student={score.id}">{score.names} <strong>{score.surname}</strong></a></span>
+        <span><a tabindex="0" href="/admin?class={classId}&student={score.id}">{score.names} <strong>{score.surname}</strong></a></span>
         <span>{score.liking.toFixed(2).replace('.', ',')}</span>
         <span>{score.popularity.toFixed(2).replace('.', ',')}</span>
     {/each}

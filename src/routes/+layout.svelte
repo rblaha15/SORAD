@@ -55,6 +55,16 @@
             color: black;
         }
 
+        button.white {
+            border-color: white;
+            color: white;
+        }
+
+        button.white:hover {
+            background: white;
+            color: black;
+        }
+
         button.red {
             border-color: orangered;
             color: orangered;
@@ -77,6 +87,7 @@
         .loader {
             width: 32px;
             height: 32px;
+            margin: 1rem;
             border: 3px solid orangered;
             border-bottom-color: transparent;
             border-radius: 50%;

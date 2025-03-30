@@ -5,11 +5,13 @@
     import AdminOverview from "$lib/components/admin/AdminOverview.svelte";
     import StudentDetails from "$lib/components/admin/class/student/StudentDetails.svelte";
 
-    const classId = $derived(browser ? page.url.searchParams.get('class') : null)
-    const studentId = $derived(browser ? page.url.searchParams.get('student') : null)
+    const classId = $derived(browser ? page.url.searchParams.get('class') : undefined)
+    const studentId = $derived(browser ? page.url.searchParams.get('student') : undefined)
 </script>
 
-{#if studentId !== null && classId !== null}
+{#if studentId === undefined || classId === undefined}
+    <span class="loader"></span>
+{:else if studentId !== null && classId !== null}
     <StudentDetails classId={Number(classId)} studentId={Number(studentId)} />
 {:else if classId !== null}
     <ClassDetails classId={Number(classId)} />
