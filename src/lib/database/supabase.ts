@@ -81,13 +81,20 @@ const client = createClient<DatabaseSchema>(
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptYmdqbWlscHJlb21icXB6dGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEzMjQ0NDIsImV4cCI6MjA1NjkwMDQ0Mn0.Vr69TqY4bcTFFCbC7TBA69eWEeNhgkRXre53h5qfO-Q'
 )
 
-const createRandomPassword = () =>
-    [...Array(6)].map(() => Math.random().toString(36)[2] || '0').join('').toUpperCase()
+// const createRandomPassword = () =>
+//     [...Array(6)].map(() => Math.random().toString(36)[2] || '0').join('').toUpperCase()
 
 const database: Database = {
     getStudentByEmail: async email => {
         const {data, error} = await client.from('student').select('*')
             .eq('email', email)
+            .single()
+        if (error) throw error
+        else return data
+    },
+    getStudentById: async id => {
+        const {data, error} = await client.from('student').select('*')
+            .eq('id', id)
             .single()
         if (error) throw error
         else return data

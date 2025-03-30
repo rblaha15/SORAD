@@ -1,26 +1,18 @@
 <script lang="ts">
-    import BasicLayout from "$lib/components/BasicLayout.svelte";
-    import type {Class} from "$lib/database";
-    import {onMount} from "svelte";
-    import database from "$lib/database/supabase";
+    import {browser} from "$app/environment";
+    import {page} from "$app/state";
+    import ClassDetails from "./ClassDetails.svelte";
+    import AdminOverview from "./AdminOverview.svelte";
+    import StudentDetails from "./StudentDetails.svelte";
 
-    let classes = $state<Class[]>([])
-
-    const refresh = async () => {
-        classes = await database.admin.getClasses()
-    }
-    onMount(refresh)
+    const classId = browser ? page.url.searchParams.get('class') : null
+    const studentId = browser ? page.url.searchParams.get('student') : null
 </script>
-<BasicLayout>
-    {#snippet title()}
-        SO-RA-D <br/>
-        <span style="font-size: 1rem">Sociometricko-ratingový dotazník</span>
-    {/snippet}
-    {#snippet content()}
-        <h5>Třídy:</h5>
-        {#each classes as klass}
-            <p><a href="/admin/class?id={klass.id}">{klass.name} ({klass.grade})</a></p>
-        {/each}
-    {/snippet}
-    {#snippet buttons()}{/snippet}
-</BasicLayout>
+
+{#if studentId !== null && classId !== null}
+    <StudentDetails classId={Number(classId)} studentId={Number(studentId)} />
+{:else if classId !== null}
+    <ClassDetails classId={Number(classId)} />
+{:else}
+    <AdminOverview />
+{/if}

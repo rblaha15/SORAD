@@ -1,5 +1,6 @@
 export interface Database {
     getStudentByEmail: (email: string) => Promise<Student>
+    getStudentById: (studentId: number) => Promise<Student>
     getEmailByPassword: (password: string) => Promise<string>
 
     getMyClass: (classId: number) => Promise<Class>

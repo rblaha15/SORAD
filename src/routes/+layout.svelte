@@ -26,7 +26,7 @@
         }
 
 
-        button {
+        button, a.btn {
             background: none;
             border: deepskyblue 1px solid;
             border-radius: 0.375rem;
@@ -34,6 +34,7 @@
             font-size: 1rem;
             padding: .5rem;
             cursor: pointer;
+            text-decoration: none;
         }
 
         button:hover {

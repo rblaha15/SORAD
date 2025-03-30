@@ -1,9 +1,11 @@
-import type {ChartConfiguration} from "chart.js";
-import type {Rating, Student} from "$lib/database";
+import type {ActiveElement, ChartConfiguration, ChartEvent} from "chart.js";
+import type {StudentScore} from "$lib/data";
+import type {Chart} from "chart.js/auto";
 
-export type StudentScore = Student & Pick<Rating, 'liking' | 'popularity'>;
-
-export const chartConfig = (scores: StudentScore[]): ChartConfiguration => ({
+export const chartConfig = (
+    scores: StudentScore[],
+    onClick: (event: ChartEvent, elements: ActiveElement[], chart: Chart) => void
+): ChartConfiguration => ({
     type: 'scatter',
     data: {
         datasets: scores.map(student => ({
@@ -14,6 +16,7 @@ export const chartConfig = (scores: StudentScore[]): ChartConfiguration => ({
         })),
     },
     options: {
+        onClick,
         aspectRatio: 1,
         locale: 'cs',
         elements: {

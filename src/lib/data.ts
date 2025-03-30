@@ -59,3 +59,13 @@ export const defaultRating = (by: number, about: number): Rating => ({
 export const validateRating = (r: Rating) =>
     r.liking != -1 && r.popularity != -1 &&
     ((r.liking != 0 && r.liking != 4) || r.reasoning)
+
+
+export type StudentScore = Student & Pick<Rating, 'liking' | 'popularity'>;
+export type RatingWithStudents = Omit<Rating, 'by' | 'about'> & { by: Student, about: Student };
+
+export const averageBy = <T>(array: T[], callback: (item: T, index: number, array: T[]) => number) =>
+    sumBy(array, callback) / array.length;
+
+export const sumBy = <T>(array: T[], callback: (item: T, index: number, array: T[]) => number) =>
+    array.reduce((sum, item, index, array) => sum + callback(item, index, array), 0);
