@@ -119,7 +119,6 @@ export const chartConfig = (
                         enabled: true,
                     },
                     mode: 'xy',
-                    scaleMode: 'xy',
                 },
                 limits: {
                     x: {
