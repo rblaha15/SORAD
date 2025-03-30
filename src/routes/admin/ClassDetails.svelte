@@ -32,26 +32,25 @@
             });
         })
         chart?.destroy()
-        chart = new Chart(canvas, chartConfig(scores, (e) => {
-            const points = chart!.getElementsAtEventForMode(e as unknown as Event, 'nearest', { intersect: true }, true)
-            if (points.length) {
-                const clickedPointIndex = points[0].datasetIndex;
-                const student = scores[clickedPointIndex];
-                goto(`/admin?class=${classId}&student=${student.id}`)
-            }
+        chart = new Chart(canvas, chartConfig(scores, s => {
+            goto(`/admin?class=${classId}&student=${s.id}`)
         }));
     }
     onMount(refresh)
+    onMount(async () => {
+        const zoom = await import("chartjs-plugin-zoom");
+        Chart.register(zoom.default);
+    })
 </script>
 
 {#snippet title()}
     Třída: {klass.name}
 {/snippet}
 {#snippet content()}
-    <div class="chart-holder">
+    <div class="chart">
         <p style:grid-area="T">Nejvíce oblíbení</p>
         <p style:grid-area="L">Nejméně vlivní</p>
-        <canvas style:grid-area="C" bind:this={canvas}></canvas>
+        <div class="chart-container" style:grid-area="C"><canvas bind:this={canvas}></canvas></div>
         <p style:grid-area="R">Nejvíce vlivní</p>
         <p style:grid-area="B">Nejméně oblíbení</p>
     </div>
@@ -65,15 +64,19 @@
 {/if}
 
 <style>
-    .chart-holder {
+    .chart {
         display: grid;
-        position: relative;
-        width: 600px;
-        height: 600px;
         grid-template-areas:
             ". T ."
             "L C R"
             ". B .";
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            max-height: 600px;
+        }
 
         * {
             align-self: center;

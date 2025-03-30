@@ -1,10 +1,68 @@
-import type {ActiveElement, ChartConfiguration, ChartEvent} from "chart.js";
+import type {ChartConfiguration, ChartOptions, ScaleOptions} from "chart.js";
 import type {StudentScore} from "$lib/data";
-import type {Chart} from "chart.js/auto";
+
+const scaleOptions = (orientation: 'x' | 'y'): ScaleOptions<'linear'> => ({
+    type: 'linear',
+    position: 'center',
+    suggestedMin: 1,
+    suggestedMax: 5,
+    offset: true,
+    ticks: {
+        display: true,
+        align: 'center',
+        color: 'white',
+        stepSize: 1,
+        font: {
+            size: 15,
+        },
+        labelOffset: {x: -15, y: 20}[orientation],
+        precision: 0,
+        includeBounds: false,
+        maxRotation: 0,
+    },
+    border: {
+        color: 'white',
+        z: -1,
+        width: 1,
+    },
+    grid: {
+        display: false,
+    },
+})
+
+let lastClickedIndex: number | null = null;
+const events = (
+    scores: StudentScore[],
+    onClick: (score: StudentScore) => void,
+): ChartOptions<'scatter'> => ({
+    onClick: (e, elements, chart) => {
+        if (elements.length) {
+            const clickedPointIndex = elements[0].datasetIndex;
+
+            if (lastClickedIndex === clickedPointIndex) {
+                onClick(scores[clickedPointIndex])
+            } else {
+                chart.setActiveElements([elements[0]]);
+                chart.tooltip!.setActiveElements([elements[0]], {x: e.x!, y: e.y!});
+                chart.update();
+
+                lastClickedIndex = clickedPointIndex;
+            }
+        } else {
+            lastClickedIndex = null;
+        }
+    },
+    onHover: (e, elements) => {
+        if (!e.native) lastClickedIndex = null;
+        if (elements.length) {
+            lastClickedIndex = elements[0].datasetIndex;
+        }
+    },
+});
 
 export const chartConfig = (
     scores: StudentScore[],
-    onClick: (event: ChartEvent, elements: ActiveElement[], chart: Chart) => void
+    onClick: (score: StudentScore) => void,
 ): ChartConfiguration => ({
     type: 'scatter',
     data: {
@@ -16,7 +74,7 @@ export const chartConfig = (
         })),
     },
     options: {
-        onClick,
+        ...events(scores, onClick),
         aspectRatio: 1,
         locale: 'cs',
         elements: {
@@ -30,59 +88,8 @@ export const chartConfig = (
             },
         },
         scales: {
-            x: {
-                type: 'linear',
-                position: 'center',
-                suggestedMin: 1,
-                suggestedMax: 5,
-                offset: true,
-                ticks: {
-                    display: true,
-                    align: 'center',
-                    color: 'white',
-                    count: 5,
-                    font: {
-                        size: 15,
-                    },
-                    labelOffset: -15,
-                },
-                border: {
-                    color: 'white',
-                    z: -1,
-                    width: 1,
-                },
-                grid: {
-                    display: false,
-                },
-            },
-            y: {
-                type: 'linear',
-                position: 'center',
-                suggestedMin: 1,
-                suggestedMax: 5,
-                offset: true,
-                ticks: {
-                    display: true,
-                    align: 'center',
-                    color: 'white',
-                    count: 5,
-                    font: {
-                        size: 15,
-                    },
-                    labelOffset: 20,
-                },
-                border: {
-                    color: 'white',
-                    z: -1,
-                    width: 1,
-                },
-                grid: {
-                    display: false,
-                },
-                title: {
-                    display: true,
-                },
-            },
+            x: scaleOptions('x'),
+            y: scaleOptions('y'),
         },
         plugins: {
             tooltip: {
@@ -94,10 +101,36 @@ export const chartConfig = (
                     },
                 },
                 caretPadding: 8,
+                backgroundColor: 'rgba(0, 0, 0, 0.2)'
             },
             legend: {
                 display: false,
             },
+            zoom: {
+                pan: {
+                    enabled: true,
+                    mode: 'xy',
+                },
+                zoom: {
+                    pinch: {
+                        enabled: true,
+                    },
+                    wheel: {
+                        enabled: true,
+                    },
+                    mode: 'xy',
+                },
+                limits: {
+                    x: {
+                        max: 5,
+                        min: 1,
+                    },
+                    y: {
+                        max: 5,
+                        min: 1,
+                    },
+                },
+            }
         },
     },
 })
