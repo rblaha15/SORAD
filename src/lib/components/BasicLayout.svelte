@@ -34,16 +34,10 @@
         padding: 1rem 1rem 0;
     }
 
-    .content {
-        flex-grow: 1;
-        padding: 1rem 1rem;
-        overflow-y: auto;
-    }
-
     .button-row {
         display: flex;
         background: black;
-        padding: 1rem 1rem 0;
+        padding: 0 1rem 1rem;
 
         :global {
             button, a.btn {
@@ -54,5 +48,11 @@
                 }
             }
         }
+    }
+
+    .content {
+        flex-grow: 1;
+        padding: 0 1rem 1rem;
+        overflow-y: auto;
     }
 </style>

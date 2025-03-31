@@ -5,6 +5,8 @@
     import {onMount} from "svelte";
     import {getStudentScore, type RatingWithStudents, type StudentScore} from "$lib/data";
     import StudentsTable from "$lib/components/admin/class/StudentsTable.svelte";
+    import RatingsTable from "$lib/components/admin/class/student/RatingsTable.svelte";
+    import Collapsible from "$lib/components/Collapsible.svelte";
 
     let {studentId, classId}: { studentId: number, classId: number } = $props()
 
@@ -28,6 +30,8 @@
         score = getStudentScore(student, ratingsGot, ratingsWrote)
     }
     onMount(refresh)
+
+    const a = $derived(score?.is_girl ? 'a' : '')
 </script>
 
 {#snippet title()}
@@ -35,7 +39,14 @@
     <span style="font-size: 1rem">{score.names} {score.surname}</span>
 {/snippet}
 {#snippet content()}
-    <StudentsTable {classId} scores={[score]} />
+    <p>Přehled třídních indexů:</p>
+    <StudentsTable scores={[score]} />
+    <Collapsible label="Hodnocení, která dostal{a}">
+        <RatingsTable ratings={ratingsGot} />
+    </Collapsible>
+    <Collapsible label="Hodnocení, která dal{a}">
+        <RatingsTable ratings={ratingsWrote} />
+    </Collapsible>
 {/snippet}
 {#snippet buttons()}
     <button class="grey" onclick={() => window.history.back()}>Zpět</button>

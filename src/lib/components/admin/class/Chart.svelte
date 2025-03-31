@@ -45,6 +45,7 @@
             ". T ."
             "L C R"
             ". B .";
+        margin-right: auto;
 
         .chart-container {
             position: relative;
