@@ -32,14 +32,14 @@
         border: none;
 
         &::before {
-            content: "⏶";
+            content: '\025B4';
             font-size: inherit;
             color: inherit;
             margin-right: .375rem;
         }
 
         &:has(+ .hidden)::before {
-            content: "⏷";
+            content: '\025BE';
         }
     }
     div.hidden {
