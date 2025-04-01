@@ -1,22 +1,68 @@
-<script lang="ts" generics="T">
-    import type {Snippet} from "svelte";
+<script module lang="ts">
+    import type {Comparable} from "$lib/data";
 
-    const { items, header, row }: {
-        items: T[],
-        header: Snippet,
-        row: Snippet<[item: T]>,
-    } = $props()
+    export type OnlyComparableFields<T> = {
+        [K in keyof T]: T[K] extends Comparable ? K : never
+    }[keyof T];
+    export type SortKey<T> = ((i: T) => Comparable) | OnlyComparableFields<T>;
 </script>
 
-<div class="table-wrapper">
+<script generics="T, Column extends string" lang="ts">
+    import type {Snippet} from "svelte";
+    import {sortBy, sortByDescending} from "$lib/data";
+
+    const {items, header, row, columns, defaultSort}: {
+        items: T[],
+        header: Snippet<[
+            classes: {
+                [C in Column]: string;
+            },
+            onClicks: {
+                [C in Column]: () => void;
+            },
+        ]>,
+        row: Snippet<[item: T]>,
+        columns?: {
+            [C in Column]: SortKey<T>;
+        },
+        defaultSort?: {
+            [C in Column]?: 'ascending' | 'descending';
+        },
+    } = $props()
+
+    let sort = $state<Column | null>(defaultSort ? Object.keys(defaultSort).at(0) as Column ?? null : null)
+    let asc = $state<boolean>(defaultSort ? Object.values(defaultSort).at(0) as boolean ?? false : false)
+    $effect(() => {
+        if (sort) asc = true
+    })
+
+    const sorted = $derived.by(() => {
+        [sort, columns, asc, items];
+        if (sort == null || columns == undefined) return items
+        const sortKey: SortKey<T> = columns[sort]
+        const sortFn = asc ? sortBy : sortByDescending;
+        const compareFn = typeof sortKey == 'function' ? sortKey : (i: T) => i[sortKey] as Comparable;
+        console.log(compareFn, sortKey);
+        return sortFn(items, compareFn)
+    })
+
+    const mapCols = <T>(callback: (c: Column) => T) => (columns == undefined ? undefined : Object.fromEntries(
+        Object.keys(columns).map(c => [c, callback(c as Column)])
+    )) as { [C in Column]: T; }
+</script>
+
+<div class="table-wrapper" class:sortable={columns !== undefined}>
     <table>
         <thead>
         <tr>
-            {@render header()}
+            {@render header(
+                mapCols(c => sort === c ? asc ? 'sort-asc' : 'sort-desc' : ''),
+                mapCols(c => () => sort !== c ? sort = c : asc = !asc),
+            )}
         </tr>
         </thead>
         <tbody>
-        {#each items as item}
+        {#each sorted as item}
             <tr>
                 {@render row(item)}
             </tr>
@@ -47,6 +93,26 @@
                         white-space: nowrap;
                     }
                 }
+            }
+        }
+    }
+
+    .sortable {
+        :global th {
+            cursor: pointer;
+
+            &::after {
+                font-size: inherit;
+                margin-left: 0.375rem;
+                color: inherit;
+            }
+
+            &.sort-asc::after {
+                content: '\025BE';
+            }
+
+            &.sort-desc::after {
+                content: '\025B4';
             }
         }
     }

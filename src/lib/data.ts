@@ -96,3 +96,19 @@ export const averageBy = <T>(array: T[], callback: (item: T, index: number, arra
 
 export const sumBy = <T>(array: T[], callback: (item: T, index: number, array: T[]) => number) =>
     array.reduce((sum, item, index, array) => sum + callback(item, index, array), 0);
+
+export type Comparable = number | string
+
+export const sortBy = <T>(array: T[], callback: (item: T, index: number, array: T[]) => Comparable) => array
+    .map((item, index, array) => ({item, sort: callback(item, index, array)}))
+    .toSorted((a, b) => typeof a.sort == 'string'
+        ? a.sort.localeCompare(b.sort as string)
+        : a.sort - (b.sort as number))
+    .map(({item}) => item);
+
+export const sortByDescending = <T>(array: T[], callback: (item: T, index: number, array: T[]) => Comparable) => array
+    .map((item, index, array) => ({item, sort: callback(item, index, array)}))
+    .toSorted((a, b) => typeof b.sort == 'string'
+        ? b.sort.localeCompare(a.sort as string)
+        : (b.sort as number) - (a.sort as number))
+    .map(({item}) => item);
