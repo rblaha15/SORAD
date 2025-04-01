@@ -7,18 +7,6 @@
     const aboutSameStudent = new Set(ratings.map(r => r.about.id)).size == 1
 </script>
 
-{#snippet header()}
-    {#if !bySameStudent}
-        <th class="left">Hodnotící</th>
-    {/if}
-    {#if !aboutSameStudent}
-        <th class="left">Hodnocený</th>
-    {/if}
-    <th>Vnímaný vliv</th>
-    <th>Sympatie</th>
-    <th>Vysvětlení sympatií</th>
-{/snippet}
-
 {#snippet row(rating: RatingWithStudents)}
     {#if !bySameStudent}
         <td class="left">
@@ -39,4 +27,18 @@
     <td>{rating.reasoning}</td>
 {/snippet}
 
-<Table items={ratings} {header} {row} />
+<Table columns={{
+    b: r => r.by.surname, a: r => r.about.surname, i: 'influence', s: 'sympathy', r: 'reasoning'
+}} defaultSort={bySameStudent ? { a: 'ascending' } : { b: 'ascending' }} items={ratings} {row}>
+    {#snippet header(c, o)}
+        {#if !bySameStudent}
+            <th class="left {c.b}" onclick={o.b}>Hodnotící</th>
+        {/if}
+        {#if !aboutSameStudent}
+            <th class="left {c.a}" onclick={o.a}>Hodnocený</th>
+        {/if}
+        <th class={c.i} onclick={o.i}>Vnímaný vliv</th>
+        <th class={c.s} onclick={o.s}>Sympatie</th>
+        <th class={c.r} onclick={o.r}>Vysvětlení sympatií</th>
+    {/snippet}
+</Table>
