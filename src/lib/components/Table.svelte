@@ -42,7 +42,6 @@
         const sortKey: SortKey<T> = columns[sort]
         const sortFn = asc ? sortBy : sortByDescending;
         const compareFn = typeof sortKey == 'function' ? sortKey : (i: T) => i[sortKey] as Comparable;
-        console.log(compareFn, sortKey);
         return sortFn(items, compareFn)
     })
 
