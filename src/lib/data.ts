@@ -2,6 +2,10 @@ import seedrandom from "seedrandom";
 import {type Class, type Rating, type Student} from "$lib/database";
 import database from "$lib/database/supabase";
 
+const throwExpr = (x: any): never => {
+    throw x;
+}
+
 export const isAdmin = (email: string) => email.endsWith('@gymceska.cz') || email == 'rblaha15@student.gymceska.cz'
 
 export type Data = {
@@ -61,17 +65,22 @@ export const validateRating = (r: Rating) =>
     ((r.influence != 0 && r.sympathy != 4) || r.reasoning)
 
 
-export type StudentScore = Student & {
+type Indexes = {
     /** Index vlivu */
-    influence: number,
+    influence: number | undefined,
     /** Index obliby */
-    popularity: number,
+    popularity: number | undefined,
     /** Index náklonnosti */
-    affection: number,
+    affection: number | undefined,
     /** Index ovlivnitelnosti */
-    influenceability: number,
+    influenceability: number | undefined,
     /** Celkové hodnocení */
-    overall: number,
+    overall: number | undefined,
+};
+
+export type StudentScore = Student & Indexes;
+export type StudentScoreWithRanks = Student & {
+    [I in keyof Indexes]: { value: number, rank: number, of: number } | undefined
 };
 
 export const getStudentScore = (
@@ -79,36 +88,67 @@ export const getStudentScore = (
     ratingsAbout: Omit<Rating, "by" | "about">[],
     ratingsBy: Omit<Rating, "by" | "about">[]
 ): StudentScore => {
-    const influence = Number(averageBy(ratingsAbout, r => r.influence).toFixed(2));
-    const popularity = Number(averageBy(ratingsAbout, r => r.sympathy).toFixed(2));
-    const affection = Number(averageBy(ratingsBy, r => r.sympathy).toFixed(2));
-    const influenceability = Number(averageBy(ratingsBy, r => r.influence).toFixed(2));
+    const influence = ratingsAbout.length == 0 ? undefined
+        : Number(averageBy(ratingsAbout, r => r.influence).toFixed(2));
+    const popularity = ratingsAbout.length == 0 ? undefined
+        : Number(averageBy(ratingsAbout, r => r.sympathy).toFixed(2));
+    const affection = ratingsBy.length == 0 ? undefined
+        : Number(averageBy(ratingsBy, r => r.sympathy).toFixed(2));
+    const influenceability = ratingsBy.length == 0 ? undefined
+        : Number(averageBy(ratingsBy, r => r.influence).toFixed(2));
     return ({
         ...student, influence, popularity, affection, influenceability,
-        overall: (influence + popularity) / 2
+        overall: influence == undefined || popularity == undefined ? undefined
+            : (influence + popularity) / 2
     });
 }
 
 export type RatingWithStudents = Omit<Rating, 'by' | 'about'> & { by: Student, about: Student };
 
 export const averageBy = <T>(array: T[], callback: (item: T, index: number, array: T[]) => number) =>
-    sumBy(array, callback) / array.length;
+    array.length == 0 ? throwExpr(RangeError('Array is empty'))
+        : sumBy(array, callback) / array.length;
 
 export const sumBy = <T>(array: T[], callback: (item: T, index: number, array: T[]) => number) =>
     array.reduce((sum, item, index, array) => sum + callback(item, index, array), 0);
 
-export type Comparable = number | string
+type NotNullComparable = number | string
+export type Comparable = null | undefined | NotNullComparable
+
+const compare = (a: NotNullComparable, b: NotNullComparable) =>
+    typeof a == 'string' && typeof b == 'string' ? compareStrings(a, b)
+        : typeof a == 'number' && typeof b == 'number' ? compareNumbers(a, b)
+            : 0
+const compareStrings = (a: string, b: string) => a.localeCompare(b)
+const compareNumbers = (a: number, b: number) => a - b
+const compareNullable = (a: Comparable, b: Comparable) => a == null
+    ? b == null ? 0 : Number.POSITIVE_INFINITY
+    : b == null ? Number.NEGATIVE_INFINITY : compare(a, b)
 
 export const sortBy = <T>(array: T[], callback: (item: T, index: number, array: T[]) => Comparable) => array
     .map((item, index, array) => ({item, sort: callback(item, index, array)}))
-    .toSorted((a, b) => typeof a.sort == 'string'
-        ? a.sort.localeCompare(b.sort as string)
-        : a.sort - (b.sort as number))
+    .toSorted((a, b) => compareNullable(a.sort, b.sort))
     .map(({item}) => item);
 
 export const sortByDescending = <T>(array: T[], callback: (item: T, index: number, array: T[]) => Comparable) => array
     .map((item, index, array) => ({item, sort: callback(item, index, array)}))
-    .toSorted((a, b) => typeof b.sort == 'string'
-        ? b.sort.localeCompare(a.sort as string)
-        : (b.sort as number) - (a.sort as number))
+    .toSorted((a, b) => compareNullable(b.sort, a.sort))
     .map(({item}) => item);
+
+export const rank = <T extends PropertyKey>(array: T[]) => Object.fromEntries(array.map(
+    (item, index) => [item, index + 1]
+).toReversed()) as Record<T, number>
+
+export const rankBy = <T, U extends Comparable & PropertyKey>(
+    array: T[], callback: (item: T, index: number, array: T[]) => U
+) => rank(sortBy(array, callback).map(callback)) as Record<U, number>
+
+declare global {
+    interface ObjectConstructor {
+        fromEntries<K extends PropertyKey, V>(
+            entries: [K, V][] | readonly [K, V][]
+        ): {
+            [Key in K]: V
+        };
+    }
+}

@@ -13,6 +13,7 @@
     let klass = $state() as Class;
     let ratingsWrote = $state<RatingWithStudents[]>([]);
     let ratingsGot = $state<RatingWithStudents[]>([]);
+    let classScores = $state() as StudentScore[];
     let score = $state() as StudentScore;
 
     const refresh = async () => {
@@ -27,7 +28,10 @@
         ratingsGot = r.filter(r => r.about == studentId).map(r => ({
             ...r, by: students.find(s => s.id == r.by)!, about: student,
         }))
-        score = getStudentScore(student, ratingsGot, ratingsWrote)
+        classScores = students.map(s =>
+            getStudentScore(s, r.filter(r => r.about == s.id), r.filter(r => r.by == s.id))
+        )
+        score = classScores.find(s => s.id == studentId)!
     }
     onMount(refresh)
 
@@ -40,7 +44,7 @@
 {/snippet}
 {#snippet content()}
     <p>Přehled třídních indexů:</p>
-    <StudentsTable scores={[score]} />
+    <StudentsTable scores={[score]} allScores={classScores} />
     <Collapsible label="Hodnocení, která dostal{a}">
         <RatingsTable ratings={ratingsGot} />
     </Collapsible>

@@ -42,7 +42,7 @@
         {#snippet label({collapsed})}
             {collapsed ? 'Zobrazit seznam žáků' : 'Skrýt seznam žáků'}
         {/snippet}
-        <StudentsTable {scores} {classId}/>
+        <StudentsTable {scores} allScores={scores}/>
     </Collapsible>
 {/snippet}
 {#snippet buttons()}

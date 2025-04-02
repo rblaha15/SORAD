@@ -68,7 +68,7 @@ export const chartConfig = (
     type: 'scatter',
     data: {
         datasets: scores.map(student => ({
-            data: [{x: student.influence, y: student.popularity}],
+            data: [{x: student.influence ?? Number.NaN, y: student.popularity ?? Number.NaN}],
             backgroundColor: student.is_girl ? 'orangered' : 'dodgerblue',
             borderColor: student.is_girl ? 'orangered' : 'dodgerblue',
         })),
@@ -96,15 +96,15 @@ export const chartConfig = (
                 callbacks: {
                     label: item => {
                         const score = scores[item.datasetIndex];
-                        const influence = score.influence.toFixed(2).replace('.', ',');
-                        const popularity = score.popularity.toFixed(2).replace('.', ',');
-                        const affection = score.affection.toFixed(2).replace('.', ',');
-                        const influenceability = score.influenceability.toFixed(2).replace('.', ',');
+                        const influence = score.influence?.toFixed(2)?.replace('.', ',');
+                        const popularity = score.popularity?.toFixed(2)?.replace('.', ',');
+                        const affection = score.affection?.toFixed(2)?.replace('.', ',');
+                        const influenceability = score.influenceability?.toFixed(2)?.replace('.', ',');
                         return `${score.names} ${score.surname}: ` +
-                            `vliv: ${influence}, ` +
-                            `obliba: ${popularity}, ` +
-                            `náklonnost: ${affection}, ` +
-                            `ovlivnitelnost: ${influenceability}`;
+                            `vliv: ${influence ?? '—'}, ` +
+                            `obliba: ${popularity ?? '—'}, ` +
+                            `náklonnost: ${affection ?? '—'}, ` +
+                            `ovlivnitelnost: ${influenceability ?? '—'}`;
                     },
                 },
                 caretPadding: 8,

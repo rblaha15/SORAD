@@ -6,7 +6,7 @@
     const {ratings}: { ratings: RatingWithStudents[] } = $props()
     const bySameStudent = new Set(ratings.map(r => r.by.id)).size == 1
     const aboutSameStudent = new Set(ratings.map(r => r.about.id)).size == 1
-    if (!bySameStudent && !aboutSameStudent) error(400)
+    if (ratings.length > 0 && !bySameStudent && !aboutSameStudent) error(400)
 
     let filter = $state<'all' | 'byGirls' | 'byBoys' | 'aboutGirls' | 'aboutBoys'>('all')
     const filtered = $derived(filter == 'all' ? ratings : ratings.filter(s => aboutSameStudent
