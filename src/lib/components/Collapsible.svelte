@@ -5,15 +5,15 @@
         label,
         children,
         content = children!,
-        collapsedInInitially = true,
+        collapsedInitially = true,
     }: {
         label: string | Snippet<[{ collapsed: boolean }]>,
         children?: Snippet,
         content?: Snippet,
-        collapsedInInitially?: boolean,
+        collapsedInitially?: boolean,
     } = $props();
 
-    let collapsed = $state(collapsedInInitially)
+    let collapsed = $state(collapsedInitially)
     const toggle = () =>
         collapsed = !collapsed;
 </script>

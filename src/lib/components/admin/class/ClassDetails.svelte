@@ -5,7 +5,7 @@
     import {onMount} from "svelte";
     import {getStudentScore, type RatingWithStudents, type StudentScore} from "$lib/data";
     import Collapsible from "$lib/components/Collapsible.svelte";
-    import Chart from "./Chart.svelte";
+    import ClassChart from "./ClassChart.svelte";
     import StudentsTable from "$lib/components/admin/class/StudentsTable.svelte";
 
     const {classId}: { classId: number } = $props()
@@ -32,11 +32,11 @@
     Třída: {klass.name}
 {/snippet}
 {#snippet content()}
-    <Collapsible>
+    <Collapsible collapsedInitially={false}>
         {#snippet label({collapsed})}
             {collapsed ? 'Zobrazit graf' : 'Skrýt graf'}
         {/snippet}
-        <Chart {scores} {classId}/>
+        <ClassChart {scores} {classId}/>
     </Collapsible>
     <Collapsible>
         {#snippet label({collapsed})}

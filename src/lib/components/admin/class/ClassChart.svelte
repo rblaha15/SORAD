@@ -1,27 +1,18 @@
 <script lang="ts">
     import type {StudentScore} from "$lib/data";
-    import {onMount} from "svelte";
     import {Chart} from "chart.js/auto";
-    import {chartConfig} from "./chartConfig";
-    import {goto} from "$app/navigation";
+    import {classConfig} from "./classConfig";
     import TopScrollable from "$lib/components/TopScrollable.svelte";
 
-    let {scores, classId}: { scores: StudentScore[], classId: number } = $props()
+    let {scores}: { scores: StudentScore[], classId: number } = $props()
 
     let canvas = $state() as HTMLCanvasElement;
     let chart = $state<Chart>();
 
-    onMount(async () => {
-        const zoom = await import("chartjs-plugin-zoom");
-        Chart.register(zoom.default);
-    })
-
     $effect(() => {
         if (!canvas) return;
 
-        chart = new Chart(canvas, chartConfig(scores, s => {
-            goto(`/admin?class=${classId}&student=${s.id}`)
-        }));
+        chart = new Chart(canvas, classConfig(scores));
 
         return () => {
             chart?.destroy()
