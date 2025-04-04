@@ -7,7 +7,7 @@ const scaleOptions = (orientation: 'x' | 'y'): ScaleOptions<'linear'> => ({
     suggestedMin: 1,
     suggestedMax: 5,
     offset: true,
-    reverse: orientation == 'y',
+    reverse: true,
     ticks: {
         display: false,
         align: 'center',

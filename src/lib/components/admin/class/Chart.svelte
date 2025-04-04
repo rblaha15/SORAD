@@ -4,6 +4,7 @@
     import {Chart} from "chart.js/auto";
     import {chartConfig} from "./chartConfig";
     import {goto} from "$app/navigation";
+    import TopScrollable from "$lib/components/TopScrollable.svelte";
 
     let {scores, classId}: { scores: StudentScore[], classId: number } = $props()
 
@@ -28,15 +29,17 @@
     })
 </script>
 
-<div class="chart">
-    <div class="chart-container" style:grid-area="C">
-        <canvas bind:this={canvas}></canvas>
+<TopScrollable>
+    <div class="chart">
+        <div class="chart-container" style:grid-area="C">
+            <canvas bind:this={canvas}></canvas>
+        </div>
+        <p style:grid-area="R">Nejvíce<br/> vlivní <br/>(1)</p>
+        <p style:grid-area="L">Nejméně<br/> vlivní <br/>(5)</p>
+        <p style:grid-area="T">Nejvíce oblíbení (1)</p>
+        <p style:grid-area="B">Nejméně oblíbení (5)</p>
     </div>
-    <p style:grid-area="L">Nejvíce<br/> vlivní <br/>(1)</p>
-    <p style:grid-area="R">Nejméně<br/> vlivní <br/>(5)</p>
-    <p style:grid-area="T">Nejvíce<br/>oblíbení<br/>(1)</p>
-    <p style:grid-area="B">Nejméně<br/>oblíbení<br/>(5)</p>
-</div>
+</TopScrollable>
 
 <style>
     .chart {
@@ -45,14 +48,12 @@
             ". T ."
             "L C R"
             ". B .";
-        margin-right: auto;
+        grid-template-columns: min-content minmax(300px, 500px) min-content;
 
         .chart-container {
             position: relative;
-            width: 100%;
             aspect-ratio: 1 / 1;
-            max-width: 500px;
-            max-height: 500px;
+            width: 100%;
         }
 
         * {

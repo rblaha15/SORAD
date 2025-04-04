@@ -1,4 +1,4 @@
-<script module lang="ts">
+<script lang="ts" module>
     import type {Comparable} from "$lib/data";
 
     export type OnlyComparableFields<T> = {
@@ -10,6 +10,7 @@
 <script generics="T, Column extends string" lang="ts">
     import type {Snippet} from "svelte";
     import {sortedBy, sortedByDescending} from "$lib/data";
+    import TopScrollable from "$lib/components/TopScrollable.svelte";
 
     const {items, header, row, columns, defaultSort}: {
         items: T[],
@@ -49,9 +50,8 @@
         Object.keys(columns).map(c => [c, callback(c as Column)])
     )) as { [C in Column]: T; }
 </script>
-
-<div class="table-wrapper" class:sortable={columns !== undefined}>
-    <table>
+<TopScrollable>
+    <table class:sortable={columns !== undefined}>
         <thead>
         <tr>
             {@render header(
@@ -68,29 +68,25 @@
         {/each}
         </tbody>
     </table>
-</div>
+</TopScrollable>
 
 <style>
-    .table-wrapper {
-        overflow-x: auto;
+    table {
+        width: fit-content;
+        border-spacing: .375rem;
 
-        table {
-            width: fit-content;
-            border-spacing: .375rem;
+        tr {
+            :global {
+                td, th {
+                    text-align: center;
 
-            tr {
-                :global {
-                    td, th {
-                        text-align: center;
-
-                        &.left {
-                            text-align: left;
-                        }
+                    &.left {
+                        text-align: left;
                     }
+                }
 
-                    td {
-                        white-space: nowrap;
-                    }
+                td {
+                    white-space: nowrap;
                 }
             }
         }
