@@ -12,13 +12,15 @@
 
     let {data}: { data: Data } = $props()
 
-    const currentGroupNumber = $derived((browser ? page.state : {}).group ?? -1) as -1 | 0 | 1 | 2 | 3
+    const currentStudentId = $derived((browser ? page.state : {}).student ?? -1)
 
     const myId = data.myself.id;
 
     const savedData = storeable<Rating[]>(`${myId}-ratings`, data.students.map(student => defaultRating(myId, student.id)))
 
-    const currentGroup = $derived(getRatingGroups(data.myself, data.students)[currentGroupNumber] ?? [])
+    const allGroups = $derived(getRatingGroups(data.myself, data.students, 7));
+    const currentGroupIndex = $derived(allGroups.findIndex(g => g.some(s => s.id == currentStudentId)))
+    const currentGroup = $derived(allGroups[currentGroupIndex] ?? [])
 
     const thisRating = (student: Student) => (r: Rating) => r.about == student.id;
 
@@ -37,9 +39,9 @@
         if (noError) showErrors = false
     })
 
-    const back = () => pushState('', {group: currentGroupNumber - 1})
+    const back = () => pushState('', {student: allGroups[currentGroupIndex - 1]?.[0]?.id ?? -1})
     const next = () => noError
-        ? pushState('', {group: currentGroupNumber + 1})
+        ? pushState('', {student: allGroups[currentGroupIndex + 1][0].id})
         : showErrors = true
     const send = () => noError
         ? database.rate($savedData)
@@ -60,15 +62,16 @@
         {:else if !data.myClass.enabled}
             <p>Js{i} přihlášen jako {data.myself.names} {data.myself.surname}.</p>
             <p>V této třídě aktuálně neprobíhá sběr dat.</p>
-        {:else if currentGroupNumber === -1}
+        {:else if currentGroupIndex === -1}
             <p>Js{i} přihlášen jako {data.myself.names} {data.myself.surname}.</p>
             <Tutorial isGirl={data.myself.is_girl} grade={data.myClass.grade}/>
         {:else}
+            <Tutorial isGirl={data.myself.is_girl} grade={data.myClass.grade} justOverview/>
             <div class="student-group">
                 <span class="main-title"></span>
-                <span class="main-title">Vliv:</span>
-                <span class="main-title">Sympatie:</span>
-                <span class="main-title">Důvod:</span>
+                <span class="main-title I">Vliv:</span>
+                <span class="main-title S">Sympatie:</span>
+                <span class="main-title R">Vysvětlení sympatií:</span>
                 {#each groupRatings as {student, rating}}
                     <StudentRow {student} bind:rating={rating.current} {showErrors}/>
                 {/each}
@@ -76,15 +79,15 @@
         {/if}
     {/snippet}
     {#snippet buttons()}
-        <button class="grey" onclick={database.auth.logOut} style="margin-right: 'auto';">Odhlásit</button>
-        {#if data.alreadyRated || !data.myClass.enabled}{:else if currentGroupNumber === -1}
-            <button onclick={() => pushState('', {group: 0})}>Začít!</button>
+        <button class="grey" onclick={database.auth.logOut} style="margin-right: auto;">Odhlásit</button>
+        {#if data.alreadyRated || !data.myClass.enabled}{:else if currentGroupIndex === -1}
+            <button class="blue" onclick={next}>Začít!</button>
         {:else}
             <button class="grey" onclick={back}>Zpět</button>
-            {#if currentGroupNumber === 3}
+            {#if currentGroupIndex === allGroups.length - 1}
                 <button class="red" onclick={send}>Odeslat</button>
             {:else}
-                <button onclick={next}>Další</button>
+                <button class="blue" onclick={next}>Další</button>
             {/if}
         {/if}
     {/snippet}
@@ -104,14 +107,20 @@
             grid-auto-flow: dense;
         }
         @media only screen and (min-width: 500px) {
-            grid-template-columns: 0fr 1fr 0fr 1fr;
+            grid-template-columns: auto auto 1fr auto 1fr;
         }
         @media only screen and (min-width: 800px) {
-            grid-template-columns: 0fr 0fr 0fr 1fr;
+            grid-template-columns: auto auto auto 1fr;
 
             .main-title {
                 display: inline;
                 margin-left: .5rem;
+                &.I {
+                    color: var(--influence-color);
+                }
+                &.S, &.R {
+                    color: var(--sympathy-color);
+                }
             }
         }
     }

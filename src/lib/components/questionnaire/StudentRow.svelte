@@ -20,23 +20,23 @@
             };
         },
     })
-    let l = value(property('liking'))
+    let s = value(property('sympathy'))
     let r = value(property('reasoning'))
-    let p = value(property('popularity'))
+    let i = value(property('influence'))
 
-    const lError = $derived(showErrors && l.current == -1)
-    const pError = $derived(showErrors && p.current == -1)
-    const rError = $derived(showErrors && (l.current == 0 || l.current == 4) && !r.current)
+    const sError = $derived(showErrors && s.current == -1)
+    const iError = $derived(showErrors && i.current == -1)
+    const rError = $derived(showErrors && (s.current == 1 || s.current == 5) && !r.current)
 </script>
 
 <span class="student-name">{student.names} {student.surname}</span>
 
-<span class="title A">Vliv:</span>
-<span class="student-rating A"><StarRating bind:value={p.current} error={pError}/></span>
-<span class="title B">Sympatie:</span>
-<span class="student-rating B"><StarRating bind:value={l.current} error={lError}/></span>
-<span class="title C">Důvod:</span>
-<input bind:value={r.current} class="student-input" class:error={rError}/>
+<span class="title I">Vliv:</span>
+<span class="student-rating I"><StarRating bind:value={i.current} error={iError} type="influence" /></span>
+<span class="title S">Sympatie:</span>
+<span class="student-rating S"><StarRating bind:value={s.current} error={sError} type="sympathy" /></span>
+<span class="title R">Vysvětlení sympatií:</span>
+<input size="1" bind:value={r.current} class="student-input" class:error={rError}/>
 
 <style>
     .student-name {
@@ -61,23 +61,39 @@
     .title {
         align-self: center;
         margin-top: .2rem;
+        white-space: nowrap;
+        &.I {
+            color: var(--influence-color);
+        }
+        &.S, &.R {
+            color: var(--sympathy-color);
+        }
+
         @media only screen and (min-width: 400px) {
             margin: 0;
-            &.A {
+            &.I {
                 grid-area: auto / span 2;
             }
 
-            &.B {
+            &.S {
                 grid-area: auto / 3;
             }
 
-            &.C {
-                grid-area: auto / 1 / auto / 1;
+            &.R {
+                grid-area: auto / 1;
             }
         }
         @media only screen and (min-width: 500px) {
-            &.A {
+            &.I {
                 grid-area: auto / 1;
+            }
+
+            &.S {
+                grid-area: auto / 4;
+            }
+
+            &.R {
+                grid-area: auto / span 2;
             }
 
             margin-top: 0;
@@ -90,26 +106,26 @@
 
     .student-rating {
         @media only screen and (min-width: 400px) {
-            &.A {
+            &.I {
                 grid-area: auto / span 2;
             }
 
-            &.B {
+            &.S {
                 grid-area: auto / 3;
             }
         }
         @media only screen and (min-width: 500px) {
-            &.A {
-                grid-area: auto / 2;
+            &.I {
+                grid-area: auto / 2 / auto / span 2;
             }
 
-            &.B {
-                grid-area: auto / 4;
+            &.S {
+                grid-area: auto / 5;
             }
         }
         @media only screen and (min-width: 800px) {
             margin-left: .5rem;
-            &.A, &.B {
+            &.I, &.S {
                 grid-area: auto / span 1;
             }
         }
@@ -118,6 +134,7 @@
     .student-input {
         align-self: center;
         margin: 1px;
+        color: var(--sympathy-color);
 
         &.error {
             margin: 0;

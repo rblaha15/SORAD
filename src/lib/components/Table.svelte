@@ -9,7 +9,7 @@
 
 <script generics="T, Column extends string" lang="ts">
     import type {Snippet} from "svelte";
-    import {sortBy, sortByDescending} from "$lib/data";
+    import {sortedBy, sortedByDescending} from "$lib/data";
 
     const {items, header, row, columns, defaultSort}: {
         items: T[],
@@ -40,7 +40,7 @@
         [sort, columns, asc, items];
         if (sort == null || columns == undefined) return items
         const sortKey: SortKey<T> = columns[sort]
-        const sortFn = asc ? sortBy : sortByDescending;
+        const sortFn = asc ? sortedBy : sortedByDescending;
         const compareFn = typeof sortKey == 'function' ? sortKey : (i: T) => i[sortKey] as Comparable;
         return sortFn(items, compareFn)
     })

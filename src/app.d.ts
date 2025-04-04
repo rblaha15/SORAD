@@ -1,7 +1,7 @@
 declare global {
     namespace App {
         interface PageState {
-            group?: number
+            student?: number
         }
     }
 }

@@ -4,9 +4,18 @@
     import ClassDetails from "$lib/components/admin/class/ClassDetails.svelte";
     import AdminOverview from "$lib/components/admin/AdminOverview.svelte";
     import StudentDetails from "$lib/components/admin/class/student/StudentDetails.svelte";
+    import {isAdmin} from "$lib/data";
+    import {onMount} from "svelte";
+    import database from "$lib/database/supabase";
 
     const classId = $derived(browser ? page.url.searchParams.get('class') : undefined)
     const studentId = $derived(browser ? page.url.searchParams.get('student') : undefined)
+
+    onMount(async () => {
+        const email = await database.auth.getEmail()
+        if (!email || !isAdmin(email))
+            window.location.replace(window.location.origin)
+    })
 </script>
 
 {#if studentId === undefined || classId === undefined}

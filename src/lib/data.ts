@@ -33,26 +33,20 @@ const shuffled = <T>(array: T[], random: () => number): T[] => array
     .sort((a, b) => a.sort - b.sort)
     .map(({value}) => value)
 
-export const getRatingGroups = (myself: Student, students: Student[]): Student[][] => {
+export const getRatingGroups = (myself: Student, students: Student[], maxGroupSize: number): Student[][] => {
     const classmates = students.toSpliced(students.findIndex(s => s.id == myself.id), 1);
 
     const random = seedrandom(`${myself.id}`)
-
-    const girls = shuffled(classmates?.filter(student => student.is_girl), random)
-    const boys = shuffled(classmates?.filter(student => !student.is_girl), random)
-
-    const girlGroups = [
-        girls?.slice(0, girls?.length / 2),
-        girls?.slice(girls?.length / 2),
-    ]
-    const boyGroups = [
-        boys?.slice(0, boys?.length / 2),
-        boys?.slice(boys?.length / 2),
+    const shuffledStudents = shuffled(classmates, random)
+    const orderedStudents = [
+        myself,
+        ...sortedBy(shuffledStudents, s => s.is_girl != myself.is_girl),
     ];
 
-    const groups = myself.is_girl ? [...girlGroups, ...boyGroups] : [...boyGroups, ...girlGroups];
-    groups[0] = [myself, ...groups[0]];
-    return groups;
+    const studentCount = students.length;
+    const chunkCount = Math.ceil(studentCount / maxGroupSize);
+    const chunkSize = Math.ceil(studentCount / chunkCount);
+    return chunked(orderedStudents, chunkSize)
 }
 
 export const defaultRating = (by: number, about: number): Rating => ({
@@ -112,36 +106,38 @@ export const averageBy = <T>(array: T[], callback: (item: T, index: number, arra
 export const sumBy = <T>(array: T[], callback: (item: T, index: number, array: T[]) => number) =>
     array.reduce((sum, item, index, array) => sum + callback(item, index, array), 0);
 
-type NotNullComparable = number | string
+type NotNullComparable = number | string | boolean
 export type Comparable = null | undefined | NotNullComparable
 
 const compare = (a: NotNullComparable, b: NotNullComparable) =>
     typeof a == 'string' && typeof b == 'string' ? compareStrings(a, b)
         : typeof a == 'number' && typeof b == 'number' ? compareNumbers(a, b)
-            : 0
+            : typeof a == 'boolean' && typeof b == 'boolean' ? compareBooleans(a, b)
+                : 0
 const compareStrings = (a: string, b: string) => a.localeCompare(b)
 const compareNumbers = (a: number, b: number) => a - b
+const compareBooleans = (a: boolean, b: boolean) => a == b ? 0 : a ? 1 : -1
 const compareNullable = (a: Comparable, b: Comparable) => a == null
     ? b == null ? 0 : Number.POSITIVE_INFINITY
     : b == null ? Number.NEGATIVE_INFINITY : compare(a, b)
 
-export const sortBy = <T>(array: T[], callback: (item: T, index: number, array: T[]) => Comparable) => array
+export const sortedBy = <T>(array: T[], callback: (item: T, index: number, array: T[]) => Comparable) => array
     .map((item, index, array) => ({item, sort: callback(item, index, array)}))
     .toSorted((a, b) => compareNullable(a.sort, b.sort))
     .map(({item}) => item);
 
-export const sortByDescending = <T>(array: T[], callback: (item: T, index: number, array: T[]) => Comparable) => array
+export const sortedByDescending = <T>(array: T[], callback: (item: T, index: number, array: T[]) => Comparable) => array
     .map((item, index, array) => ({item, sort: callback(item, index, array)}))
     .toSorted((a, b) => compareNullable(b.sort, a.sort))
     .map(({item}) => item);
 
-export const rank = <T extends PropertyKey>(array: T[]) => Object.fromEntries(array.map(
+export const ranked = <T extends PropertyKey>(array: T[]) => Object.fromEntries(array.map(
     (item, index) => [item, index + 1]
 ).toReversed()) as Record<T, number>
 
-export const rankBy = <T, U extends Comparable & PropertyKey>(
+export const rankedBy = <T, U extends Comparable & PropertyKey>(
     array: T[], callback: (item: T, index: number, array: T[]) => U
-) => rank(sortBy(array, callback).map(callback)) as Record<U, number>
+) => ranked(sortedBy(array, callback).map(callback)) as Record<U, number>
 
 declare global {
     interface ObjectConstructor {
@@ -152,3 +148,23 @@ declare global {
         };
     }
 }
+
+export const chunked = <T>(arr: T[], size: number): T[][] => windowed(arr, size, size, true);
+
+export const windowed = <T>(arr: T[], size: number, step: number = 1, partialWindows: boolean = false): T[][] => {
+    if (size <= 0 || step <= 0) throw new RangeError("Size and step bust be positive");
+
+    const thisSize = arr.length;
+    const resultCapacity = Math.floor(thisSize / step) + (thisSize % step == 0 ? 0 : 1);
+    const result = Array<T[]>(resultCapacity);
+    let index = 0;
+    let arrayIndex = 0;
+    while (0 <= index && index < thisSize) {
+        const windowSize = Math.min(size, thisSize - index);
+        if (windowSize < size && !partialWindows) break;
+        result[arrayIndex++] = Array.from(Array(windowSize), (_, i) => arr[i + index]);
+        index += step;
+    }
+    return result;
+};
+

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {rankBy, type StudentScore, type StudentScoreWithRanks} from "$lib/data";
+    import {rankedBy, type StudentScore, type StudentScoreWithRanks} from "$lib/data";
     import Table from "$lib/components/Table.svelte";
 
     const {scores, allScores = scores}: { scores: StudentScore[], allScores?: StudentScore[] } = $props()
@@ -11,7 +11,7 @@
     const keys = ['influence', 'popularity', 'affection', 'influenceability', 'overall'] as const
     const ranks = $derived(keys.map(key => {
         const nonNull = allFiltered.filter(s => s[key] != undefined);
-        return [key, rankBy(nonNull, s => s[key]!), nonNull.length] as const;
+        return [key, rankedBy(nonNull, s => s[key]!), nonNull.length] as const;
     }))
 
 

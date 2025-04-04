@@ -1,6 +1,5 @@
 <script lang="ts">
     import type {Snippet} from "svelte";
-    import database from "$lib/database/supabase";
 
     const {
         title,

@@ -18,6 +18,21 @@
         height: 100%;
     }
 
+    :root {
+        --influence-color: lightcyan;
+        --sympathy-color: papayawhip;
+
+        --blue-color: dodgerblue;
+        --orange-color: orangered;
+        --red-color: red;
+        --grey-color: grey;
+        --white-color: white;
+
+        --link-color: var(--blue-color);
+        --boy-color: var(--blue-color);
+        --girl-color: var(--orange-color);
+    }
+
     :global {
         * {
             font-size: 1rem;
@@ -26,53 +41,40 @@
         }
 
         a {
-            color: dodgerblue;
+            color: var(--link-color);
         }
 
         button, a.btn {
             background: none;
-            border: dodgerblue 1px solid;
+            border: var(--btn-color) 1px solid;
             border-radius: 0.375rem;
-            color: dodgerblue;
+            color: var(--btn-color);
             font-size: 1rem;
             padding: .5rem;
             cursor: pointer;
             text-decoration: none;
         }
 
-        button:hover, a.btn:hover {
-            background: dodgerblue;
+        button:hover, a.btn:hover, button:focus-visible, a.btn:focus-visible {
+            background: var(--btn-color);
             color: black;
+            outline: none;
+        }
+
+        .blue {
+            --btn-color: var(--blue-color);
         }
 
         .grey {
-            border-color: grey;
-            color: grey;
-        }
-
-        .grey:hover {
-            background: grey;
-            color: black;
+            --btn-color: var(--grey-color);
         }
 
         .white {
-            border-color: white;
-            color: white;
-        }
-
-        .white:hover {
-            background: white;
-            color: black;
+            --btn-color: var(--white-color);
         }
 
         .red {
-            border-color: orangered;
-            color: orangered;
-        }
-
-        .red:hover {
-            background: orangered;
-            color: black;
+            --btn-color: var(--orange-color);
         }
 
         input {
@@ -88,7 +90,7 @@
             width: 32px;
             height: 32px;
             margin: 1rem;
-            border: 3px solid orangered;
+            border: 3px solid var(--orange-color);
             border-bottom-color: transparent;
             border-radius: 50%;
             display: inline-block;

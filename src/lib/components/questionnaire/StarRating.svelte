@@ -1,8 +1,8 @@
 <script lang="ts">
     let {
-        value = $bindable(), error
+        value = $bindable(), error, type
     }: {
-        value: number, error: boolean
+        value: number, error: boolean, type: 'influence' | 'sympathy'
     } = $props()
 
     const id = $props.id()
@@ -12,7 +12,7 @@
 
 <div class="star-row">
     {#each arr as i}
-        <label class:error onpointerup={() => value = i}>
+        <label class:error class={type} onpointerup={() => value = i}>
             <input type="radio" value={i} name="star-rating-{id}" bind:group={value}>
             &starf;
         </label>
@@ -45,8 +45,14 @@
         &:not(:hover) label:has(input:checked) ~ label,
         & label:has(input:hover) ~ label {
             color: white;
+            &.influence {
+                color: var(--influence-color);
+            }
+            &.sympathy {
+                color: var(--sympathy-color);
+            }
             &.error {
-                color: red;
+                color: var(--red-color);
             }
         }
     }
