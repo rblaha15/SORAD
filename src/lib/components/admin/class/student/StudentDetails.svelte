@@ -7,6 +7,8 @@
     import StudentsTable from "$lib/components/admin/class/StudentsTable.svelte";
     import RatingsTable from "$lib/components/admin/class/student/RatingsTable.svelte";
     import Collapsible from "$lib/components/Collapsible.svelte";
+    import StudentChart from "$lib/components/admin/class/student/StudentChart.svelte";
+    import TopScrollable from "$lib/components/TopScrollable.svelte";
 
     let {studentId, classId}: { studentId: number, classId: number } = $props()
 
@@ -43,6 +45,20 @@
     <span style="font-size: 1rem">{score.names} {score.surname}</span>
 {/snippet}
 {#snippet content()}
+    <Collapsible label="Grafy">
+        <TopScrollable>
+            <div class="charts">
+                <div>
+                    <p>Hodnocení ostatními:</p>
+                    <StudentChart ratings={ratingsGot} />
+                </div>
+                <div>
+                    <p>Hodnocení ostatních:</p>
+                    <StudentChart ratings={ratingsWrote} />
+                </div>
+            </div>
+        </TopScrollable>
+    </Collapsible>
     <p>Přehled třídních indexů:</p>
     <StudentsTable scores={[score]} allScores={classScores} />
     <Collapsible label="Hodnocení, která dostal{a}">
@@ -62,3 +78,10 @@
 {:else}
     <BasicLayout {buttons} {content} {title}/>
 {/if}
+
+<style>
+    .charts {
+        display: flex;
+        flex-wrap: wrap;
+    }
+</style>

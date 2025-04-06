@@ -32,11 +32,11 @@
     Třída: {klass.name}
 {/snippet}
 {#snippet content()}
-    <Collapsible collapsedInitially={false}>
+    <Collapsible>
         {#snippet label({collapsed})}
             {collapsed ? 'Zobrazit graf' : 'Skrýt graf'}
         {/snippet}
-        <ClassChart {scores} {classId}/>
+        <ClassChart {scores} />
     </Collapsible>
     <Collapsible>
         {#snippet label({collapsed})}

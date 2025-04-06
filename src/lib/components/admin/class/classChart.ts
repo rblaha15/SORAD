@@ -25,7 +25,7 @@ const scaleOptions: ScaleOptions<'linear'> = {
     },
 }
 
-export const classConfig = (
+export const classChart = (
     scores: StudentScore[],
 ): ChartConfiguration => ({
     type: 'scatter',

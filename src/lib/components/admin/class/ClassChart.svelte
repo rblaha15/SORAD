@@ -1,10 +1,10 @@
 <script lang="ts">
     import type {StudentScore} from "$lib/data";
     import {Chart} from "chart.js/auto";
-    import {classConfig} from "./classConfig";
+    import {classChart} from "./classChart";
     import TopScrollable from "$lib/components/TopScrollable.svelte";
 
-    let {scores}: { scores: StudentScore[], classId: number } = $props()
+    let {scores}: { scores: StudentScore[] } = $props()
 
     let canvas = $state() as HTMLCanvasElement;
     let chart = $state<Chart>();
@@ -12,7 +12,7 @@
     $effect(() => {
         if (!canvas) return;
 
-        chart = new Chart(canvas, classConfig(scores));
+        chart = new Chart(canvas, classChart(scores));
 
         return () => {
             chart?.destroy()

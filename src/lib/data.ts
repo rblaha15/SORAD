@@ -28,7 +28,7 @@ export const allData = async (email: string): Promise<Data | undefined> => {
     };
 }
 
-const shuffled = <T>(array: T[], random: () => number): T[] => array
+export const shuffled = <T>(array: T[], random: () => number = Math.random): T[] => array
     .map(value => ({value, sort: random()}))
     .sort((a, b) => a.sort - b.sort)
     .map(({value}) => value)
@@ -168,3 +168,8 @@ export const windowed = <T>(arr: T[], size: number, step: number = 1, partialWin
     return result;
 };
 
+/** Největší společný násobek */
+export const gcd = (a: number, b: number): number => b == 0 ? a : gcd(b, a % b)
+const lcm2 = (a: number, b: number): number => a * b / gcd(a, b)
+/** Nejmenší společný dělitel */
+export const lcm = (...numbers: number[]) => numbers.reduce(lcm2, 1)
