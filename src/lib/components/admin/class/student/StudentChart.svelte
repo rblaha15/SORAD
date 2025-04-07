@@ -14,9 +14,9 @@
 
         const myIndex = ratings.findIndex(r => r.by.id == r.about.id);
         const classmates = ratings.toSpliced(myIndex, 1);
-
+        const myself = myIndex == -1 ? undefined : {...ratings[myIndex], sympathy: 0};
         chart = new Chart(canvas, studentChart(
-            [{...ratings[myIndex], sympathy: 0}, ...classmates].map(r => ({
+            [...myself ? [myself] : [], ...classmates].map(r => ({
                 value: r.sympathy,
                 student: bySameStudent ? r.about : r.by
             })),

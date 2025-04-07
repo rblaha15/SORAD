@@ -2,7 +2,7 @@ import type {ChartConfiguration} from "chart.js";
 import type {Student} from "$lib/database";
 import {lcm} from "$lib/data";
 
-const opacity = (value: number) => ({
+const importance = (value: number) => ({
     0: 2,
     1: 1,
     2: .66,
@@ -38,9 +38,8 @@ export const studentChart = (
                     return ({
                         data: [...arr(index + offset, null), value],
                         backgroundColor: student.is_girl ? 'orangered' : 'dodgerblue',
-                        // backgroundColor: `rgba(${student.is_girl ? '255, 69, 0' : '30, 144, 255'}, ${opacity(value)})`,
-                        pointRadius: 8 * opacity(value),
-                        hoverRadius: 10 * opacity(value),
+                        pointRadius: 8 * importance(value),
+                        hoverRadius: 10 * importance(value),
                         fill: false,
                         label: `${student.names} ${student.surname}`
                     });
@@ -66,12 +65,13 @@ export const studentChart = (
                     min: 0,
                     max: 5,
                     ticks: {
-                        color: ctx => `rgba(255, 255, 255, ${opacity(ctx.index)})`,
+                        color: ctx => `rgba(255, 255, 255, ${importance(ctx.index)})`,
                         backdropColor: 'black',
                         precision: 0,
                     },
                     grid: {
-                        color: ctx => `rgba(255, 255, 255, ${opacity(ctx.index)})`,
+                        circular: true,
+                        color: ctx => `rgba(255, 255, 255, ${importance(ctx.index)})`,
                     },
                     pointLabels: {
                         display: false,

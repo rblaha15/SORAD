@@ -44,7 +44,7 @@ export const classChart = (
                 radius: 6,
                 hoverRadius: 10,
                 hitRadius: 8,
-                pointStyle: 'cross',
+                pointStyle: 'crossRot',
                 borderWidth: 2,
                 hoverBorderWidth: 4,
             },
