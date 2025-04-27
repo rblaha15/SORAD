@@ -7,14 +7,14 @@
 
     const id = $props.id()
 
-    const arr = Array(5).fill(0).map((_, i) => 5 - i as number)
+    const arr = Array(5).fill(0).map((_, i) => i + 1)
 </script>
 
 <div class="star-row">
     {#each arr as i}
-        <label class:error class={type} onpointerup={() => value = i}>
+        <label class:error class="{type} " onpointerup={() => value = i}>
             <input type="radio" value={i} name="star-rating-{id}" bind:group={value}>
-            &starf;
+            {i}
         </label>
     {/each}
 </div>
@@ -32,28 +32,31 @@
         label {
             text-decoration: none;
             font-size: 2rem;
-            color: gold;
+            color: white;
             cursor: pointer;
             user-select: none;
+            font-family: monospace;
+
+            &.influence {
+                color: var(--influence-color);
+            }
+
+            &.sympathy {
+                color: var(--sympathy-color);
+            }
+
+            &.error {
+                color: var(--red-color);
+            }
 
             &:has(> input:focus-visible) {
                 color: darkgreen !important;
             }
         }
 
-        &:not(:hover):not(:has(> label > input:checked)) label,
-        &:not(:hover) label:has(input:checked) ~ label,
-        & label:has(input:hover) ~ label {
-            color: white;
-            &.influence {
-                color: var(--influence-color);
-            }
-            &.sympathy {
-                color: var(--sympathy-color);
-            }
-            &.error {
-                color: var(--red-color);
-            }
+        &:not(:hover) label:has(input:checked),
+        & label:has(input:hover) {
+            color: gold;
         }
     }
 </style>

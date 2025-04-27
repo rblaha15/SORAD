@@ -54,9 +54,8 @@ export const defaultRating = (by: number, about: number): Rating => ({
     influence: -1, sympathy: -1, reasoning: ''
 })
 
-export const validateRating = (r: Rating) =>
-    r.influence != -1 && r.sympathy != -1 &&
-    ((r.influence != 0 && r.sympathy != 4) || r.reasoning)
+export const validateRating = (r: Rating, phase: 'influence' | 'sympathy' | 'sympathy-reasoning') =>
+    r.influence != -1 && (r.sympathy != -1 || phase == 'influence')
 
 
 type Indexes = {

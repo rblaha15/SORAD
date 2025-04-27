@@ -1,14 +1,15 @@
 <script lang="ts">
     import StarRating from "./StarRating.svelte";
-    import {value} from "$lib/stores";
-    import type {Rating, Student} from "$lib/database";
+    import { value } from "$lib/stores";
+    import type { Rating, Student } from "$lib/database";
 
     let {
-        student, rating = $bindable(), showErrors
+        student, rating = $bindable(), showErrors, type,
     }: {
         student: Student,
         rating: Rating,
         showErrors: boolean,
+        type: 'influence' | 'sympathy' | 'sympathy-reasoning',
     } = $props()
 
     const property = <K extends keyof Rating>(key: K) => ({
@@ -26,30 +27,31 @@
 
     const sError = $derived(showErrors && s.current == -1)
     const iError = $derived(showErrors && i.current == -1)
-    const rError = $derived(showErrors && (s.current == 1 || s.current == 5) && !r.current)
 </script>
 
 <span class="student-name">{student.names} {student.surname}</span>
 
-<span class="title I">Vliv:</span>
-<span class="student-rating I"><StarRating bind:value={i.current} error={iError} type="influence" /></span>
-<span class="title S">Sympatie:</span>
-<span class="student-rating S"><StarRating bind:value={s.current} error={sError} type="sympathy" /></span>
-<span class="title R">Vysvětlení sympatií:</span>
-<input size="1" bind:value={r.current} class="student-input" class:error={rError}/>
+{#if type === 'influence'}
+    <span class="title I">Vliv:</span>
+    <span class="student-rating I"><StarRating bind:value={i.current} error={iError} type="influence" /></span>
+{:else}
+    <span class="title S">Sympatie:</span>
+    <span class="student-rating S"><StarRating bind:value={s.current} error={sError} type="sympathy" /></span>
+{/if}
+{#if type === 'sympathy-reasoning'}
+    <span class="title R">Vysvětlení sympatií:</span>
+    <input bind:value={r.current} class="student-input" size="1" />
+{/if}
 
 <style>
     .student-name {
         align-self: start;
         font-size: 1.5rem;
         margin-top: 1rem;
-        @media only screen and (min-width: 400px) {
-            grid-area: auto / span 3;
+        @media only screen and (min-width: 250px) {
+            grid-area: auto / span 2;
         }
-        @media only screen and (min-width: 500px) {
-            grid-area: auto / span 5;
-        }
-        @media only screen and (min-width: 800px) {
+        @media only screen and (min-width: 600px) {
             font-size: 1.25rem;
             white-space: nowrap;
             grid-area: auto / 1;
@@ -62,68 +64,40 @@
         align-self: center;
         margin-top: .2rem;
         white-space: nowrap;
+
         &.I {
             color: var(--influence-color);
         }
+
         &.S, &.R {
             color: var(--sympathy-color);
         }
 
-        @media only screen and (min-width: 400px) {
-            margin: 0;
-            &.I {
-                grid-area: auto / span 2;
-            }
-
-            &.S {
-                grid-area: auto / 3;
-            }
-
+        @media only screen and (min-width: 250px) {
             &.R {
-                grid-area: auto / 1;
+                grid-area: auto / span 2;
             }
         }
-        @media only screen and (min-width: 500px) {
-            &.I {
-                grid-area: auto / 1;
-            }
-
-            &.S {
-                grid-area: auto / 4;
-            }
-
+        @media only screen and (min-width: 400px) {
             &.R {
-                grid-area: auto / span 2;
+                grid-area: auto;
             }
 
             margin-top: 0;
-            margin-right: .375rem;
         }
-        @media only screen and (min-width: 800px) {
+        @media only screen and (min-width: 600px) {
             display: none;
         }
     }
 
     .student-rating {
-        @media only screen and (min-width: 400px) {
-            &.I {
-                grid-area: auto / span 2;
-            }
-
-            &.S {
-                grid-area: auto / 3;
+        margin-left: .375rem;
+        @media only screen and (min-width: 250px) {
+            &.I, &.S {
+                grid-area: auto / 2;
             }
         }
-        @media only screen and (min-width: 500px) {
-            &.I {
-                grid-area: auto / 2 / auto / span 2;
-            }
-
-            &.S {
-                grid-area: auto / 5;
-            }
-        }
-        @media only screen and (min-width: 800px) {
+        @media only screen and (min-width: 600px) {
             margin-left: .5rem;
             &.I, &.S {
                 grid-area: auto / span 1;
@@ -133,32 +107,18 @@
 
     .student-input {
         align-self: center;
-        margin: 1px;
         color: var(--sympathy-color);
 
-        &.error {
-            margin: 0;
-            border: 2px solid red;
-        }
-
-        @media only screen and (min-width: 400px) {
+        @media only screen and (min-width: 250px) {
             grid-area: auto / span 2;
-
-            margin-left: calc(1px + .375rem);
-            &.error {
-                margin-left: .375rem;
-            }
         }
-        @media only screen and (min-width: 500px) {
-            grid-area: auto / span 3;
-
-            margin-bottom: calc(1px + .375rem);
-            &.error {
-                margin-bottom: .375rem;
-            }
+        @media only screen and (min-width: 400px) {
+            grid-area: auto / 2;
+            margin-left: .375rem;
         }
-        @media only screen and (min-width: 800px) {
-            grid-area: auto / 4;
+        @media only screen and (min-width: 600px) {
+            grid-area: auto / 3;
+            margin-bottom: .375rem;
         }
     }
 </style>

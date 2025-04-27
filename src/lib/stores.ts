@@ -49,3 +49,12 @@ export const value = <T>(state: { get: () => T, set: (v: T) => void }) => ({
         state.set(v)
     },
 })
+
+export const propertyValue = <T, K extends keyof T>(key: K, state: { get: () => T, set: (v: T) => void }) => ({
+    get current() {
+        return state.get()[key]
+    },
+    set current(v: T[K]) {
+        state.set({ ...state.get(), [key]: v })
+    },
+})

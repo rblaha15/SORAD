@@ -35,13 +35,14 @@ export interface Database {
 }
 
 
-export type Class = {
+export interface Class {
     id: number
     name: string
     grade: number
     enabled: boolean
 }
-export type Student = {
+
+export interface Student {
     class: number
     id: number
     is_girl: boolean
@@ -50,11 +51,13 @@ export type Student = {
     surname: string
     email: string
 }
-export type StudentPassword = {
+
+export interface StudentPassword {
     email: string
     password: string
 }
-export type Rating = {
+
+export interface Rating {
     about: number
     by: number
     sympathy: number
