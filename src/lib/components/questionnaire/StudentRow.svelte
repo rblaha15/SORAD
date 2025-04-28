@@ -9,7 +9,7 @@
         student: Student,
         rating: Rating,
         showErrors: boolean,
-        type: 'influence' | 'sympathy' | 'sympathy-reasoning',
+        type: Phase,
     } = $props()
 
     const property = <K extends keyof Rating>(key: K) => ({

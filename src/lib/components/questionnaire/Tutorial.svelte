@@ -1,101 +1,127 @@
-<script lang="ts">
-    import StarRating from "./StarRating.svelte";
+<script lang='ts'>
 
     const {
-        isGirl, grade, justOverview = false
+        isGirl, grade, justOverview = false, phase,
     }: {
-        isGirl: boolean, grade: number, justOverview?: boolean
+        isGirl: boolean, grade: number, justOverview?: boolean, phase: Phase,
     } = $props()
 
-    const a = isGirl ? 'a' : ''
     const i = grade > 4 ? 'te' : 'i'
+    const i2 = grade > 4 ? 'i' : ''
     const te = grade > 4 ? 'te' : 'š'
     const ete = grade > 4 ? 'ete' : 'i'
+    const te2 = grade > 4 ? 'te' : ''
+    const your = grade > 4 ? 'vašich' : 'tvých'
+    const you = grade > 4 ? 'vám' : 'ti'
+    const you2 = grade > 4 ? 'vás' : 'tebe'
+    const classmates = isGirl ? 'spolužačkek (a spolužáků)' : 'spolužáků (a spolužaček)'
+    const a = isGirl ? 'a' : ''
+    const ya = isGirl ? 'á' : 'ý'
+    const ten = isGirl ? 'ta' : 'ten'
+    const or = (a: string, b: string) => isGirl ? `${b}/${a}` : `${a}/${b}`
+
+    const labels = $derived(phase === 'influence' ? [
+        `Nejvlivnější ${or('žák', 'žákyně')} třídy`,
+        'Patří mezi několik nejvlivnějších',
+        'Má průměrný vliv jako většina žáků a žákyň',
+        'Má slabý vliv',
+        'Nemá žádný nebo téměř žádný vliv',
+    ] : [
+        `Je mi velmi sympatick${or('ý', 'á')}`,
+        `Je mi sympatick${or('ý', 'á')}`,
+        `Není mi ani sympatick${or('ý', 'á')}, ani nesympatick${or('ý', 'á')}`,
+        `Je mi spíše nesympatick${or('ý', 'á')}`,
+        `Je mi nesympatick${or('ý', 'á')}`,
+    ])
 </script>
 
-<!--suppress JSUnresolvedReference -->
 <div>
-    {#snippet tutorialRating(min: string, max: string, type: 'influence' | 'sympathy')}
-        <div class="tutorial-rating">
-            <div class="star-labels {type}">
-                <span>{@html min}</span>
-                <span>{@html max}</span>
-            </div>
-            <div class="tutorial-stars">
-                <StarRating error={false} value={4} {type} />
-            </div>
-            <span class="width-helper">&starf;&starf;&starf;&starf;&starf;&starf;&starf;&starf;</span>
-        </div>
-    {/snippet}
-
-    {#if justOverview}
-        <div class="overview-row">
-            {@render tutorialRating(
-                'Malý až<br />žádný vliv',
-                'Největší<br />vliv',
-                'influence',
-            )}
-            {@render tutorialRating(
-                'Úplně<br/>nesympatický',
-                'Nejvíce<br/>sympatický',
-                'sympathy',
-            )}
+    {#if justOverview || phase !== 'sympathy-reasoning'}
+        <div class="scale {phase.replace('-', ' ')}">
+            {#each labels as label, i}
+                <div><span class="number">{i + 1}</span><span>{label}</span></div>
+            {/each}
         </div>
         <hr />
-    {:else}
-        <p>Každého spolužáka (a sebe) ohodnotí{te} tím, že si zodpoví{te} na následující dvě otázky a přidělí{te} jim
-            hodnotu 1-5:</p>
-        <p class="influence"><strong>1. Kdo má ve třídě na ostatní jaký vliv? (Jak moc na ně druzí dají)</strong></p>
-        {@render tutorialRating(
-            'Malý až<br />žádný vliv',
-            'Největší<br />vliv',
-            'influence',
-        )}
-        <p class="sympathy"><strong>2. Kdo je mi ze třídy sympatický nebo nesympatický? (Jak rád{a} se s nimi vídám)</strong></p>
-        {@render tutorialRating(
-            'Úplně<br/>nesympatický',
-            'Nejvíce<br/>sympatický',
-            'sympathy',
-        )}
-        <p class="sympathy">Poté prosím vysvětl{ete}, proč js{i} u druhé otázky zvolil{a} právě tuto odpověď (obzvlášť, pokud js{i}
-            zaškrtl{a} 1 nebo 5)</p>
-        <br/>
-        <p>Všechny odpovědi se průběžně ukládají do prohlížeče, takže o ně nepřijde{te}, pokud např. ztratí{te}
-            připojení k internetu.</p>
+    {/if}
+
+    {#if !justOverview}
+        {#if phase === "influence"}
+            <p class="info I"><span class="icon">»</span>
+                Nyní u {your} {classmates} vybere{te} číslo (ze stupnice výše), které ozanačuje, jak velký vliv mají na ostatní.
+            </p>
+            <p class="info I"><span class="icon">!</span>
+                Hodnoť{te2} podle vlastního nezávislého mínění, které je nejhodnotnější. Vzájemné domlouvání zkresluje výsledky.
+            </p>
+            {#if grade <= 4}
+                <p class="info I"><span class="icon">?</span>
+                    Vliv žáka se pozná podle toho, do jaké míry se ostatní řídí jeho názory. Nehodnotíš, jestli je vliv dobrý, nebo špatný, jen sílu vlivu.
+                </p>
+            {/if}
+            <p class="info I"><span class="icon">!</span>
+                Pracuj{te2} rychle, bez dlouhého rozmýšlení, první názor bývá nejlepší. Jestliže si nejs{i} u někoho jist{i2}, srovnej{te2} je s těmi žáky, které
+                zná{te} lépe. Nedívej{te2} se k sousedovi – když bude{te} chtít, může{te} si promluvit o přestávce o tom, co jste napsali. S hodnocením bude{te}
+                hotov{i2} asi za pět minut.
+            </p>
+        {:else if phase === "sympathy"}
+            <p class="info S"><span class="icon">»</span>
+                Nyní u {your} {classmates} vybere{te} číslo (ze stupnice výše), které ozanačuje, jak moc jsou {you} sympatičtí nebo nesympatičtí.
+            </p>
+            <p class="info S"><span class="icon">?</span>
+                Sympatick{ya} je pro {you2} {ten}, kdo je {you} příjemn{ya}, s kým se rád{a} stýkáš.
+            </p>
+            <p class="info S"><span class="icon">!</span>
+                Sympatie jsou individuální, každý má rád, trochu jiné lidi, takže domlouvání nemá smysl!
+            </p>
+        {:else if phase === "sympathy-reasoning"}
+            <p class="info S"><span class="icon">»</span>
+                Nyní se zamysl{ete} nad tím, proč je {you} kdo sympatický a nesympatický a napiš{te2} to krátkou větou do políčka vedle hodnocení.
+            </p>
+            <p class="info S"><span class="icon">+</span>
+                Má{te} příležitost ukázat, jak dovede{te} přemýšlet o lidech a o svých vztazích k nim.
+            </p>
+            <p class="info S"><span class="icon">!</span>
+                Postupuj{te2} v pořadí, jak se {you} jména objeví na následující obrazovce. Nevadí, jestliže nestihne{te} odůvodnit všechny, ale snaž{te2} se
+                projít co nejvíce jmen!
+            </p>
+        {/if}
+
+        <p>Všechny odpovědi se průběžně ukládají do prohlížeče, takže o ně nepřijde{te}, pokud např. ztratí{te} připojení k internetu.</p>
     {/if}
 </div>
 
 <style>
-    .overview-row {
+    .scale {
+        div {
+            display: flex;
+            align-items: center;
+
+            span.number {
+                font-size: 2rem;
+                font-family: monospace;
+                min-width: 2rem;
+                margin: -.3rem .5rem -.25rem 0;
+            }
+        }
+    }
+
+    .info {
         display: flex;
-        justify-content: space-between;
-        flex-wrap: wrap;
-    }
-    .tutorial-rating {
-        width: max-content;
+        align-items: center;
 
-        .star-labels {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            text-align: center;
-        }
-
-        .tutorial-stars {
-            justify-self: center;
-        }
-
-        .width-helper {
-            display: block;
+        span.icon {
             font-size: 2rem;
-            visibility: hidden;
-            height: 0;
+            font-family: monospace;
+            min-width: 2rem;
+            margin: auto 0;
         }
     }
 
-    .influence {
+    .influence, .I {
         color: var(--influence-color);
     }
-    .sympathy {
+
+    .sympathy, .S {
         color: var(--sympathy-color);
     }
 </style>

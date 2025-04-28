@@ -21,11 +21,6 @@
 
     const savedData = storeable<Rating[]>(`${myId}-ratings`, data.students.map(student => defaultRating(myId, student.id)))
 
-    // const phase = $derived(
-    //     !$savedData.every(r => r.influence > -1) ? 'influence'
-    //         : !$savedData.every(r => r.sympathy > -1) ? 'sympathy'
-    //             : 'sympathy-reasoning'
-    // )
     const allGroups = $derived(getRatingGroups(data.myself, data.students, phase == 'sympathy-reasoning' ? Number.POSITIVE_INFINITY : 7));
     const currentGroupIndex = $derived(allGroups.findIndex(g => g.some(s => s.id == currentStudentId)))
     const currentGroup = $derived(allGroups[currentGroupIndex] ?? [])
@@ -51,8 +46,8 @@
         if (noError) showErrors = false
     })
 
-    const prevPhase = (phase: string) => phase == 'sympathy-reasoning' ? 'sympathy' : 'influence'
-    const nextPhase = (phase: string) => phase == 'influence' ? 'sympathy' : 'sympathy-reasoning'
+    const prevPhase = (phase: Phase) => phase == 'sympathy-reasoning' ? 'sympathy' : 'influence'
+    const nextPhase = (phase: Phase) => phase == 'influence' ? 'sympathy' : 'sympathy-reasoning'
 
     const back = () => pushState('', currentGroupIndex > -1
         ? { student: allGroups[currentGroupIndex - 1]?.[0]?.id ?? -1, phase }
@@ -81,9 +76,9 @@
             <p>V této třídě aktuálně neprobíhá sběr dat.</p>
         {:else if currentGroupIndex === -1}
             <p>Js{i} přihlášen jako {data.myself.names} {data.myself.surname}.</p>
-            <Tutorial isGirl={data.myself.is_girl} grade={data.myClass.grade} />
+            <Tutorial isGirl={true/*data.myself.is_girl*/} grade={4/*data.myClass.grade*/} {phase} />
         {:else}
-            <Tutorial isGirl={data.myself.is_girl} grade={data.myClass.grade} justOverview />
+            <Tutorial isGirl={true/*data.myself.is_girl*/} grade={4/*data.myClass.grade*/} justOverview {phase} />
             <div class="student-group {phase.replace('-', ' ')}">
                 <span class="main-title"></span>
                 <span class="main-title I">Vliv:</span>

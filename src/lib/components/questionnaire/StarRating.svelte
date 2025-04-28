@@ -12,7 +12,7 @@
 
 <div class="star-row">
     {#each arr as i}
-        <label class:error class="{type} " onpointerup={() => value = i}>
+        <label class:error class={type} onpointerup={() => value = i}>
             <input type="radio" value={i} name="star-rating-{id}" bind:group={value}>
             {i}
         </label>
@@ -36,6 +36,8 @@
             cursor: pointer;
             user-select: none;
             font-family: monospace;
+            min-width: 2rem;
+            text-align: center;
 
             &.influence {
                 color: var(--influence-color);
