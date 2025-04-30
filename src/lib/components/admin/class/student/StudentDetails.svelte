@@ -52,11 +52,11 @@
             <div class="charts">
                 <div>
                     <p>Hodnocení ostatními:</p>
-                    <StudentChart ratings={ratingsGot} />
+                    <StudentChart myself={student} ratings={ratingsGot} />
                 </div>
                 <div>
                     <p>Hodnocení ostatních:</p>
-                    <StudentChart ratings={ratingsWrote} />
+                    <StudentChart myself={student} ratings={ratingsWrote} />
                 </div>
             </div>
         </TopScrollable>

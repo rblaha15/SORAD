@@ -1,9 +1,10 @@
 <script lang="ts">
-    import type {RatingWithStudents} from "$lib/data";
-    import {Chart} from "chart.js/auto";
-    import {studentChart} from "./studentChart";
+    import type { RatingWithStudents } from "$lib/data";
+    import { Chart } from "chart.js/auto";
+    import { studentChart } from "./studentChart";
+    import type { Student } from "$lib/database";
 
-    let {ratings}: { ratings: RatingWithStudents[] } = $props()
+    let {ratings, myself}: { ratings: RatingWithStudents[], myself: Student } = $props()
     const bySameStudent = new Set(ratings.map(r => r.by.id)).size == 1
 
     let canvas = $state() as HTMLCanvasElement;
@@ -12,11 +13,10 @@
     $effect(() => {
         if (!canvas) return;
 
-        const myIndex = ratings.findIndex(r => r.by.id == r.about.id);
-        const classmates = ratings.toSpliced(myIndex, 1);
-        const myself = myIndex == -1 ? undefined : {...ratings[myIndex], sympathy: 0};
+        const classmates = ratings.toSpliced(ratings.findIndex(r => r.about.id == r.by.id), 1);
+        const myself2 = { about: myself, by: myself, sympathy: 0 };
         chart = new Chart(canvas, studentChart(
-            [...myself ? [myself] : [], ...classmates].map(r => ({
+            [...myself2 ? [myself2] : [], ...classmates].map(r => ({
                 value: r.sympathy,
                 student: bySameStudent ? r.about : r.by
             })),
