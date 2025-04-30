@@ -1,6 +1,6 @@
 <script lang="ts">
     import BasicLayout from "$lib/components/BasicLayout.svelte";
-    import type {Class} from "$lib/database";
+    import type { Class, Student } from "$lib/database";
     import database from "$lib/database/supabase";
     import {onMount} from "svelte";
     import {getStudentScore, type RatingWithStudents, type StudentScore} from "$lib/data";
@@ -15,21 +15,23 @@
     let klass = $state() as Class;
     let ratingsWrote = $state<RatingWithStudents[]>([]);
     let ratingsGot = $state<RatingWithStudents[]>([]);
+    let ratings = $state<RatingWithStudents[]>([]);
+    let students = $state<Student[]>([]);
+    let student = $state() as Student;
     let classScores = $state() as StudentScore[];
     let score = $state() as StudentScore;
 
     const refresh = async () => {
         klass = await database.getMyClass(classId)
         const r = await database.admin.getClassRatings(classId)
-        const students = await database.getStudentsOfClass(classId)
-        const student = students.find(s => s.id == studentId)!
+        students = await database.getStudentsOfClass(classId)
+        student = students.find(s => s.id == studentId)!
 
-        ratingsWrote = r.filter(r => r.by == studentId).map(r => ({
-            ...r, by: student, about: students.find(s => s.id == r.about)!
+        ratings = r.map(r => ({
+            ...r, by: students.find(s => s.id == r.by)!, about: students.find(s => s.id == r.about)!
         }))
-        ratingsGot = r.filter(r => r.about == studentId).map(r => ({
-            ...r, by: students.find(s => s.id == r.by)!, about: student,
-        }))
+        ratingsWrote = ratings.filter(r => r.by.id == studentId)
+        ratingsGot = ratings.filter(r => r.about.id == studentId)
         classScores = students.map(s =>
             getStudentScore(s, r.filter(r => r.about == s.id), r.filter(r => r.by == s.id))
         )
@@ -60,7 +62,7 @@
         </TopScrollable>
     </Collapsible>
     <p>Přehled třídních indexů:</p>
-    <StudentsTable scores={[score]} allScores={classScores} />
+    <StudentsTable students={[student]} allStudents={students} {ratings} />
     <Collapsible label="Hodnocení, která dostal{a}">
         <RatingsTable ratings={ratingsGot} />
     </Collapsible>

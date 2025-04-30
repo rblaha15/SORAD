@@ -76,6 +76,13 @@ export type StudentScoreWithRanks = Student & {
     [I in keyof Indexes]: { value: number, rank: number, of: number } | undefined
 };
 
+export const getStudentsScores = (
+    students: Student[],
+    ratings: RatingWithStudents[],
+): StudentScore[] => students.map(s =>
+    getStudentScore(s, ratings.filter(r => r.about.id == s.id), ratings.filter(r => r.by.id == s.id))
+);
+
 export const getStudentScore = (
     student: Student,
     ratingsAbout: Omit<Rating, "by" | "about">[],
@@ -91,6 +98,28 @@ export const getStudentScore = (
         : Number(averageBy(ratingsBy, r => r.influence).toFixed(2));
     return ({
         ...student, influence, popularity, affection, influenceability,
+        overall: influence == undefined || popularity == undefined ? undefined
+            : (influence + popularity) / 2
+    });
+}
+
+export const getClassScore = (
+    scores: StudentScore[],
+): Indexes => {
+    const influence = scores.length == 0 ? undefined : Number(averageBy(
+        scores.filter(s => s.influence), s => s.influence!
+    ).toFixed(2));
+    const popularity = scores.length == 0 ? undefined : Number(averageBy(
+        scores.filter(s => s.popularity), s => s.popularity!
+    ).toFixed(2));
+    const affection = scores.length == 0 ? undefined : Number(averageBy(
+        scores.filter(s => s.affection), s => s.affection!
+    ).toFixed(2));
+    const influenceability = scores.length == 0 ? undefined : Number(averageBy(
+        scores.filter(s => s.influenceability), s => s.influenceability!
+    ).toFixed(2));
+    return ({
+        influence, popularity, affection, influenceability,
         overall: influence == undefined || popularity == undefined ? undefined
             : (influence + popularity) / 2
     });

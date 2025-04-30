@@ -44,7 +44,7 @@
             color: var(--link-color);
         }
 
-        button, a.btn {
+        button, .btn {
             background: none;
             border: var(--btn-color) 1px solid;
             border-radius: 0.375rem;
@@ -55,7 +55,7 @@
             text-decoration: none;
         }
 
-        button:hover, a.btn:hover, button:focus-visible, a.btn:focus-visible {
+        button:hover, .btn:hover, button:focus-visible, .btn:focus-visible {
             background: var(--btn-color);
             color: black;
             outline: none;

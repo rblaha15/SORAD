@@ -185,8 +185,8 @@ const database: Database = {
         },
 
         getClassRatings: async classId => {
-            const {data, error} = await client.from('rating').select('*, student!by()')
-                .eq('student.class', classId)
+            const {data, error} = await client
+                .rpc('get_class_ratings', { class_id: classId });
             if (error) throw error
             return data
         },

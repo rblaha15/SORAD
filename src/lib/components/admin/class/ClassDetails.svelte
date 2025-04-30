@@ -1,9 +1,9 @@
 <script lang="ts">
     import BasicLayout from "$lib/components/BasicLayout.svelte";
-    import type {Class} from "$lib/database";
+    import type { Class, Student } from "$lib/database";
     import database from "$lib/database/supabase.js";
     import {onMount} from "svelte";
-    import {getStudentScore, type RatingWithStudents, type StudentScore} from "$lib/data";
+    import { getStudentsScores, type RatingWithStudents } from "$lib/data";
     import Collapsible from "$lib/components/Collapsible.svelte";
     import ClassChart from "./ClassChart.svelte";
     import StudentsTable from "$lib/components/admin/class/StudentsTable.svelte";
@@ -12,18 +12,15 @@
 
     let klass = $state() as Class;
     let ratings = $state<RatingWithStudents[]>([]);
-    let scores = $state<StudentScore[]>([]);
+    let students = $state<Student[]>([]);
 
     const refresh = async () => {
         klass = await database.getMyClass(classId)
         const r = await database.admin.getClassRatings(classId)
-        const students = await database.getStudentsOfClass(classId)
+        students = await database.getStudentsOfClass(classId)
         ratings = r.map(r => ({
             ...r, by: students.find(s => s.id == r.by)!, about: students.find(s => s.id == r.about)!
         }))
-        scores = students.map(s =>
-            getStudentScore(s, r.filter(r => r.about == s.id), r.filter(r => r.by == s.id))
-        )
     }
     onMount(refresh)
 </script>
@@ -36,13 +33,13 @@
         {#snippet label({collapsed})}
             {collapsed ? 'Zobrazit graf' : 'Skrýt graf'}
         {/snippet}
-        <ClassChart {scores} />
+        <ClassChart scores={getStudentsScores(students, ratings)} />
     </Collapsible>
     <Collapsible>
         {#snippet label({collapsed})}
             {collapsed ? 'Zobrazit seznam žáků' : 'Skrýt seznam žáků'}
         {/snippet}
-        <StudentsTable {scores} allScores={scores}/>
+        <StudentsTable {students} {ratings} allStudents={students} overview />
     </Collapsible>
 {/snippet}
 {#snippet buttons()}

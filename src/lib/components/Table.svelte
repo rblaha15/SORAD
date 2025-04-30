@@ -31,10 +31,14 @@
         },
     } = $props()
 
-    let sort = $state<Column | null>(defaultSort ? Object.keys(defaultSort).at(0) as Column ?? null : null)
+    let sort = $state<Column | null>(null)
     let asc = $state<boolean>(defaultSort ? Object.values(defaultSort).at(0) as boolean ?? false : false)
     $effect(() => {
         if (sort) asc = true
+    })
+    $effect(() => {
+        if (defaultSort)
+            sort = Object.keys(defaultSort).at(0) as Column ?? sort
     })
 
     const sorted = $derived.by(() => {
@@ -51,7 +55,7 @@
     )) as { [C in Column]: T; }
 </script>
 <TopScrollable>
-    <table class:sortable={columns !== undefined}>
+    <table class:sortable={columns !== undefined && defaultSort !== undefined}>
         <thead>
         <tr>
             {@render header(

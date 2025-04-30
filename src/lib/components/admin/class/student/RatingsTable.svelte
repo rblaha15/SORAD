@@ -64,3 +64,13 @@
         <td>{rating.reasoning}</td>
     {/snippet}
 </Table>
+
+<style>
+    .filters {
+        margin: .75rem;
+
+        label, input {
+            cursor: pointer;
+        }
+    }
+</style>
