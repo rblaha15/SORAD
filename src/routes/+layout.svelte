@@ -45,6 +45,7 @@
         }
 
         button, .btn {
+            display: block;
             background: none;
             border: var(--btn-color) 1px solid;
             border-radius: 0.375rem;

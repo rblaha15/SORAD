@@ -7,8 +7,10 @@
     import {isAdmin} from "$lib/data";
     import {onMount} from "svelte";
     import database from "$lib/database/supabase";
+    import PrintCodes from "$lib/components/admin/class/PrintCodes.svelte";
 
     const classId = $derived(browser ? page.url.searchParams.get('class') : undefined)
+    const print = $derived(browser ? page.url.searchParams.get('print') : undefined)
     const studentId = $derived(browser ? page.url.searchParams.get('student') : undefined)
 
     onMount(async () => {
