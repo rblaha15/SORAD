@@ -76,6 +76,9 @@ export const classChart = (
             legend: {
                 display: false,
             },
+            datalabels: {
+                display: false,
+            }
         },
         animation: false,
     },
