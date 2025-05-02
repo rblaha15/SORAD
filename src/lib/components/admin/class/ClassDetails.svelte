@@ -43,29 +43,23 @@
     }
 
     const print = async () => {
-        let passwords = await database.admin.getStudentPasswords(students.map(s => s.email));
-        if (!passwords) {
+        const passwords = await database.admin.getStudentPasswords(students.map(s => s.email)) ?? await (async () => {
             await database.admin.addStudentPasswords(students.map(s => ({
                 email: s.email,
                 password: [...Array(6)].map(() => Math.random().toString(36)[2] || '0').join('').toUpperCase(),
             })))
-            passwords = await database.admin.getStudentPasswords(students.map(s => s.email));
-        }
+            return await database.admin.getStudentPasswords(students.map(s => s.email));
+        })()
         const codes = students.map(s => ({ ...s, password: passwords.find(p => p.email == s.email)!.password }));
 
-        const frame = document.createElement("iframe");
-        frame.onload = () => {
-            const w = frame.contentWindow!;
-            mount(PrintCodes, { props: { codes }, target: w.document.body })
-            document.querySelectorAll('style, link[rel="stylesheet"]').forEach(el => {
-                w.document.head.appendChild(el.cloneNode(true));
-            });
-            w.onbeforeunload = () => document.body.removeChild(frame);
-            w.onafterprint = () => document.body.removeChild(frame);
-            w.print();
-        };
-        frame.style.display = "none";
-        document.body.appendChild(frame);
+        const w = window.open()!;
+        mount(PrintCodes, { props: { codes }, target: w.document.body })
+        document.querySelectorAll('style, link[rel="stylesheet"]').forEach(el => {
+            w.document.head.appendChild(el.cloneNode(true));
+        });
+        w.onbeforeunload = () => w.close();
+        w.onafterprint = () => w.close();
+        w.print();
     }
 </script>
 
@@ -77,7 +71,7 @@
         <form class="settings" onsubmit={confirm}>
             <label>
                 Název třídy:
-                <input bind:value={name} type="text"/>
+                <input bind:value={name} type="text" />
             </label>
             <label>
                 Ročník:
@@ -85,7 +79,7 @@
             </label>
             <p>1 až 8 – u čtyřletých tříd 5 až 8</p>
             <label>
-                <input bind:checked={enabled} type="checkbox"/>
+                <input bind:checked={enabled} type="checkbox" />
                 Povolit přijímání odpovědí od studentů
             </label>
             <button class="red" type="submit">Potvrdit</button>
@@ -123,6 +117,7 @@
     button {
         margin: .375rem 0;
     }
+
     form.settings {
         label {
             display: block;

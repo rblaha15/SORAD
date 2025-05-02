@@ -2,15 +2,20 @@
     import type { Student } from "$lib/database";
 
     const { codes }: { codes: (Student & { password: string })[] } = $props()
+    const half = $derived(Math.floor(codes.length / 2))
+    const pairs = $derived(codes.slice(0, half).map((_, i) => [codes[i], codes[i + half]] as const))
 </script>
+
+<title>Kódy pro přihlášení</title>
 
 <table>
     <tbody>
-    {#each codes as s}
+    {#each pairs as [s1, s2]}
         <tr>
-            <td>{s.surname}</td>
-            <td>{s.names}</td>
-            <td>{s.password}</td>
+            <td>{s1.surname} {s1.names}</td>
+            <td>{s1.password}</td>
+            <td>{s2.surname} {s2.names}</td>
+            <td>{s2.password}</td>
         </tr>
     {/each}
     </tbody>
@@ -18,7 +23,6 @@
 
 <style>
     table {
-        background: red;
         border-collapse: collapse;
         border: 2px solid black;
 
@@ -26,6 +30,9 @@
             border: 1px solid black;
             padding: 5px;
             text-align: center;
+        }
+        td:nth-of-type(3) {
+            border-left-width: 2px;
         }
     }
 </style>
