@@ -27,8 +27,8 @@ export interface Database {
         updateStudents: (students: Student[]) => Promise<void>
         removeStudents: (studentIds: number[]) => Promise<void>
 
-        addStudentPasswords: (studentPasswords: StudentPassword[]) => Promise<void>
-        getStudentPasswords: (studentEmails: string[]) => Promise<StudentPassword[]>
+        addStudentPasswords: (studentPasswords: StudentPasswords) => Promise<void>
+        getStudentPasswords: (studentEmails: string[]) => Promise<StudentPasswords>
 
         createStudentAccounts: (students: { email: string, password: string }[]) => Promise<void>
     }
@@ -64,3 +64,5 @@ export interface Rating {
     influence: number
     reasoning: string
 }
+
+export type StudentPasswords = Record<string, string>

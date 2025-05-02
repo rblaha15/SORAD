@@ -22,7 +22,7 @@
                 [C in Column]: () => void;
             },
         ]>,
-        row: Snippet<[item: T]>,
+        row: Snippet<[item: T, index: number]>,
         columns?: {
             [C in Column]: SortKey<T>;
         },
@@ -65,9 +65,9 @@
         </tr>
         </thead>
         <tbody>
-        {#each sorted as item}
+        {#each sorted as item, index}
             <tr>
-                {@render row(item)}
+                {@render row(item, index)}
             </tr>
         {/each}
         </tbody>

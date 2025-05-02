@@ -1,7 +1,7 @@
 <script lang="ts">
-    import type {Snippet} from "svelte";
+    import type { Snippet } from "svelte";
 
-    const {children}: {
+    const { children }: {
         children?: Snippet;
     } = $props();
 </script>
@@ -45,21 +45,57 @@
         }
 
         button, .btn {
+            --border-radius: .375rem;
             display: block;
             background: none;
-            border: var(--btn-color) 1px solid;
-            border-radius: 0.375rem;
             color: var(--btn-color);
+            border: var(--btn-color) 1px solid;
+            border-radius: var(--border-radius);
             font-size: 1rem;
             padding: .5rem;
             cursor: pointer;
             text-decoration: none;
+            width: fit-content;
+            height: fit-content;
         }
 
-        button:hover, .btn:hover, button:focus-visible, .btn:focus-visible {
+        .btn.toggle {
+            input {
+                width: 0;
+                position: absolute;
+            }
+        }
+
+        button:hover, .btn:hover, button:focus-visible, .btn:focus-visible, .btn.toggle:has(> input:checked), .btn.toggle.checked {
             background: var(--btn-color);
             color: black;
             outline: none;
+        }
+
+        .btn.toggle:has(> input:not(:checked)), .btn.toggle:not(.checked) {
+            background: none;
+            color: var(--btn-color);
+        }
+
+        .btn-group {
+            display: flex;
+
+            & > * {
+                margin-right: 0;
+                margin-left: -1px;
+                border-radius: 0;
+            }
+
+            :first-child {
+                margin-left: 0;
+                border-top-left-radius: var(--border-radius);
+                border-bottom-left-radius: var(--border-radius);
+            }
+
+            :last-child {
+                border-top-right-radius: var(--border-radius);
+                border-bottom-right-radius: var(--border-radius);
+            }
         }
 
         .blue {

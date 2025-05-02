@@ -17,7 +17,7 @@
     const scores = $derived(getStudentsScores(filtered, filteredRatings))
     const allScores = $derived(getStudentsScores(allFiltered, filteredRatings))
 
-    const keys = ['influence', 'popularity', 'affection', 'influenceability', 'overall'] as const
+    const keys = ['influence', 'popularity', 'influenceability', 'affection', 'overall'] as const
     const ranks = $derived(keys.map(key => {
         const nonNull = allScores.filter(s => s[key] != undefined);
         return [key, rankedBy(nonNull, s => s[key]!), nonNull.length] as const;
@@ -38,19 +38,19 @@
 
 </script>
 
-<div class="filters">
-    <label>
+<div class="filters btn-group">
+    <label class="btn toggle white">
         <input bind:group={filter} type="radio" value="all" />
         Všichni
     </label>
     {#if students.some(s => s.is_girl)}
-        <label>
+        <label class="btn toggle red">
             <input bind:group={filter} type="radio" value="girls" />
             Pouze dívky o dívkách
         </label>
     {/if}
     {#if students.some(s => !s.is_girl)}
-        <label>
+        <label class="btn toggle blue">
             <input bind:group={filter} type="radio" value="boys" />
             Pouze chlapci o chlapcích
         </label>
@@ -63,8 +63,8 @@
         {#snippet header()}
             <th>Index vlivu</th>
             <th>Index obliby</th>
-            <th>Index náklonosti</th>
             <th>Index ovlivnitelnosti</th>
+            <th>Index náklonosti</th>
             <th>Celkové hodnocení</th>
         {/snippet}
 
@@ -87,8 +87,8 @@
         {/if}
         <th class={c.i} onclick={o.i}>Index vlivu</th>
         <th class={c.p} onclick={o.p}>Index obliby</th>
-        <th class={c.a} onclick={o.a}>Index náklonosti</th>
         <th class={c.b} onclick={o.b}>Index ovlivnitelnosti</th>
+        <th class={c.a} onclick={o.a}>Index náklonosti</th>
         <th class={c.o} onclick={o.o}>Celkové hodnocení</th>
     {/snippet}
 
@@ -109,7 +109,7 @@
 
 <style>
     .filters {
-        margin: .75rem;
+        margin: .75rem 0;
 
         label, input {
             cursor: pointer;

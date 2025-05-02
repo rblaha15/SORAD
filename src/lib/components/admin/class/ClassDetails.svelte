@@ -2,13 +2,15 @@
     import BasicLayout from "$lib/components/BasicLayout.svelte";
     import type { Class, Student } from "$lib/database";
     import database from "$lib/database/supabase.js";
-    import { mount, onMount } from "svelte";
+    import { onMount } from "svelte";
     import { getStudentsScores, type RatingWithStudents } from "$lib/data";
     import Collapsible from "$lib/components/Collapsible.svelte";
     import ClassChart from "./ClassChart.svelte";
     import StudentsTable from "$lib/components/admin/class/StudentsTable.svelte";
     import type { EventHandler } from "svelte/elements";
     import PrintCodes from "$lib/components/admin/class/PrintCodes.svelte";
+    import { printComponent } from "$lib/print.svelte";
+    import seedrandom from "seedrandom";
 
     const { classId }: { classId: number } = $props()
 
@@ -42,24 +44,24 @@
         await refresh();
     }
 
-    const print = async () => {
-        const passwords = await database.admin.getStudentPasswords(students.map(s => s.email)) ?? await (async () => {
-            await database.admin.addStudentPasswords(students.map(s => ({
-                email: s.email,
-                password: [...Array(6)].map(() => Math.random().toString(36)[2] || '0').join('').toUpperCase(),
-            })))
-            return await database.admin.getStudentPasswords(students.map(s => s.email));
-        })()
-        const codes = students.map(s => ({ ...s, password: passwords.find(p => p.email == s.email)!.password }));
+    const randomChar = (random: () => number = Math.random) =>
+        (random().toString(36)[2] || '0').toUpperCase()
 
-        const w = window.open()!;
-        mount(PrintCodes, { props: { codes }, target: w.document.body })
-        document.querySelectorAll('style, link[rel="stylesheet"]').forEach(el => {
-            w.document.head.appendChild(el.cloneNode(true));
-        });
-        w.onbeforeunload = () => w.close();
-        w.onafterprint = () => w.close();
-        w.print();
+    const classRandom = seedrandom(classId.toString())
+    const classCode = randomChar(classRandom) + randomChar(classRandom)
+    const newPassword = () => classCode + [...Array(4)].map(() => randomChar()).join('')
+
+    const print = async () => {
+        let passwords = await database.admin.getStudentPasswords(students.map(s => s.email))
+        const newPasswords = Object.fromEntries(students
+            .filter(s => !(s.email in passwords))
+            .map(s => [s.email, newPassword()] as [string, string]))
+        await database.admin.addStudentPasswords(newPasswords)
+        passwords = { ...passwords, ...newPasswords }
+
+        const codes = students.map(s => ({ ...s, password: passwords[s.email]! }));
+
+        printComponent(PrintCodes, { codes })
     }
 </script>
 

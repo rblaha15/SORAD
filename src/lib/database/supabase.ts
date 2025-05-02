@@ -203,14 +203,15 @@ const database: Database = {
         },
 
         addStudentPasswords: async studentPasswords => {
-            const {error} = await client.from('student_password').insert(studentPasswords)
+            const {error} = await client.from('student_password')
+                .insert(Object.entries(studentPasswords).map(([email, password]) => ({email, password})))
             if (error) throw error
         },
         getStudentPasswords: async studentEmails => {
             const {data, error} = await client.from('student_password').select('*')
                 .in('email', studentEmails)
             if (error) throw error
-            return data
+            return Object.fromEntries(data.map(s => [s.email, s.password] as [string, string]))
         },
 
         createStudentAccounts: async students => {

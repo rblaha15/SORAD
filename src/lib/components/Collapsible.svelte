@@ -42,6 +42,9 @@
             content: '\025BE';
         }
     }
+    div {
+        margin-left: 1rem;
+    }
     div.hidden {
         display: none;
     }

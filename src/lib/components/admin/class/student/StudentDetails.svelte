@@ -2,15 +2,15 @@
     import BasicLayout from "$lib/components/BasicLayout.svelte";
     import type { Class, Student } from "$lib/database";
     import database from "$lib/database/supabase";
-    import {onMount} from "svelte";
-    import {getStudentScore, type RatingWithStudents, type StudentScore} from "$lib/data";
+    import { onMount } from "svelte";
+    import { getStudentScore, type RatingWithStudents, type StudentScore } from "$lib/data";
     import StudentsTable from "$lib/components/admin/class/StudentsTable.svelte";
     import RatingsTable from "$lib/components/admin/class/student/RatingsTable.svelte";
     import Collapsible from "$lib/components/Collapsible.svelte";
     import StudentChart from "$lib/components/admin/class/student/StudentChart.svelte";
     import TopScrollable from "$lib/components/TopScrollable.svelte";
 
-    let {studentId, classId}: { studentId: number, classId: number } = $props()
+    let { studentId, classId }: { studentId: number, classId: number } = $props()
 
     let klass = $state() as Class;
     let ratingsWrote = $state<RatingWithStudents[]>([]);
@@ -43,26 +43,21 @@
 </script>
 
 {#snippet title()}
-    Třída: {klass.name} <br/>
+    Třída: {klass.name} <br />
     <span style="font-size: 1rem">{score.names} {score.surname}</span>
 {/snippet}
 {#snippet content()}
-    <Collapsible label="Grafy">
+    <Collapsible label="Grafy sympatií">
         <TopScrollable>
             <div class="charts">
-                <div>
-                    <p>Hodnocení ostatními:</p>
-                    <StudentChart myself={student} ratings={ratingsGot} />
-                </div>
-                <div>
-                    <p>Hodnocení ostatních:</p>
-                    <StudentChart myself={student} ratings={ratingsWrote} />
-                </div>
+                <StudentChart myself={student} ratings={ratingsGot} />
+                <StudentChart myself={student} ratings={ratingsWrote} />
             </div>
         </TopScrollable>
     </Collapsible>
-    <p>Přehled třídních indexů:</p>
-    <StudentsTable students={[student]} allStudents={students} {ratings} />
+    <Collapsible label="Přehled třídních indexů">
+        <StudentsTable students={[student]} allStudents={students} {ratings} />
+    </Collapsible>
     <Collapsible label="Hodnocení, která dostal{a}">
         <RatingsTable ratings={ratingsGot} />
     </Collapsible>
@@ -78,7 +73,7 @@
 {#if klass === undefined || score === undefined}
     <span class="loader"></span>
 {:else}
-    <BasicLayout {buttons} {content} {title}/>
+    <BasicLayout {buttons} {content} {title} />
 {/if}
 
 <style>

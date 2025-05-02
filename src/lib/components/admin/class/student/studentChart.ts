@@ -1,6 +1,9 @@
-import type {ChartConfiguration} from "chart.js";
-import type {Student} from "$lib/database";
-import {lcm} from "$lib/data";
+import { Chart, type ChartConfiguration } from "chart.js";
+import type { Student } from "$lib/database";
+import { lcm } from "$lib/data";
+import datalabels from "chartjs-plugin-datalabels";
+
+Chart.register(datalabels);
 
 const importance = (value: number) => ({
     0: 2,
@@ -16,6 +19,7 @@ export const studentChart = (
         value: number,
         student: Student,
     }[],
+    print: boolean,
 ): ChartConfiguration => {
     const studentsPerValue = Object.entries(Object.groupBy(values, r => r.value))
         .filter(([_, v]) => v != undefined)
@@ -30,7 +34,7 @@ export const studentChart = (
         type: 'radar',
         data: {
             labels: arr(count + 1, ''),
-            datasets: studentsPerValue.flatMap(({value, students, size}) => {
+            datasets: studentsPerValue.flatMap(({ value, students, size }) => {
                 const gap = Math.floor((count + 1) / size);
                 const offset = Math.floor(Math.random() * (gap - 1))
                 return students.map((student, i) => {
@@ -59,19 +63,29 @@ export const studentChart = (
                     hoverBorderWidth: 4,
                 },
             },
+            layout: {
+                padding: print ? 50 : 0,
+            },
             scales: {
                 r: {
+                    angleLines: {
+                        display: false
+                    },
                     beginAtZero: true,
                     min: 0,
                     max: 5,
                     ticks: {
-                        color: ctx => `rgba(255, 255, 255, ${importance(ctx.index)})`,
-                        backdropColor: 'black',
+                        color: ctx => print
+                            ? `rgba(0, 0, 0, ${importance(ctx.index)})`
+                            : `rgba(255, 255, 255, ${importance(ctx.index)})`,
+                        backdropColor: print ? 'white' : 'black',
                         precision: 0,
                     },
                     grid: {
                         circular: true,
-                        color: ctx => `rgba(255, 255, 255, ${importance(ctx.index)})`,
+                        color: ctx => print
+                            ? `rgba(0, 0, 0, ${importance(ctx.index)})`
+                            : `rgba(255, 255, 255, ${importance(ctx.index)})`,
                     },
                     pointLabels: {
                         display: false,
@@ -87,12 +101,23 @@ export const studentChart = (
                 },
                 tooltip: {
                     callbacks: {
-                        label: item => item.dataset.label
+                        label: item => item.dataset.label,
                     },
+                },
+                datalabels: {
+                    align: 'end',
+                    formatter: (_, ctx) => ctx.dataset.label!.replace(' ', '\n'),
+                    display: print,
+                    textAlign: 'center',
+                    font: {
+                        weight: 'bold'
+                    },
+                    color: ctx => `rgba(0, 0, 0, ${importance(ctx.dataset.data.at(-1) as number)})`,
+                    offset: ctx => importance(ctx.dataset.data.at(-1) as number) * 10 - 5,
                 },
             },
         },
     });
-}
+};
 
 const arr = <T>(size: number, value: T) => Array(size).fill(value);
