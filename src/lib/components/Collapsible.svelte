@@ -1,51 +1,43 @@
 <script lang="ts">
     import type {Snippet} from "svelte";
 
-    const {
+    let {
         label,
         children,
         content = children!,
-        collapsedInitially = true,
+        open = false,
     }: {
-        label: string | Snippet<[{ collapsed: boolean }]>,
+        label: string,
         children?: Snippet,
         content?: Snippet,
-        collapsedInitially?: boolean,
+        open?: boolean,
     } = $props();
 
-    let collapsed = $state(collapsedInitially)
-    const toggle = () =>
-        collapsed = !collapsed;
 </script>
 
-<button class="white" onclick={toggle}>
-    {#if typeof label == 'string'}{label}{:else}{@render label({collapsed})}{/if}
-</button>
-<div class={{hidden: collapsed}}>
-    {@render content()}
-</div>
+<details bind:open>
+    <summary>{label}</summary>
+    {@render content?.()}
+</details>
 
 <style>
-    button {
-        display: block;
-        margin-top: .375rem;
-        border: none;
-
-        &::before {
-            content: '\025B4';
-            font-size: inherit;
-            color: inherit;
-            margin-right: .375rem;
-        }
-
-        &:has(+ .hidden)::before {
-            content: '\025BE';
-        }
+    details {
+        border: 1px solid var(--grey-color);
+        border-radius: .75rem;
+        margin-top: 1rem;
     }
-    div {
-        margin-left: 1rem;
+    summary {
+        font-weight: bold;
+        padding: 1rem;
+        cursor: pointer;
     }
-    div.hidden {
-        display: none;
+
+    details[open] {
+        padding: 1rem;
+    }
+
+    details[open] summary {
+        border-bottom: 1px solid var(--grey-color);
+        margin: -1rem -1rem 0;
     }
 </style>

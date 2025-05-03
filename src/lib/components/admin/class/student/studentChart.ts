@@ -1,6 +1,6 @@
 import { Chart, type ChartConfiguration } from "chart.js";
 import type { Student } from "$lib/database";
-import { lcm } from "$lib/data";
+import { arrayOf, lcm } from "$lib/data";
 import datalabels from "chartjs-plugin-datalabels";
 
 Chart.register(datalabels);
@@ -33,14 +33,14 @@ export const studentChart = (
     return ({
         type: 'radar',
         data: {
-            labels: arr(count + 1, ''),
+            labels: arrayOf(count + 1, ''),
             datasets: studentsPerValue.flatMap(({ value, students, size }) => {
                 const gap = Math.floor((count + 1) / size);
                 const offset = Math.floor(Math.random() * (gap - 1))
                 return students.map((student, i) => {
                     const index = Math.min(gap * i + 1, count);
                     return ({
-                        data: [...arr(index + offset, null), value],
+                        data: [...arrayOf(index + offset, null), value],
                         backgroundColor: student.is_girl ? 'orangered' : 'dodgerblue',
                         pointRadius: 8 * importance(value),
                         hoverRadius: 10 * importance(value),
@@ -119,5 +119,3 @@ export const studentChart = (
         },
     });
 };
-
-const arr = <T>(size: number, value: T) => Array(size).fill(value);

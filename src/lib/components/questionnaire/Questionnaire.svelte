@@ -65,20 +65,17 @@
 
 <BasicLayout>
     {#snippet title()}
-        Třída: {data.myClass.name}
+        {data.myself.names} {data.myself.surname} ({data.myClass.name})
     {/snippet}
     {#snippet content()}
         {#if data.alreadyRated}
-            <p>Js{i} přihlášen jako {data.myself.names} {data.myself.surname}.</p>
             <p>Hotovo! {tve} odpovědi byly odeslány.</p>
         {:else if !data.myClass.enabled}
-            <p>Js{i} přihlášen jako {data.myself.names} {data.myself.surname}.</p>
             <p>V této třídě aktuálně neprobíhá sběr dat.</p>
         {:else if currentGroupIndex === -1}
-            <p>Js{i} přihlášen jako {data.myself.names} {data.myself.surname}.</p>
-            <Tutorial isGirl={true/*data.myself.is_girl*/} grade={4/*data.myClass.grade*/} {phase} />
+            <Tutorial isGirl={data.myself.is_girl} grade={data.myClass.grade} {phase} />
         {:else}
-            <Tutorial isGirl={true/*data.myself.is_girl*/} grade={4/*data.myClass.grade*/} justOverview {phase} />
+            <Tutorial isGirl={data.myself.is_girl} grade={data.myClass.grade} {phase} justOverview />
             <div class="student-group {phase.replace('-', ' ')}">
                 <span class="main-title"></span>
                 <span class="main-title I">Vliv:</span>
@@ -91,15 +88,15 @@
         {/if}
     {/snippet}
     {#snippet buttons()}
-        <button class="grey" onclick={database.auth.logOut} style="margin-right: auto;">Odhlásit</button>
+        <button class="secondary" onclick={database.auth.logOut} style="margin-right: auto;">Odhlásit</button>
         {#if data.alreadyRated || !data.myClass.enabled}{:else if currentGroupIndex === -1 && phase === 'influence'}
-            <button class="blue" onclick={next}>Začít!</button>
+            <button class="primary" onclick={next}>Začít!</button>
         {:else}
-            <button class="grey" onclick={back}>Zpět</button>
+            <button class="secondary" onclick={back}>Zpět</button>
             {#if phase === 'sympathy-reasoning' && currentGroupIndex === allGroups.length - 1}
-                <button class="red" onclick={send}>Odeslat</button>
+                <button class="danger" onclick={send}>Odeslat</button>
             {:else}
-                <button class="blue" onclick={next}>Další</button>
+                <button class="primary" onclick={next}>Další</button>
             {/if}
         {/if}
     {/snippet}

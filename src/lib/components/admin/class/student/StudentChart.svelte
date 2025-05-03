@@ -41,7 +41,7 @@
     {#if !print}
         <div class="title">
             <h4>{bySameStudent ? 'Hodnocení ostatními:' : 'Hodnocení ostatních:'}</h4>
-            <button class="white"
+            <button class="neutral"
                     onclick={() => printComponent(StudentChart, { myself, ratings, print: true })}
             >Vytiskonout
             </button>

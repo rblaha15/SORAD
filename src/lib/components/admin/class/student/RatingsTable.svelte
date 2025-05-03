@@ -26,15 +26,15 @@
 </script>
 
 <div class="filters btn-group">
-    <label class="btn white toggle">
+    <label class="btn neutral toggle">
         <input bind:group={filter} type="radio" value="all" />
         Všichni
     </label>
-    <label class="btn red toggle">
+    <label class="btn toggle" style="--btn-color: var(--girl-color)">
         <input bind:group={filter} type="radio" value={aboutSameStudent ? 'byGirls' : 'aboutGirls'} />
         Pouze dívky
     </label>
-    <label class="btn blue toggle">
+    <label class="btn toggle" style="--btn-color: var(--boy-color)">
         <input bind:group={filter} type="radio" value={aboutSameStudent ? 'byBoys' : 'aboutBoys'} />
         Pouze chlapci
     </label>

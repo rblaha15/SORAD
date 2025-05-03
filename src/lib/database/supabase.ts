@@ -1,12 +1,13 @@
-import {createClient} from '@supabase/supabase-js';
-import type {Class, Database, Rating, Student, StudentPassword} from '$lib/database';
+import { createClient } from '@supabase/supabase-js';
+import type { GenericSchema } from '@supabase/supabase-js/src/lib/types';
+import type { Class, Database, Rating, Student, StudentPassword } from '$lib/database';
 
 type DatabaseSchema = {
     public: {
         Tables: {
             class: {
                 Row: Class
-                Insert: Class
+                Insert: Omit<Class, 'id'> & { id?: number }
                 Update: Partial<Class>
                 Relationships: []
             }
@@ -33,9 +34,7 @@ type DatabaseSchema = {
             }
             student: {
                 Row: Student
-                Insert: Student & {
-                    id?: number
-                }
+                Insert: Omit<Student, 'id'> & { id?: number }
                 Update: Partial<Student>
                 Relationships: [
                     {
@@ -70,58 +69,64 @@ type DatabaseSchema = {
                 }
                 Returns: string
             }
+            get_class_ratings: {
+                Args: {
+                    class_id: number
+                }
+                Returns: Rating[]
+            }
         }
         Enums: Record<never, never>
         CompositeTypes: Record<never, never>
     }
 }
 
-const client = createClient<DatabaseSchema>(
+const client = createClient<DatabaseSchema, 'public', DatabaseSchema['public']>(
     'https://jmbgjmilpreombqpztli.supabase.co',
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImptYmdqbWlscHJlb21icXB6dGxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEzMjQ0NDIsImV4cCI6MjA1NjkwMDQ0Mn0.Vr69TqY4bcTFFCbC7TBA69eWEeNhgkRXre53h5qfO-Q'
 )
 
 const database: Database = {
     getStudentByEmail: async email => {
-        const {data, error} = await client.from('student').select('*')
+        const { data, error } = await client.from('student').select('*')
             .eq('email', email)
             .single()
         if (error) throw error
         else return data
     },
     getStudentById: async id => {
-        const {data, error} = await client.from('student').select('*')
+        const { data, error } = await client.from('student').select('*')
             .eq('id', id)
             .single()
         if (error) throw error
         else return data
     },
     getEmailByPassword: async password => {
-        const {data, error} = await client.rpc('get_email_by_password', {p: password})
+        const { data, error } = await client.rpc('get_email_by_password', { p: password })
         if (error) throw error
         return data
     },
     getMyClass: async klass => {
-        const {data, error} = await client.from('class').select('*')
+        const { data, error } = await client.from('class').select('*')
             .eq('id', klass)
             .single()
         if (error) throw error
         return data
     },
     getStudentsOfClass: async klass => {
-        const {data, error} = await client.from('student').select('*')
+        const { data, error } = await client.from('student').select('*')
             .eq('class', klass)
         if (error) throw error
         return data
     },
     getAlreadyRated: async studentId => {
-        const {count, error} = await client.from('rating').select("", {count: 'exact'})
+        const { count, error } = await client.from('rating').select("", { count: 'exact' })
             .eq('by', studentId)
         if (error) throw error
         return (count ?? 0) > 0
     },
     rate: async ratings => {
-        const {error} = await client.from('rating')
+        const { error } = await client.from('rating')
             .upsert(ratings)
         if (error) throw error
     },
@@ -129,7 +134,7 @@ const database: Database = {
     auth: {
         getEmail: async () => (await client.auth.getUser())?.data?.user?.email ?? null,
         logInWithMS: async () => {
-            const {error} = await client.auth.signInWithOAuth({
+            const { error } = await client.auth.signInWithOAuth({
                 provider: 'azure',
                 options: {
                     redirectTo: window.location.href,
@@ -142,7 +147,7 @@ const database: Database = {
         logInWithStudentPassword: async (password) => {
             const email = await database.getEmailByPassword(password)
             if (!email) return false
-            const {error} = await client.auth.signInWithPassword({
+            const { error } = await client.auth.signInWithPassword({
                 email, password,
             })
             if (error) {
@@ -155,7 +160,7 @@ const database: Database = {
         },
 
         logOut: async () => {
-            const {error} = await client.auth.signOut()
+            const { error } = await client.auth.signOut()
             if (error) console.error(error)
             else window.location.reload();
         }
@@ -163,61 +168,58 @@ const database: Database = {
 
     admin: {
         getClasses: async () => {
-            const {data, error} = await client.from('class').select('*')
+            const { data, error } = await client.from('class').select('*')
             if (error) throw error
             return data
         },
-        addClass: async klass => {
-            const {error} = await client.from('class').insert(klass)
+        setClass: async klass => {
+            const { error } = await client.from('class').upsert(klass)
             if (error) throw error
         },
         deleteClass: async classId => {
-            const {error} = await client.from('class').delete()
+            const { error } = await client.from('class').delete()
                 .eq('id', classId)
-            if (error) throw error
-        },
-        updateClass: async klass => {
-            const {error} = await client.from('class').upsert(klass)
             if (error) throw error
         },
 
         getClassRatings: async classId => {
-            const {data, error} = await client
+            const { data, error } = await client
                 .rpc('get_class_ratings', { class_id: classId });
             if (error) throw error
             return data
         },
-
-        addStudents: async students => {
-            const {error} = await client.from('student').insert(students)
+        removeRatings: async studentIds => {
+            const { error } = await client.from('rating').delete()
+                .or(`by.in.(${studentIds.join(',')}),about.in.(${studentIds.join(',')})`)
             if (error) throw error
         },
-        updateStudents: async students => {
-            const {error} = await client.from('student').upsert(students)
+
+        setStudents: async students => {
+            const { error } = await client.from('student').upsert(students)
             if (error) throw error
         },
         removeStudents: async studentIds => {
-            const {error} = await client.from('student').delete()
+            const { error } = await client.from('student').delete()
                 .in('id', studentIds)
             if (error) throw error
         },
-
-        addStudentPasswords: async studentPasswords => {
-            const {error} = await client.from('student_password')
-                .insert(Object.entries(studentPasswords).map(([email, password]) => ({email, password})))
-            if (error) throw error
-        },
         getStudentPasswords: async studentEmails => {
-            const {data, error} = await client.from('student_password').select('*')
+            const { data, error } = await client.from('student_password').select('*')
                 .in('email', studentEmails)
             if (error) throw error
             return Object.fromEntries(data.map(s => [s.email, s.password] as [string, string]))
         },
-
-        createStudentAccounts: async students => {
-            for (const student of students) {
-                await client.auth.signUp(student)
-            }
+        createStudentAccountsAndSavePasswords: async students => {
+            const { error } = await client.functions.invoke<string>('create-users', {
+                body: { users: Object.entries(students).map(([email, password]) => ({ email, password })) }
+            })
+            if (error) throw error
+        },
+        deleteStudentAccountsAndPasswords: async students => {
+            const { error } = await client.functions.invoke<string>('delete-users', {
+                body: { users: students }
+            })
+            if (error) throw error
         },
     }
 }

@@ -17,32 +17,30 @@ export interface Database {
 
     admin: {
         getClasses: () => Promise<Class[]>
-        addClass: (klass: Class) => Promise<void>
+        setClass: (klass: Omit<Class, 'id'> & { id?: number }) => Promise<void>
         deleteClass: (classId: number) => Promise<void>
-        updateClass: (klass: Class) => Promise<void>
 
         getClassRatings: (classId: number) => Promise<Rating[]>
+        removeRatings: (studentIds: number[]) => Promise<void>
 
-        addStudents: (students: Student[]) => Promise<void>
-        updateStudents: (students: Student[]) => Promise<void>
+        setStudents: (students: Omit<Student, 'id'>[]) => Promise<void>
         removeStudents: (studentIds: number[]) => Promise<void>
 
-        addStudentPasswords: (studentPasswords: StudentPasswords) => Promise<void>
         getStudentPasswords: (studentEmails: string[]) => Promise<StudentPasswords>
-
-        createStudentAccounts: (students: { email: string, password: string }[]) => Promise<void>
+        createStudentAccountsAndSavePasswords: (students: StudentPasswords) => Promise<void>
+        deleteStudentAccountsAndPasswords: (students: Student[]) => Promise<void>
     }
 }
 
 
-export interface Class {
+export type Class = {
     id: number
     name: string
     grade: number
     enabled: boolean
 }
 
-export interface Student {
+export type Student = {
     class: number
     id: number
     is_girl: boolean
@@ -52,12 +50,12 @@ export interface Student {
     email: string
 }
 
-export interface StudentPassword {
+export type StudentPassword = {
     email: string
     password: string
 }
 
-export interface Rating {
+export type Rating = {
     about: number
     by: number
     sympathy: number

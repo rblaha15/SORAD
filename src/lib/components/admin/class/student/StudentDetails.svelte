@@ -43,31 +43,39 @@
 </script>
 
 {#snippet title()}
-    Třída: {klass.name} <br />
+    Administrace: třída {klass.name} <br />
     <span style="font-size: 1rem">{score.names} {score.surname}</span>
 {/snippet}
 {#snippet content()}
     <Collapsible label="Grafy sympatií">
         <TopScrollable>
             <div class="charts">
-                <StudentChart myself={student} ratings={ratingsGot} />
-                <StudentChart myself={student} ratings={ratingsWrote} />
+                {#if ratingsGot.length}
+                    <StudentChart myself={student} ratings={ratingsGot} />
+                {/if}
+                {#if ratingsWrote.length}
+                    <StudentChart myself={student} ratings={ratingsWrote} />
+                {/if}
             </div>
         </TopScrollable>
     </Collapsible>
     <Collapsible label="Přehled třídních indexů">
         <StudentsTable students={[student]} allStudents={students} {ratings} />
     </Collapsible>
-    <Collapsible label="Hodnocení, která dostal{a}">
-        <RatingsTable ratings={ratingsGot} />
-    </Collapsible>
-    <Collapsible label="Hodnocení, která dal{a}">
-        <RatingsTable ratings={ratingsWrote} />
-    </Collapsible>
+    {#if ratingsGot.length}
+        <Collapsible label="Hodnocení, která dostal{a}">
+            <RatingsTable ratings={ratingsGot} />
+        </Collapsible>
+    {/if}
+    {#if ratingsWrote.length}
+        <Collapsible label="Hodnocení, která dal{a}">
+            <RatingsTable ratings={ratingsWrote} />
+        </Collapsible>
+    {/if}
 {/snippet}
 {#snippet buttons()}
-    <button class="grey" onclick={() => window.history.back()}>Zpět</button>
-    <button class="grey" onclick={database.auth.logOut} style="margin-right: 'auto';">Odhlásit</button>
+    <button class="secondary" onclick={() => window.history.back()}>Zpět</button>
+    <button class="secondary" onclick={database.auth.logOut} style="margin-right: 'auto';">Odhlásit</button>
 {/snippet}
 
 {#if klass === undefined || score === undefined}

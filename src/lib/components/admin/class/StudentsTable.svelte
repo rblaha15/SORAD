@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { getClassScore, getStudentsScores, rankedBy, type RatingWithStudents, type StudentScoreWithRanks } from "$lib/data";
+    import { averageBy, getStudentsScores, rankedBy, type RatingWithStudents, type StudentScoreWithRanks } from "$lib/data";
     import Table from "$lib/components/Table.svelte";
     import type { Student } from "$lib/database";
 
@@ -32,54 +32,57 @@
         }
     }))
 
+    const i = $derived(ranked.filter(r => r.influence))
+    const p = $derived(ranked.filter(r => r.popularity))
+    const b = $derived(ranked.filter(r => r.influenceability))
+    const a = $derived(ranked.filter(r => r.affection))
+    const o = $derived(ranked.filter(r => r.overall))
+    const withAverage = $derived(overview ? [
+        {
+            influence: i.length ? { value: averageBy(i, r => r.influence!.value), rank: 0, of: 0 } : undefined,
+            popularity: p.length ? { value: averageBy(p, r => r.popularity!.value), rank: 0, of: 0 } : undefined,
+            influenceability: b.length ? { value: averageBy(b, r => r.influenceability!.value), rank: 0, of: 0 } : undefined,
+            affection: a.length ? { value: averageBy(a, r => r.affection!.value), rank: 0, of: 0 } : undefined,
+            overall: o.length ? { value: averageBy(o, r => r.overall!.value), rank: 0, of: 0 } : undefined,
+            is_girl: false,
+            student_number: -1,
+            class: -1,
+            id: -1,
+            surname: '',
+            names: '',
+            email: '',
+        },
+        ...ranked
+    ] : ranked)
+
     const columns = (s: StudentScoreWithRanks) => keys.map(key => s[key] == undefined ? '—'
         : `${s[key].value.toFixed(2).replace('.', ',')} (${s[key].rank}/${s[key].of})`
     )
-
 </script>
 
 <div class="filters btn-group">
-    <label class="btn toggle white">
+    <label class="btn toggle neutral">
         <input bind:group={filter} type="radio" value="all" />
         Všichni
     </label>
     {#if students.some(s => s.is_girl)}
-        <label class="btn toggle red">
+        <label class="btn toggle" style="--btn-color: var(--girl-color)">
             <input bind:group={filter} type="radio" value="girls" />
             Pouze dívky o dívkách
         </label>
     {/if}
     {#if students.some(s => !s.is_girl)}
-        <label class="btn toggle blue">
+        <label class="btn toggle" style="--btn-color: var(--boy-color)">
             <input bind:group={filter} type="radio" value="boys" />
             Pouze chlapci o chlapcích
         </label>
     {/if}
 </div>
 
-{#if overview}
-    <p>Průměrné indexy celé skupiny:</p>
-    <Table items={[getClassScore(scores)]}>
-        {#snippet header()}
-            <th>Index vlivu</th>
-            <th>Index obliby</th>
-            <th>Index ovlivnitelnosti</th>
-            <th>Index náklonosti</th>
-            <th>Celkové hodnocení</th>
-        {/snippet}
-
-        {#snippet row(score)}
-            {#each Object.values(score) as col}
-                <td>{col?.toFixed(2)?.replace('.', ',') ?? '—'}</td>
-            {/each}
-        {/snippet}
-    </Table>
-{/if}
-
 <Table columns={{
     s: 'student_number', n: 'surname', i: r => r.influence?.value, p: r => r.popularity?.value,
     a: r => r.affection?.value, b: r => r.influenceability?.value, o: r => r.overall?.value
-}} defaultSort={ranked.length <= 1 ? undefined : {n: 'ascending'}} items={ranked}>
+}} defaultSort={ranked.length <= 1 ? undefined : {n: 'ascending'}} items={withAverage}>
     {#snippet header(c, o)}
         {#if ranked.length > 1}
             <th class={c.s} onclick={o.s}>#</th>
@@ -93,17 +96,25 @@
     {/snippet}
 
     {#snippet row(score)}
-        {#if ranked.length > 1}
-            <td>{score.student_number}</td>
-            <td class="left">
-                <a style:color={score.is_girl ? 'orangered' : 'dodgerblue'}
-                   tabindex="0" href="/admin?class={score.class}&student={score.id}"
-                >{score.names} <strong>{score.surname}</strong></a>
-            </td>
+        {#if score.id === -1}
+            <td></td>
+            <td class="left"><strong>Průměr</strong></td>
+            {#each columns(score) as col}
+                <td>{col.split(' (')[0]}</td>
+            {/each}
+        {:else}
+            {#if ranked.length > 1}
+                <td>{score.student_number}</td>
+                <td class="left">
+                    <a style:color={score.is_girl ? 'var(--girl-color)' : 'var(--boy-color)'}
+                       tabindex="0" href="/admin?class={score.class}&student={score.id}"
+                    >{score.names} <strong>{score.surname}</strong></a>
+                </td>
+            {/if}
+            {#each columns(score) as col}
+                <td>{col}</td>
+            {/each}
         {/if}
-        {#each columns(score) as col}
-            <td>{col}</td>
-        {/each}
     {/snippet}
 </Table>
 

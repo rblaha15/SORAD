@@ -23,6 +23,7 @@
 
 <style>
     table {
+        color: black;
         border-collapse: collapse;
         border: 2px solid black;
 

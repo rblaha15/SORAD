@@ -12,7 +12,7 @@
     import {sortedBy, sortedByDescending} from "$lib/data";
     import TopScrollable from "$lib/components/TopScrollable.svelte";
 
-    const {items, header, row, columns, defaultSort}: {
+    const {items, header, row, columns, defaultSort, borders = false}: {
         items: T[],
         header: Snippet<[
             classes: {
@@ -29,6 +29,7 @@
         defaultSort?: {
             [C in Column]?: 'ascending' | 'descending';
         },
+        borders?: boolean,
     } = $props()
 
     let sort = $state<Column | null>(null)
@@ -55,7 +56,7 @@
     )) as { [C in Column]: T; }
 </script>
 <TopScrollable>
-    <table class:sortable={columns !== undefined && defaultSort !== undefined}>
+    <table class:sortable={columns !== undefined && defaultSort !== undefined} class:borders>
         <thead>
         <tr>
             {@render header(
@@ -78,6 +79,7 @@
     table {
         width: fit-content;
         border-spacing: .375rem;
+        border-collapse: collapse;
 
         tr {
             :global {
@@ -93,6 +95,13 @@
                     white-space: nowrap;
                 }
             }
+        }
+    }
+
+    table.borders tr :global {
+        td, th {
+            border: 1px solid white;
+            padding: .375rem;
         }
     }
 

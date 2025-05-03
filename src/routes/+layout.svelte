@@ -22,15 +22,16 @@
         --influence-color: lightcyan;
         --sympathy-color: papayawhip;
 
-        --blue-color: dodgerblue;
-        --orange-color: orangered;
-        --red-color: red;
-        --grey-color: grey;
+        --blue-color: deepskyblue;
+        --orange-color: orange;
+        --red-color: crimson;
+        --grey-color: darkgrey;
         --white-color: white;
+        --green-color: limegreen;
 
         --link-color: var(--blue-color);
-        --boy-color: var(--blue-color);
-        --girl-color: var(--orange-color);
+        --boy-color: dodgerblue;
+        --girl-color: orangered;
     }
 
     :global {
@@ -57,6 +58,11 @@
             text-decoration: none;
             width: fit-content;
             height: fit-content;
+
+            &:disabled {
+                opacity: .65;
+                pointer-events: none;
+            }
         }
 
         .btn.toggle {
@@ -66,10 +72,14 @@
             }
         }
 
-        button:hover, .btn:hover, button:focus-visible, .btn:focus-visible, .btn.toggle:has(> input:checked), .btn.toggle.checked {
-            background: var(--btn-color);
-            color: black;
-            outline: none;
+        button, .btn {
+            &:not(:disabled) {
+                &:hover, &:focus-visible, &.toggle:has(> input:checked), &.toggle.checked {
+                    background: var(--btn-color);
+                    color: black;
+                    outline: none;
+                }
+            }
         }
 
         .btn.toggle:has(> input:not(:checked)), .btn.toggle:not(.checked) {
@@ -84,6 +94,9 @@
                 margin-right: 0;
                 margin-left: -1px;
                 border-radius: 0;
+                height: unset;
+                align-content: center;
+                text-align: center;
             }
 
             :first-child {
@@ -98,19 +111,23 @@
             }
         }
 
-        .blue {
+        .primary {
             --btn-color: var(--blue-color);
         }
 
-        .grey {
+        .secondary {
             --btn-color: var(--grey-color);
         }
 
-        .white {
+        .neutral {
             --btn-color: var(--white-color);
         }
 
-        .red {
+        .danger {
+            --btn-color: var(--red-color);
+        }
+
+        .warning {
             --btn-color: var(--orange-color);
         }
 
@@ -121,6 +138,15 @@
             color: inherit;
             font-size: 1rem;
             padding: .375rem .75rem;
+        }
+
+        input[type=checkbox] {
+            transform: scale(1.5);
+            cursor: pointer;
+        }
+
+        label:has(> input[type=checkbox]) {
+            cursor: pointer;
         }
 
         .loader {
@@ -153,6 +179,29 @@
 
         h1 {
             font-size: 1.75rem;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+        }
+
+        dialog {
+            background: black !important;
+            color: white !important;
+            border-radius: 1rem;
+
+            &::backdrop {
+                background-color: rgb(0 0 0 / 50%);
+            }
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
         }
     }
 </style>

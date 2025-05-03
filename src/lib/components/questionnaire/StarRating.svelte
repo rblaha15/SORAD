@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { newArray, range } from "$lib/data.js";
+
     let {
         value = $bindable(), error, type
     }: {
@@ -7,7 +9,7 @@
 
     const id = $props.id()
 
-    const arr = Array(5).fill(0).map((_, i) => i + 1)
+    const arr = range(1, 6)
 </script>
 
 <div class="star-row">

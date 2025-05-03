@@ -1,5 +1,5 @@
 import seedrandom from "seedrandom";
-import {type Class, type Rating, type Student} from "$lib/database";
+import { type Class, type Rating, type Student } from "$lib/database";
 import database from "$lib/database/supabase";
 
 const throwExpr = (x: any): never => {
@@ -29,19 +29,16 @@ export const allData = async (email: string): Promise<Data | undefined> => {
 }
 
 export const shuffled = <T>(array: T[], random: () => number = Math.random): T[] => array
-    .map(value => ({value, sort: random()}))
+    .map(value => ({ value, sort: random() }))
     .sort((a, b) => a.sort - b.sort)
-    .map(({value}) => value)
+    .map(({ value }) => value)
 
 export const getRatingGroups = (myself: Student, students: Student[], maxGroupSize: number): Student[][] => {
     const classmates = students.toSpliced(students.findIndex(s => s.id == myself.id), 1);
 
     const random = seedrandom(`${myself.id}`)
     const shuffledStudents = shuffled(classmates, random)
-    const orderedStudents = [
-        myself,
-        ...sortedBy(shuffledStudents, s => s.is_girl != myself.is_girl),
-    ];
+    const orderedStudents = sortedBy(shuffledStudents, s => s.is_girl != myself.is_girl)
 
     const studentCount = students.length;
     const chunkCount = Math.ceil(studentCount / maxGroupSize);
@@ -63,10 +60,10 @@ type Indexes = {
     influence: number | undefined,
     /** Index obliby */
     popularity: number | undefined,
-    /** Index náklonnosti */
-    affection: number | undefined,
     /** Index ovlivnitelnosti */
     influenceability: number | undefined,
+    /** Index náklonnosti */
+    affection: number | undefined,
     /** Celkové hodnocení */
     overall: number | undefined,
 };
@@ -150,14 +147,19 @@ const compareNullable = (a: Comparable, b: Comparable) => a == null
     : b == null ? Number.NEGATIVE_INFINITY : compare(a, b)
 
 export const sortedBy = <T>(array: T[], callback: (item: T, index: number, array: T[]) => Comparable) => array
-    .map((item, index, array) => ({item, sort: callback(item, index, array)}))
+    .map((item, index, array) => ({ item, sort: callback(item, index, array) }))
     .toSorted((a, b) => compareNullable(a.sort, b.sort))
-    .map(({item}) => item);
+    .map(({ item }) => item);
+
+export const maxBy = <T>(array: T[], callback: (item: T, index: number, array: T[]) => Comparable) =>
+    sortedBy(array, callback).at(-1)
+export const minBy = <T>(array: T[], callback: (item: T, index: number, array: T[]) => Comparable) =>
+    sortedBy(array, callback)[0]
 
 export const sortedByDescending = <T>(array: T[], callback: (item: T, index: number, array: T[]) => Comparable) => array
-    .map((item, index, array) => ({item, sort: callback(item, index, array)}))
+    .map((item, index, array) => ({ item, sort: callback(item, index, array) }))
     .toSorted((a, b) => compareNullable(b.sort, a.sort))
-    .map(({item}) => item);
+    .map(({ item }) => item);
 
 export const ranked = <T extends PropertyKey>(array: T[]) => Object.fromEntries(array.map(
     (item, index) => [item, index + 1]
@@ -190,14 +192,43 @@ export const windowed = <T>(arr: T[], size: number, step: number = 1, partialWin
     while (0 <= index && index < thisSize) {
         const windowSize = Math.min(size, thisSize - index);
         if (windowSize < size && !partialWindows) break;
-        result[arrayIndex++] = Array.from(Array(windowSize), (_, i) => arr[i + index]);
+        result[arrayIndex++] = arr.slice(index, index + windowSize);
         index += step;
     }
     return result;
 };
+
 
 /** Největší společný násobek */
 export const gcd = (a: number, b: number): number => b == 0 ? a : gcd(b, a % b)
 const lcm2 = (a: number, b: number): number => a * b / gcd(a, b)
 /** Nejmenší společný dělitel */
 export const lcm = (...numbers: number[]) => numbers.reduce(lcm2, 1)
+
+const randomChar = (random: () => number = Math.random) =>
+    (random().toString(36)[2] || '0').toUpperCase()
+
+const studentPassword = (student: Omit<Student, 'id'>) => {
+    const classRandom = seedrandom(student.class.toString())
+    const studentRandom = seedrandom(student.email);
+    return newString(6, i => randomChar(i < 2 ? classRandom : studentRandom));
+}
+
+export const generatePasswords = (students: Omit<Student, 'id'>[]) => Object.fromEntries(
+    students.map(s => [s.email, studentPassword(s)] as [string, string])
+)
+
+export function range(startInclusive: number, endExclusive: number): number[];
+export function range(endExclusive: number): number[];
+export function range(p0: number, p1?: number): number[] {
+    const start =  p1 == undefined ? 0 : p0
+    const end =  p1 == undefined ? p0 : p1
+    return newArray(end - start, i => start + i)
+}
+
+export const arrayOf = <T>(size: number, value: T) => newArray(size, () => value);
+export const newArray = <T>(size: number, filler: (index: number) => T) =>
+    Array.from(Array(size), (_, i) => filler(i));
+
+export const newString = (count: number, filler: (index: number) => string) => newArray(count, filler).join('')
+export const stringOf = (count: number, value: string) => arrayOf(count, value).join('')

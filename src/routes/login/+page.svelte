@@ -2,7 +2,7 @@
     import {onMount} from "svelte";
     import database from "$lib/database/supabase";
 
-    let code = $state('P6PMSP')
+    let code = $state('8EF91X')
     let error = $state<string>()
 
     onMount(async () => {
@@ -11,7 +11,7 @@
 
     const logIn = async () => {
         if (!await database.auth.logInWithStudentPassword(code))
-            error = 'Kód, není správný. Prosím, zkontrolujte, že jste ho zadali správně.'
+            error = 'Kód není správný. Prosím, zkontrolujte, že jste ho zadali správně.'
     }
 </script>
 
@@ -22,7 +22,7 @@
                 Zadej své ID:
                 <input bind:value={code} type="text"/>
             </label>
-            <button class="blue" type="submit">Potvrdit</button>
+            <button class="primary" type="submit">Potvrdit</button>
         </div>
         <p>{error}</p>
     </form>
@@ -31,7 +31,7 @@
         <span>nebo</span>
         <hr/>
     </div>
-    <button class="blue" onclick={database.auth.logInWithMS}>Přihlásit se pomocí školního MS účtu</button>
+    <button class="primary" onclick={database.auth.logInWithMS}>Přihlásit se pomocí školního MS účtu</button>
 </div>
 
 <style>
@@ -52,14 +52,10 @@
             }
         }
 
-        .row {
-            display: flex;
-            align-items: center;
 
-            hr {
-                flex-grow: 1;
-                margin: 1rem;
-            }
+        hr {
+            flex-grow: 1;
+            margin: 1rem;
         }
     }
 </style>

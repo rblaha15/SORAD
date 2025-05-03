@@ -7,9 +7,9 @@ export const printComponent = <Props extends Record<string, any>>(component: Com
         w.document.head.appendChild(w.document.importNode(e, true));
     });
     const mounted = mount(component, { props, target: w.document.body })
-    w.onafterprint = async () => {
+    w.onafterprint = () => setTimeout(async () => {
         await unmount(mounted)
         w.close();
-    };
+    }, 100);
     setTimeout(() => w.print(), 100);
 }
