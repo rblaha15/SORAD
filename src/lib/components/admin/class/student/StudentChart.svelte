@@ -5,28 +5,26 @@
     import StudentChart from "./StudentChart.svelte";
     import type { Student } from "$lib/database";
     import { printComponent } from "$lib/print.svelte";
+    import { onMount } from "svelte";
 
     let { ratings, myself, print = false }: { ratings: RatingWithStudents[], myself: Student, print?: boolean } = $props()
     const bySameStudent = new Set(ratings.map(r => r.by.id)).size == 1
 
-    let canvas = $state() as HTMLCanvasElement;
+    const classmates = ratings.toSpliced(ratings.findIndex(r => r.about.id == r.by.id), 1);
+    const myRating = { about: myself, by: myself, sympathy: 0 };
+    const config = studentChart(
+        [myRating, ...classmates].map(r => ({
+            value: r.sympathy,
+            student: bySameStudent ? r.about : r.by
+        })), print,
+    );
+
+    let canvas: HTMLCanvasElement;
     let chart = $state<Chart>();
 
-    $effect(() => {
-        if (!canvas) return;
-
-        const classmates = ratings.toSpliced(ratings.findIndex(r => r.about.id == r.by.id), 1);
-        const myself2 = { about: myself, by: myself, sympathy: 0 };
-        chart = new Chart(canvas, studentChart(
-            [...myself2 ? [myself2] : [], ...classmates].map(r => ({
-                value: r.sympathy,
-                student: bySameStudent ? r.about : r.by
-            })), print,
-        ));
-
-        return () => {
-            chart?.destroy()
-        }
+    onMount(() => {
+        chart = new Chart(canvas, config);
+        return () => chart?.destroy()
     })
 
     const printTitle = `${myself.names} ${myself.surname} — hodnocení sympatií ${bySameStudent ? 'ostatních' : 'ostatními'}`
