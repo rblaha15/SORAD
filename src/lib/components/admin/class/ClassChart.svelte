@@ -1,5 +1,5 @@
 <script lang="ts">
-    import type {StudentScore} from "$lib/data";
+    import type {StudentScore} from "$lib/admin";
     import {Chart} from "chart.js/auto";
     import {classChart} from "./classChart";
     import TopScrollable from "$lib/components/TopScrollable.svelte";

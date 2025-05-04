@@ -1,7 +1,10 @@
 <script lang="ts">
-    import { averageBy, getStudentsScores, rankedBy, type RatingWithStudents, type StudentScoreWithRanks } from "$lib/data";
+    import { getStudentsScores, type RatingWithStudents, type StudentScoreWithRanks } from "$lib/admin";
     import Table from "$lib/components/Table.svelte";
     import type { Student } from "$lib/database";
+
+    import { averageBy } from "$lib/utils/sums";
+    import { rankedBy } from "$lib/utils/ranks";
 
     const {
         overview = false, ratings, students, allStudents = students,
@@ -23,13 +26,13 @@
         return [key, rankedBy(nonNull, s => s[key]!), nonNull.length] as const;
     }))
 
-    const ranked = $derived(scores.map((s): StudentScoreWithRanks => {
+    const ranked = $derived(scores.map(s => {
         const indexes = Object.fromEntries(ranks.map(([key, rank, count]) => [key, s[key] == undefined ? undefined : {
             value: s[key], rank: rank[s[key]], of: count
-        }] as const))
+        }]))
         return {
             ...s, ...indexes,
-        }
+        } as StudentScoreWithRanks
     }))
 
     const i = $derived(ranked.filter(r => r.influence))

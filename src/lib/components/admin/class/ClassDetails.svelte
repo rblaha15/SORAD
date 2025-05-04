@@ -3,7 +3,7 @@
     import type { Class, Student } from "$lib/database";
     import database from "$lib/database/supabase.js";
     import { onMount } from "svelte";
-    import { getStudentsScores, type RatingWithStudents } from "$lib/data";
+    import { getStudentsScores, type RatingWithStudents } from "$lib/admin";
     import Collapsible from "$lib/components/Collapsible.svelte";
     import ClassChart from "./ClassChart.svelte";
     import StudentsTable from "$lib/components/admin/class/StudentsTable.svelte";

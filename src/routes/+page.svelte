@@ -1,39 +1,47 @@
 <script lang="ts">
-    import Questionnaire from "$lib/components/questionnaire/Questionnaire.svelte";
-    import {onMount} from "svelte";
-    import {allData, type Data, isAdmin} from "$lib/data";
+    import Questionnaire, { type QuestionnaireData } from "$lib/components/questionnaire/Questionnaire.svelte";
+    import { onMount } from "svelte";
+    import { isAdmin } from "$lib/admin";
     import database from "$lib/database/supabase";
-    import Tutorial from "$lib/components/questionnaire/Tutorial.svelte";
-    import StudentRow from "$lib/components/questionnaire/StudentRow.svelte";
     import BasicLayout from "$lib/components/BasicLayout.svelte";
 
-    let data = $state<Data | null>();
+    let data = $state<QuestionnaireData | 'loading' | 'notStudent' | 'noData'>('loading');
     onMount(async () => {
         const email = await database.auth.getEmail()
-        if (email) {
-            try {
-                if (isAdmin(email))
-                    window.location.replace('/admin')
-                else
-                    data = await allData(email)
-            } catch (e) {
-                data = null
-            }
-        } else window.location.replace('/login')
+
+        if (!email) return window.location.replace('/login')
+        if (isAdmin(email)) return window.location.replace('/admin')
+        if (!email.endsWith('@student.gymceska.cz')) return data = 'notStudent'
+
+        try {
+            const myself = await database.getStudentByEmail(email)
+            data = {
+                myself,
+                myClass: await database.getMyClass(myself.class),
+                students: await database.getStudentsOfClass(myself.class),
+                alreadyRated: await database.getAlreadyRated(myself.id),
+            };
+        } catch (e) {
+            data = 'noData'
+        }
     })
 </script>
 
-{#if data === undefined}
+{#if data === 'loading'}
     <span class="loader"></span>
-{:else if data === null}
+{:else if data === 'noData' || data === 'notStudent'}
     <BasicLayout>
         {#snippet content()}
-            <p>V této třídě aktuálně neprobíhá sběr dat.</p>
+            {#if data === 'noData'}
+                <p>V této třídě aktuálně neprobíhá sběr dat.</p>
+            {:else if data === 'notStudent'}
+                <p>Tento Microsoft účet není podporován.</p>
+            {/if}
         {/snippet}
         {#snippet buttons()}
             <button class="secondary" onclick={database.auth.logOut} style="margin-right: auto;">Odhlásit</button>
         {/snippet}
     </BasicLayout>
 {:else}
-    <Questionnaire {data}/>
+    <Questionnaire {...data} />
 {/if}

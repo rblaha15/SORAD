@@ -1,5 +1,5 @@
-import {browser} from '$app/environment';
-import {get, writable, type Writable} from 'svelte/store';
+import { browser } from '$app/environment';
+import { get, writable, type Writable } from 'svelte/store';
 
 type GetStoreable = {
     <T>(key: string): Writable<T | undefined>;
@@ -41,7 +41,9 @@ export const storeable: GetStoreable = <T>(key: string, defaultValue?: T) => {
     return _storeable;
 };
 
-export const value = <T>(state: { get: () => T, set: (v: T) => void }) => ({
+type State<T extends Record<string, unknown>> = { get: () => T, set: (v: T) => void };
+
+export const value = <T extends Record<string, unknown>>(state: State<T>) => ({
     get current() {
         return state.get()
     },
@@ -50,11 +52,13 @@ export const value = <T>(state: { get: () => T, set: (v: T) => void }) => ({
     },
 })
 
-export const propertyValue = <T, K extends keyof T>(key: K, state: { get: () => T, set: (v: T) => void }) => ({
-    get current() {
-        return state.get()[key]
-    },
-    set current(v: T[K]) {
-        state.set({ ...state.get(), [key]: v })
-    },
-})
+export const propertiesValue = <K extends (keyof T)[], T extends Record<string, unknown>>(
+    state: State<T>,
+    keys: K,
+): { [key in K[number]]: T[key] } => Object.defineProperties(
+    {} as { [key in K[number]]: T[key] },
+    Object.fromEntries(keys.map(key => [key, {
+        get: () => state.get()[key],
+        set: (v: T[K[number]]) => state.set({ ...state.get(), [key]: v }),
+    }])),
+)

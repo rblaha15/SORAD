@@ -1,7 +1,9 @@
 <script lang="ts">
-    import { averageBy, type RatingWithStudents } from "$lib/data";
+    import { type RatingWithStudents } from "$lib/admin";
     import Table from "$lib/components/Table.svelte";
     import { error } from "@sveltejs/kit";
+
+    import { averageBy } from "$lib/utils/sums";
 
     const { ratings }: { ratings: RatingWithStudents[] } = $props()
     const bySameStudent = new Set(ratings.map(r => r.by.id)).size == 1

@@ -1,5 +1,5 @@
 import type {ChartConfiguration, ScaleOptions} from "chart.js";
-import type {StudentScore} from "$lib/data";
+import type {StudentScore} from "$lib/admin";
 
 const scaleOptions: ScaleOptions<'linear'> = {
     type: 'linear',

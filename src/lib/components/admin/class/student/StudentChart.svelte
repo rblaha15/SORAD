@@ -1,10 +1,10 @@
 <script lang="ts">
-    import type { RatingWithStudents } from "$lib/data";
+    import type { RatingWithStudents } from "$lib/admin";
     import { Chart } from "chart.js/auto";
     import { studentChart } from "./studentChart";
     import StudentChart from "./StudentChart.svelte";
     import type { Student } from "$lib/database";
-    import { printComponent } from "$lib/print.svelte";
+    import { printComponent } from "$lib/print.js";
     import { onMount } from "svelte";
 
     let { ratings, myself, print = false }: { ratings: RatingWithStudents[], myself: Student, print?: boolean } = $props()

@@ -1,5 +1,7 @@
 <script lang="ts">
-    import { range } from "$lib/data.js";
+
+
+    import { range } from "$lib/utils/constructors";
 
     let {
         value = $bindable(), error, type, readonly = false,

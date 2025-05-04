@@ -1,17 +1,52 @@
+<script module lang="ts">
+    import type { Class } from "$lib/database";
+    import seedrandom from "seedrandom";
+    import { shuffled } from "$lib/utils/random";
+    import { chunked } from "$lib/utils/splitting";
+
+    export type QuestionnaireData = {
+        myself: Student
+        myClass: Class
+        students: Student[]
+        alreadyRated: boolean
+    }
+
+    export const getRatingGroups = (myself: Student, students: Student[], maxGroupSize: number): Student[][] => {
+        const classmates = students.toSpliced(students.findIndex(s => s.id == myself.id), 1);
+
+        const random = seedrandom(`${myself.id}`)
+        const shuffledStudents = shuffled(classmates, random)
+        const orderedStudents = sortedBy(shuffledStudents, s => s.is_girl != myself.is_girl)
+
+        const studentCount = students.length;
+        const chunkCount = Math.ceil(studentCount / maxGroupSize);
+        const chunkSize = Math.ceil(studentCount / chunkCount);
+        return chunked(orderedStudents, chunkSize)
+    }
+
+    export const defaultRating = (by: number, about: number): Rating => ({
+        by, about,
+        influence: -1, sympathy: -1, reasoning: ''
+    })
+
+    export const validateRating = (r: Rating, phase: Phase) =>
+        r.influence != -1 && (r.sympathy != -1 || phase == 'influence')
+</script>
+
 <script lang="ts">
     import { browser } from "$app/environment";
     import { page } from "$app/state";
     import { pushState } from "$app/navigation";
     import Tutorial from "./Tutorial.svelte";
     import { storeable, value } from "$lib/stores";
-    import { type Data, defaultRating, getRatingGroups, sortedBy, validateRating } from "$lib/data";
     import BasicLayout from "$lib/components/BasicLayout.svelte";
     import database from "$lib/database/supabase";
     import type { Rating, Student } from "$lib/database";
     import StudentRow from "$lib/components/questionnaire/StudentRow.svelte";
-    import { sortedByDescending } from "$lib/data.js";
 
-    let { data }: { data: Data } = $props()
+    import { sortedBy, sortedByDescending } from "$lib/utils/comparisons";
+
+    let data: QuestionnaireData = $props()
 
     const pageState = $derived(browser ? page.state : {})
     const currentStudentId = $derived(pageState.student ?? -1)

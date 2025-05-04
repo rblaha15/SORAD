@@ -4,7 +4,7 @@
     import ClassDetails from "$lib/components/admin/class/ClassDetails.svelte";
     import AdminOverview from "$lib/components/admin/AdminOverview.svelte";
     import StudentDetails from "$lib/components/admin/class/student/StudentDetails.svelte";
-    import {isAdmin} from "$lib/data";
+    import {isAdmin} from "$lib/admin";
     import {onMount} from "svelte";
     import database from "$lib/database/supabase";
     import StudentsImport from "$lib/components/admin/class/StudentsImport.svelte";

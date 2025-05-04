@@ -1,5 +1,5 @@
 <script lang="ts" module>
-    import type {Comparable} from "$lib/data";
+    import type { Comparable } from "$lib/utils/comparisons";
 
     export type OnlyComparableFields<T> = {
         [K in keyof T]: T[K] extends Comparable ? K : never
@@ -8,11 +8,11 @@
 </script>
 
 <script generics="T, Column extends string" lang="ts">
-    import type {Snippet} from "svelte";
-    import {sortedBy, sortedByDescending} from "$lib/data";
+    import type { Snippet } from "svelte";
     import TopScrollable from "$lib/components/TopScrollable.svelte";
+    import { sortedBy, sortedByDescending } from "$lib/utils/comparisons";
 
-    const {items, header, row, columns, defaultSort, borders = false}: {
+    const { items, header, row, columns, defaultSort, borders = false }: {
         items: T[],
         header: Snippet<[
             classes: {
@@ -56,7 +56,7 @@
     )) as { [C in Column]: T; }
 </script>
 <TopScrollable>
-    <table class:sortable={columns !== undefined && defaultSort !== undefined} class:borders>
+    <table class:borders class:sortable={columns !== undefined && defaultSort !== undefined}>
         <thead>
         <tr>
             {@render header(

@@ -1,6 +1,6 @@
 <script lang="ts">
     import StarRating from "./StarRating.svelte";
-    import { value } from "$lib/stores";
+    import { propertiesValue } from "$lib/stores";
     import type { Rating, Student } from "$lib/database";
 
     let {
@@ -12,35 +12,24 @@
         type: Phase,
     } = $props()
 
-    const property = <K extends keyof Rating>(key: K) => ({
-        get: () => rating[key],
-        set: (value: Rating[K]) => {
-            rating = {
-                ...rating,
-                [key]: value,
-            };
-        },
-    })
-    let s = value(property('sympathy'))
-    let r = value(property('reasoning'))
-    let i = value(property('influence'))
+    const r = propertiesValue({ get: () => rating, set: (r: Rating) => rating = r }, ['sympathy', 'reasoning', 'influence'])
 
-    const sError = $derived(showErrors && s.current == -1)
-    const iError = $derived(showErrors && i.current == -1)
+    const sError = $derived(showErrors && r.sympathy == -1)
+    const iError = $derived(showErrors && r.influence == -1)
 </script>
 
 <span class="student-name">{student.names} {student.surname}</span>
 
 {#if type === 'influence'}
     <span class="title I">Vliv:</span>
-    <span class="student-rating I"><StarRating bind:value={i.current} error={iError} type="influence" /></span>
+    <span class="student-rating I"><StarRating bind:value={r.influence} error={iError} type="influence" /></span>
 {:else}
     <span class="title S">Sympatie:</span>
-    <span class="student-rating S"><StarRating bind:value={s.current} error={sError} type="sympathy" readonly={type === 'sympathy-reasoning'} /></span>
+    <span class="student-rating S"><StarRating bind:value={r.sympathy} error={sError} type="sympathy" readonly={type === 'sympathy-reasoning'} /></span>
 {/if}
 {#if type === 'sympathy-reasoning'}
     <span class="title R">Vysvětlení sympatií:</span>
-    <input bind:value={r.current} class="student-input" size="1" />
+    <input bind:value={r.reasoning} class="student-input" size="1" />
 {/if}
 
 <style>

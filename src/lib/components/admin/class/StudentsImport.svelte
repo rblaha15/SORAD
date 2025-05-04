@@ -1,12 +1,24 @@
 <script lang="ts">
     import database from "$lib/database/supabase";
-    import { generatePasswords } from "$lib/data";
     import type { Class, Student } from "$lib/database";
     import readXlsxFile from "read-excel-file";
     import Table from "$lib/components/Table.svelte";
     import { onMount } from "svelte";
     import BasicLayout from "$lib/components/BasicLayout.svelte";
-    import { sortedBy } from "$lib/data.js";
+    import { sortedBy } from "$lib/utils/comparisons";
+    import seedrandom from "seedrandom";
+    import { newString } from "$lib/utils/constructors";
+    import { randomChar } from "$lib/utils/random";
+
+    const studentPassword = (student: Omit<Student, 'id'>) => {
+        const classRandom = seedrandom(student.class.toString())
+        const studentRandom = seedrandom(student.email);
+        return newString(6, i => randomChar(i < 2 ? classRandom : studentRandom));
+    }
+
+    export const generatePasswords = (students: Omit<Student, 'id'>[]) => Object.fromEntries(
+        students.map(s => [s.email, studentPassword(s)] as [string, string])
+    )
 
     const { classId }: { classId: number } = $props()
 
