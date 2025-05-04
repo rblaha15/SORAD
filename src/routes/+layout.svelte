@@ -203,5 +203,10 @@
             display: flex;
             align-items: center;
         }
+
+        body:has(> .print) {
+            background: white;
+            color: black;
+        }
     }
 </style>

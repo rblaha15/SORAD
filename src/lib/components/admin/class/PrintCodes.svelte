@@ -8,7 +8,7 @@
 
 <title>Kódy pro přihlášení</title>
 
-<table>
+<table class="print">
     <tbody>
     {#each pairs as [s1, s2]}
         <tr>

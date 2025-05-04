@@ -84,11 +84,4 @@
             width: 210mm;
         }
     }
-
-    :global {
-        body:has(> .chart-root.print) {
-            background: white;
-            color: black;
-        }
-    }
 </style>
