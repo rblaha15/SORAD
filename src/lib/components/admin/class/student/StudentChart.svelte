@@ -29,7 +29,7 @@
         }
     })
 
-    const printTitle = `${myself.names} ${myself.surname} — hodnocení sympatií ${bySameStudent ? 'ostatními' : 'ostatních'}`
+    const printTitle = `${myself.names} ${myself.surname} — hodnocení sympatií ${bySameStudent ? 'ostatních' : 'ostatními'}`
 </script>
 
 {#if print}
@@ -40,7 +40,7 @@
 <div class="chart-root" class:print>
     {#if !print}
         <div class="title">
-            <h4>{bySameStudent ? 'Hodnocení ostatními:' : 'Hodnocení ostatních:'}</h4>
+            <h4>{bySameStudent ? 'Hodnocení ostatních:' : 'Hodnocení ostatními:'}</h4>
             <button class="neutral"
                     onclick={() => printComponent(StudentChart, { myself, ratings, print: true })}
             >Vytiskonout

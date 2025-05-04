@@ -31,11 +31,12 @@
 
     $effect(() => {
         if (!file) return;
-        readXlsxFile(file).then(rows =>
+        readXlsxFile(file).then(rows => {
+            console.log(rows);
             newStudents = rows.slice(1).map(
                 ([n, names, surname, email, g]) => ({ student_number: Number(n), names, surname, email, is_girl: g == 'Ano' }) as NewStudent
             )
-        )
+        })
     })
 
     const keys = ['email', 'student_number', 'names', 'surname', 'is_girl'] as const;
@@ -60,15 +61,17 @@
     let importing = $state(false);
     const importStudents = async () => {
         importing = true;
+        console.log(oldStudents, newStudents)
+        console.log(added, removed, changed, unchanged)
         const toRemove = removed.map(s => s.id)
-        await database.admin.removeRatings(toRemove)
-        await database.admin.removeStudents(toRemove)
-        await database.admin.deleteStudentAccountsAndPasswords(removed)
+        if (toRemove.length) await database.admin.removeRatings(toRemove)
+        if (toRemove.length) await database.admin.removeStudents(toRemove)
+        if (removed.length) await database.admin.deleteStudentAccountsAndPasswords(removed)
 
         const toAdd = added.map(s => ({ ...s, class: classId }))
         const toChange = changed.map(s => ({ ...s, class: classId }))
-        await database.admin.setStudents([...toAdd, ...toChange])
-        await database.admin.createStudentAccountsAndSavePasswords(generatePasswords(toAdd))
+        if (toAdd.length || toChange.length) await database.admin.setStudents([...toAdd, ...toChange])
+        if (toAdd.length) await database.admin.createStudentAccountsAndSavePasswords(generatePasswords(toAdd))
 
         window.history.back()
     }
@@ -95,7 +98,7 @@
         {/if}
     {:else if file}
         <p>Soubor neobsahuje žádné změny.</p>
-    {:else}
+    {:else if allChanges.length}
         <p>Aktuální seznam žáků:</p>
     {/if}
     {#if allChanges.length}

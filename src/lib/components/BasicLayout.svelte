@@ -14,9 +14,7 @@
     } = $props();
 </script>
 
-{#if title}
-    <h1 class="title">{@render title()}</h1>
-{/if}
+<h1 class="title">{@render title?.()}</h1>
 {#if buttons}
     <div class="row buttons">
         {@render buttons()}

@@ -22,10 +22,16 @@
         enabled = klass.enabled
     })
 
+    let changing = $state(false);
+    let changed = $state(false);
     const confirm: EventHandler<SubmitEvent, HTMLFormElement> = async e => {
+        changing = true;
         e.preventDefault();
         await database.admin.setClass({ id: classId, name, grade: grade ?? klass.grade, enabled });
         await refresh();
+        changing = false;
+        changed = true;
+        setTimeout(() => changed = false, 5000);
     }
 
     let deleting = $state(false);
@@ -66,7 +72,15 @@
         <input bind:checked={enabled} type="checkbox" />
         Povolit přijímání odpovědí od studentů
     </label>
-    <button class="danger" type="submit">Uložit</button>
+    <div class="row">
+        <button class="danger" type="submit">Uložit</button>
+        {#if changing}
+            <div class="loader"></div>
+        {/if}
+        {#if changed}
+            <p class="text-icon">&checkmark;</p>
+        {/if}
+    </div>
 </form>
 <hr />
 {#if students.length}
@@ -121,5 +135,11 @@
                 margin-right: 0;
             }
         }
+    }
+
+    .text-icon {
+        margin: 0 .5rem;
+        font-size: 2rem;
+        color: var(--green-color);
     }
 </style>

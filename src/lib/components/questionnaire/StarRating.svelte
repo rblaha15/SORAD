@@ -1,10 +1,10 @@
 <script lang="ts">
-    import { newArray, range } from "$lib/data.js";
+    import { range } from "$lib/data.js";
 
     let {
-        value = $bindable(), error, type
+        value = $bindable(), error, type, readonly = false,
     }: {
-        value: number, error: boolean, type: 'influence' | 'sympathy'
+        value: number, error: boolean, type: 'influence' | 'sympathy', readonly?: boolean,
     } = $props()
 
     const id = $props.id()
@@ -14,8 +14,8 @@
 
 <div class="star-row">
     {#each arr as i}
-        <label class:error class={type} onpointerup={() => value = i}>
-            <input type="radio" value={i} name="star-rating-{id}" bind:group={value}>
+        <label class:error class={type}>
+            <input type="radio" value={i} name="star-rating-{id}" bind:group={value} {readonly}>
             {i}
         </label>
     {/each}
@@ -41,6 +41,10 @@
             min-width: 2rem;
             text-align: center;
 
+            &:read-only {
+                pointer-events: none;
+            }
+
             &.influence {
                 color: var(--influence-color);
             }
@@ -59,7 +63,8 @@
         }
 
         &:not(:hover) label:has(input:checked),
-        & label:has(input:hover) {
+        & label:has(input:checked:read-only),
+        & label:has(input:hover:not(:read-only)) {
             color: gold;
         }
     }

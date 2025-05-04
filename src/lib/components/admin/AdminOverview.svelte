@@ -1,16 +1,16 @@
 <script lang="ts">
-
-    import {onMount} from "svelte";
+    import { onMount } from "svelte";
     import database from "$lib/database/supabase";
-    import type {Class} from "$lib/database";
+    import type { Class } from "$lib/database";
     import BasicLayout from "$lib/components/BasicLayout.svelte";
 
     let classes = $state<Class[]>([])
 
     const refresh = async () => {
-        classes = await database.admin.getClasses()
-        const newClass = classes.find(c => c.grade == -1)
-        if (newClass) location.assign(`/admin/?class=${newClass.id}`)
+        const _classes = await database.admin.getClasses()
+        const newClass = _classes.find(c => c.grade == -1)
+        if (newClass) return location.assign(`/admin/?class=${newClass.id}`)
+        classes = _classes
     }
     onMount(refresh)
 
@@ -29,22 +29,30 @@
         <h4>Třídy:</h4>
         <button class="primary" onclick={newClass}>Nová třída</button>
     </div>
-    {#each classes as klass}
-        <a class="btn primary" href="/admin/?class={klass.id}">{klass.name} ({klass.grade})</a>
-    {/each}
+    <ul>
+        {#each classes as klass}
+            <li>
+                <a class:enabled={klass.enabled} href="/admin/?class={klass.id}"><strong>{klass.name}</strong></a>
+            </li>
+        {/each}
+    </ul>
 {/snippet}
 {#snippet buttons()}
     <button class="secondary" onclick={database.auth.logOut} style="margin-right: auto;">Odhlásit</button>
 {/snippet}
 
-<BasicLayout {title} {content} {buttons} />
+<BasicLayout {buttons} {content} {title} />
 
 <style>
     .title {
         display: flex;
         align-items: center;
+
         h4 {
             margin-right: 1rem;
         }
+    }
+    a:not(.enabled) {
+        color: var(--grey-color)
     }
 </style>

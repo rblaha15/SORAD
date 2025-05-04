@@ -61,6 +61,10 @@
 
     const tve = data.myClass.grade > 4 ? 'Vaše' : 'Tvé'
     const i = data.myClass.grade > 4 ? 'te' : 'i'
+    const te = data.myClass.grade > 4 ? 'te' : 'š'
+
+    let sending = $state(false);
+    let sendDialog = $state() as HTMLDialogElement;
 </script>
 
 <BasicLayout>
@@ -94,13 +98,25 @@
         {:else}
             <button class="secondary" onclick={back}>Zpět</button>
             {#if phase === 'sympathy-reasoning' && currentGroupIndex === allGroups.length - 1}
-                <button class="danger" onclick={send}>Odeslat</button>
+                <button class="warning" onclick={() => sendDialog.showModal()}>Odeslat</button>
             {:else}
                 <button class="primary" onclick={next}>Další</button>
             {/if}
         {/if}
     {/snippet}
 </BasicLayout>
+
+<dialog bind:this={sendDialog} closedby={sending ? 'none' : 'any'} onclose={() => sending && sendDialog.showModal()}>
+    <h2>Odeslat dotazník</h2>
+    <p>Pokud dotazník odešle{te}, nebude{te} se moci vrátit a upravit své odpovědi!</p>
+    <div class="row">
+        <button disabled={sending} class="primary" onclick={() => sendDialog.close()} style="margin-right: auto;">Zrušit</button>
+        {#if sending}
+            <div class="loader"></div>
+        {/if}
+        <button disabled={sending} class="danger" onclick={send}>Odeslat</button>
+    </div>
+</dialog>
 
 <style>
     .student-group {

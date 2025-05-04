@@ -36,7 +36,7 @@
     <span class="student-rating I"><StarRating bind:value={i.current} error={iError} type="influence" /></span>
 {:else}
     <span class="title S">Sympatie:</span>
-    <span class="student-rating S"><StarRating bind:value={s.current} error={sError} type="sympathy" /></span>
+    <span class="student-rating S"><StarRating bind:value={s.current} error={sError} type="sympathy" readonly={type === 'sympathy-reasoning'} /></span>
 {/if}
 {#if type === 'sympathy-reasoning'}
     <span class="title R">Vysvětlení sympatií:</span>

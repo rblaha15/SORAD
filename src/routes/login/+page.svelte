@@ -2,7 +2,7 @@
     import {onMount} from "svelte";
     import database from "$lib/database/supabase";
 
-    let code = $state('8EF91X')
+    let code = $state('')
     let error = $state<string>()
 
     onMount(async () => {
@@ -20,7 +20,7 @@
         <div class="row">
             <label>
                 Zadej své ID:
-                <input bind:value={code} type="text"/>
+                <input value={code} type="text" oninput={e => code = e.currentTarget.value.toUpperCase()}/>
             </label>
             <button class="primary" type="submit">Potvrdit</button>
         </div>
