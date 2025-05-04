@@ -4,6 +4,7 @@
     import { error } from "@sveltejs/kit";
 
     import { averageBy } from "$lib/utils/sums";
+    import { round } from "$lib/utils/arithmetics";
 
     const { ratings }: { ratings: RatingWithStudents[] } = $props()
     const bySameStudent = new Set(ratings.map(r => r.by.id)).size == 1
@@ -17,8 +18,8 @@
         : s.about.is_girl == (filter == 'aboutGirls')))
     const withAverage: RatingWithStudents[] = $derived([
         {
-            influence: averageBy(filtered, r => r.influence),
-            sympathy: averageBy(filtered, r => r.sympathy),
+            influence: averageBy(filtered, r => r.influence)!,
+            sympathy: averageBy(filtered, r => r.sympathy)!,
             reasoning: '',
             by: { ...myself, surname: '' },
             about: { ...myself, surname: '' },
@@ -71,8 +72,8 @@
                 <strong>Průměr</strong>
             {/if}
         </td>
-        <td>{rating.influence.toFixed(2).replace('.', ',')}</td>
-        <td>{rating.sympathy.toFixed(2).replace('.', ',')}</td>
+        <td>{round(rating.influence).toLocaleString('cs')}</td>
+        <td>{round(rating.sympathy).toLocaleString('cs')}</td>
         <td>{rating.reasoning}</td>
     {/snippet}
 </Table>

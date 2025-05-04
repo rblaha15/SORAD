@@ -1,10 +1,17 @@
 <script lang="ts">
-    import { getStudentsScores, type RatingWithStudents, type StudentScoreWithRanks } from "$lib/admin";
+    import { getStudentsScores, type Indexes, type RatingWithStudents, type StudentScore } from "$lib/admin";
     import Table from "$lib/components/Table.svelte";
     import type { Student } from "$lib/database";
 
     import { averageBy } from "$lib/utils/sums";
     import { rankedBy } from "$lib/utils/ranks";
+    import { round } from "$lib/utils/arithmetics";
+
+    type Rank = { value: number, rank: undefined, of: undefined } | { value: number, rank: number, of: number };
+    export type Ranks = {
+        [I in keyof Indexes]: Rank | undefined
+    };
+    export type StudentScoreWithRanks = { student: StudentScore | undefined } & Ranks;
 
     const {
         overview = false, ratings, students, allStudents = students,
@@ -20,46 +27,30 @@
     const scores = $derived(getStudentsScores(filtered, filteredRatings))
     const allScores = $derived(getStudentsScores(allFiltered, filteredRatings))
 
-    const keys = ['influence', 'popularity', 'influenceability', 'affection', 'overall'] as const
-    const ranks = $derived(keys.map(key => {
-        const nonNull = allScores.filter(s => s[key] != undefined);
-        return [key, rankedBy(nonNull, s => s[key]!), nonNull.length] as const;
+    const keys = ['influence', 'popularity', 'affection'] as const
+    const rankedScores = $derived(keys.map(key => {
+        const nonNull = allScores.filter(s => s[key]);
+        return { key, ranked: rankedBy(nonNull, s => s[key]!), count: nonNull.length };
     }))
 
     const ranked = $derived(scores.map(s => {
-        const indexes = Object.fromEntries(ranks.map(([key, rank, count]) => [key, s[key] == undefined ? undefined : {
-            value: s[key], rank: rank[s[key]], of: count
-        }]))
-        return {
-            ...s, ...indexes,
-        } as StudentScoreWithRanks
+        const ranks = Object.fromEntries(rankedScores.map(({ key, ranked, count }) => [key, s[key] == undefined ? undefined : {
+            value: s[key], rank: ranked[s[key]], of: count
+        }])) as Ranks
+
+        return { student: s, ...ranks } as StudentScoreWithRanks
     }))
 
-    const i = $derived(ranked.filter(r => r.influence))
-    const p = $derived(ranked.filter(r => r.popularity))
-    const b = $derived(ranked.filter(r => r.influenceability))
-    const a = $derived(ranked.filter(r => r.affection))
-    const o = $derived(ranked.filter(r => r.overall))
-    const withAverage = $derived(overview ? [
-        {
-            influence: i.length ? { value: averageBy(i, r => r.influence!.value), rank: 0, of: 0 } : undefined,
-            popularity: p.length ? { value: averageBy(p, r => r.popularity!.value), rank: 0, of: 0 } : undefined,
-            influenceability: b.length ? { value: averageBy(b, r => r.influenceability!.value), rank: 0, of: 0 } : undefined,
-            affection: a.length ? { value: averageBy(a, r => r.affection!.value), rank: 0, of: 0 } : undefined,
-            overall: o.length ? { value: averageBy(o, r => r.overall!.value), rank: 0, of: 0 } : undefined,
-            is_girl: false,
-            student_number: -1,
-            class: -1,
-            id: -1,
-            surname: '',
-            names: '',
-            email: '',
-        },
-        ...ranked
-    ] : ranked)
+    const average = {...Object.fromEntries(keys.map(key => [key,
+        { value: averageBy(ranked.filter(r => r[key]), r => r[key]!.value), rank: undefined, of: undefined }
+    ])), student: undefined } as StudentScoreWithRanks
+
+    const withAverage = $derived(overview ? [average, ...ranked] : ranked)
 
     const columns = (s: StudentScoreWithRanks) => keys.map(key => s[key] == undefined ? '—'
-        : `${s[key].value.toFixed(2).replace('.', ',')} (${s[key].rank}/${s[key].of})`
+        : s[key].rank
+            ? `${round(s[key].value).toLocaleString('cs')} (${s[key].rank}/${s[key].of})`
+            : round(s[key].value).toLocaleString('cs')
     )
 </script>
 
@@ -83,8 +74,8 @@
 </div>
 
 <Table columns={{
-    s: 'student_number', n: 'surname', i: r => r.influence?.value, p: r => r.popularity?.value,
-    a: r => r.affection?.value, b: r => r.influenceability?.value, o: r => r.overall?.value
+    s: r => r.student?.student_number, n: r => r.student?.surname,
+    i: r => r.influence?.value, p: r => r.popularity?.value, a: r => r.affection?.value,
 }} defaultSort={ranked.length <= 1 ? undefined : {n: 'ascending'}} items={withAverage}>
     {#snippet header(c, o)}
         {#if ranked.length > 1}
@@ -93,13 +84,11 @@
         {/if}
         <th class={c.i} onclick={o.i}>Index vlivu</th>
         <th class={c.p} onclick={o.p}>Index obliby</th>
-        <th class={c.b} onclick={o.b}>Index ovlivnitelnosti</th>
         <th class={c.a} onclick={o.a}>Index náklonosti</th>
-        <th class={c.o} onclick={o.o}>Celkové hodnocení</th>
     {/snippet}
 
     {#snippet row(score)}
-        {#if score.id === -1}
+        {#if !score.student}
             <td></td>
             <td class="left"><strong>Průměr</strong></td>
             {#each columns(score) as col}
@@ -107,11 +96,11 @@
             {/each}
         {:else}
             {#if ranked.length > 1}
-                <td>{score.student_number}</td>
+                <td>{score.student.student_number}</td>
                 <td class="left">
-                    <a style:color={score.is_girl ? 'var(--girl-color)' : 'var(--boy-color)'}
-                       tabindex="0" href="/admin?class={score.class}&student={score.id}"
-                    >{score.names} <strong>{score.surname}</strong></a>
+                    <a style:color={score.student.is_girl ? 'var(--girl-color)' : 'var(--boy-color)'}
+                       tabindex="0" href="/admin?class={score.student.class}&student={score.student.id}"
+                    >{score.student.names} <strong>{score.student.surname}</strong></a>
                 </td>
             {/if}
             {#each columns(score) as col}

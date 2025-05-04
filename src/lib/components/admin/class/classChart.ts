@@ -1,5 +1,6 @@
 import type {ChartConfiguration, ScaleOptions} from "chart.js";
 import type {StudentScore} from "$lib/admin";
+import { round } from "$lib/utils/arithmetics";
 
 const scaleOptions: ScaleOptions<'linear'> = {
     type: 'linear',
@@ -58,15 +59,11 @@ export const classChart = (
                 callbacks: {
                     label: item => {
                         const score = scores[item.datasetIndex];
-                        const influence = score.influence?.toFixed(2)?.replace('.', ',');
-                        const popularity = score.popularity?.toFixed(2)?.replace('.', ',');
-                        const affection = score.affection?.toFixed(2)?.replace('.', ',');
-                        const influenceability = score.influenceability?.toFixed(2)?.replace('.', ',');
+                        const pretty = (v: number | undefined) => v ? round(v).toLocaleString('cs') : '—'
                         return `${score.names} ${score.surname}: ` +
-                            `vliv: ${influence ?? '—'}, ` +
-                            `obliba: ${popularity ?? '—'}, ` +
-                            `náklonnost: ${affection ?? '—'}, ` +
-                            `ovlivnitelnost: ${influenceability ?? '—'}`;
+                            `vliv: ${pretty(score.influence)}, ` +
+                            `obliba: ${pretty(score.popularity)}, ` +
+                            `náklonnost: ${pretty(score.affection)}`
                     },
                 },
                 caretPadding: 8,
