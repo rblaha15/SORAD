@@ -6,23 +6,19 @@
     }: {
         value: number, error: boolean, type: 'influence' | 'sympathy', readonly?: boolean,
     } = $props()
-
-    const id = $props.id()
-
-    const arr = range(1, 6)
 </script>
 
-<div class="star-row">
-    {#each arr as i}
+<div class="number-row">
+    {#each range(1, 6) as i}
         <label class:error class={type}>
-            <input type="radio" value={i} name="star-rating-{id}" bind:group={value} {readonly}>
+            <input type="radio" value={i} bind:group={value} {readonly}>
             {i}
         </label>
     {/each}
 </div>
 
 <style>
-    .star-row {
+    .number-row {
         display: flex;
         margin: -.25rem 0;
 

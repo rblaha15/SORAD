@@ -1,35 +1,32 @@
 <script lang="ts">
     import NumberRating from "./Rating.svelte";
-    import { propertiesValue } from "$lib/stores";
     import type { Rating, Student } from "$lib/database";
 
     let {
-        student, rating = $bindable(), showErrors, type,
+        student, rating = $bindable(), showErrors, phase,
     }: {
         student: Student,
         rating: Rating,
         showErrors: boolean,
-        type: Phase,
+        phase: Phase,
     } = $props()
 
-    const r = propertiesValue({ get: () => rating, set: (r: Rating) => rating = r }, ['sympathy', 'reasoning', 'influence'])
-
-    const sError = $derived(showErrors && r.sympathy == -1)
-    const iError = $derived(showErrors && r.influence == -1)
+    const sError = $derived(showErrors && rating.sympathy == -1)
+    const iError = $derived(showErrors && rating.influence == -1)
 </script>
 
 <span class="student-name">{student.names} {student.surname}</span>
 
-{#if type === 'influence'}
+{#if phase === 'influence'}
     <span class="title I">Vliv:</span>
-    <span class="student-rating I"><NumberRating bind:value={r.influence} error={iError} type="influence" /></span>
+    <span class="student-rating I"><NumberRating bind:value={rating.influence} error={iError} type="influence" /></span>
 {:else}
     <span class="title S">Sympatie:</span>
-    <span class="student-rating S"><NumberRating bind:value={r.sympathy} error={sError} type="sympathy" readonly={type === 'sympathy-reasoning'} /></span>
+    <span class="student-rating S"><NumberRating bind:value={rating.sympathy} error={sError} type="sympathy" readonly={phase === 'sympathy-reasoning'} /></span>
 {/if}
-{#if type === 'sympathy-reasoning'}
+{#if phase === 'sympathy-reasoning'}
     <span class="title R">Vysvětlení sympatií:</span>
-    <input bind:value={r.reasoning} class="student-input" size="1" />
+    <input bind:value={rating.reasoning} class="student-input" size="1" />
 {/if}
 
 <style>

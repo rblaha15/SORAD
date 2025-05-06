@@ -1,10 +1,17 @@
 declare global {
     type Phase = 'influence' | 'sympathy' | 'sympathy-reasoning'
-    namespace App {
-        interface PageState {
-            student?: number
-            phase?: Phase,
-        }
+    type State = {
+        phase: 'influence',
+        progress: 'introduction'
+        group: undefined
+    } | {
+        phase: Phase,
+        progress: 'tutorial'
+        group: undefined
+    } | {
+        phase: Phase,
+        progress: 'ratings'
+        group: number
     }
 }
 
