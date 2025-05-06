@@ -3,13 +3,14 @@
     import database from "$lib/database/supabase";
     import type { Class } from "$lib/database";
     import BasicLayout from "$lib/components/BasicLayout.svelte";
+    import { goto } from "$app/navigation";
 
     let classes = $state<Class[]>([])
 
     const refresh = async () => {
         const _classes = await database.admin.getClasses()
         const newClass = _classes.find(c => c.grade == -1)
-        if (newClass) return location.assign(`/admin/?class=${newClass.id}`)
+        if (newClass) return await goto(`/admin/?class=${newClass.id}`, { replaceState: true })
         classes = _classes
     }
     onMount(refresh)
@@ -32,7 +33,7 @@
     <ul>
         {#each classes as klass}
             <li>
-                <a class:enabled={klass.enabled} href="/admin/?class={klass.id}"><strong>{klass.name}</strong></a>
+                <a class:enabled={klass.enabled} href="/admin/?class={klass.id}" data-sveltekit-replacestate><strong>{klass.name}</strong></a>
             </li>
         {/each}
     </ul>

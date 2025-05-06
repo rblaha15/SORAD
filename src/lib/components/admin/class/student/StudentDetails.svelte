@@ -9,6 +9,7 @@
     import Collapsible from "$lib/components/Collapsible.svelte";
     import StudentChart from "$lib/components/admin/class/student/StudentChart.svelte";
     import TopScrollable from "$lib/components/TopScrollable.svelte";
+    import { goto } from "$app/navigation";
 
     let { studentId, classId }: { studentId: number, classId: number } = $props()
 
@@ -74,7 +75,7 @@
     {/if}
 {/snippet}
 {#snippet buttons()}
-    <button class="secondary" onclick={() => window.history.back()}>Zpět</button>
+    <button class="secondary" onclick={() => goto(`/admin?class=${classId}`, { replaceState: true })}>Zpět</button>
     <button class="secondary" onclick={database.auth.logOut} style="margin-right: 'auto';">Odhlásit</button>
 {/snippet}
 

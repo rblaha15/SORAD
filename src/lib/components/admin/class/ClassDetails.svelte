@@ -8,6 +8,7 @@
     import ClassChart from "./ClassChart.svelte";
     import StudentsTable from "$lib/components/admin/class/StudentsTable.svelte";
     import ClassSettings from "$lib/components/admin/class/ClassSettings.svelte";
+    import { goto } from "$app/navigation";
 
     const { classId }: { classId: number } = $props()
 
@@ -46,7 +47,7 @@
     {/if}
 {/snippet}
 {#snippet buttons()}
-    <button class="secondary" onclick={() => window.history.back()}>Zpět</button>
+    <button class="secondary" onclick={() => goto(`/admin`, { replaceState: true })}>Zpět</button>
     <button class="secondary" onclick={database.auth.logOut} style="margin-right: 'auto';">Odhlásit</button>
 {/snippet}
 

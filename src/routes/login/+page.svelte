@@ -1,12 +1,13 @@
 <script lang="ts">
     import {onMount} from "svelte";
     import database from "$lib/database/supabase";
+    import { goto } from "$app/navigation";
 
     let code = $state('')
     let error = $state<string>()
 
     onMount(async () => {
-        if (await database.auth.getEmail()) window.location.replace(window.location.origin);
+        if (await database.auth.getEmail()) await goto('', { replaceState: true });
     })
 
     const logIn = async () => {

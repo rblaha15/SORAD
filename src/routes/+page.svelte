@@ -4,13 +4,14 @@
     import { isAdmin } from "$lib/admin";
     import database from "$lib/database/supabase";
     import BasicLayout from "$lib/components/BasicLayout.svelte";
+    import { goto } from "$app/navigation";
 
     let data = $state<QuestionnaireData | 'loading' | 'notStudent' | 'noData'>('loading');
     onMount(async () => {
         const email = await database.auth.getEmail()
 
-        if (!email) return window.location.replace('/login')
-        if (isAdmin(email)) return window.location.replace('/admin')
+        if (!email) return await goto('/login', { replaceState: true })
+        if (isAdmin(email)) return await goto('/admin', { replaceState: true })
         if (!email.endsWith('@student.gymceska.cz')) return data = 'notStudent'
 
         try {

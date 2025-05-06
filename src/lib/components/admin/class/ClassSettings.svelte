@@ -7,6 +7,7 @@
     import type { Class, Rating, Student } from "$lib/database";
 
     import { sortedBy } from "$lib/utils/comparisons";
+    import { goto } from "$app/navigation";
 
     const {
         refresh, classId, klass, students, ratings,
@@ -43,7 +44,7 @@
         await database.admin.removeRatings(students.map(s => s.id))
         await database.admin.removeStudents(students.map(s => s.id))
         await database.admin.deleteClass(classId)
-        location.assign('/admin')
+        await goto('/admin', { replaceState: true })
     }
 
     const print = async () => {
@@ -88,7 +89,7 @@
 {#if students.length}
     <button onclick={print} class="primary">Vytisknout jednorázové kódy pro přihlášení</button>
 {/if}
-<a class="btn primary" href="/admin?class={classId}&import">Importovat seznam žáků</a>
+<a class="btn primary" href="/admin?class={classId}&import" data-sveltekit-replacestate>Importovat seznam žáků</a>
 <button onclick={() => deleteDialog.showModal()} class="warning">Odstranit třídu</button>
 <dialog bind:this={deleteDialog} closedby={deleting ? 'none' : 'any'} onclose={() => deleting && deleteDialog.showModal()}>
     <h2>Odstranit třídu</h2>

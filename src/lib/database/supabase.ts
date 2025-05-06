@@ -154,7 +154,7 @@ const database: Database = {
                 console.error(error)
                 return false
             } else {
-                window.location.reload();
+                location.reload();
                 return true
             }
         },
@@ -162,7 +162,7 @@ const database: Database = {
         logOut: async () => {
             const { error } = await client.auth.signOut()
             if (error) console.error(error)
-            else window.location.reload();
+            else location.reload();
         }
     },
 

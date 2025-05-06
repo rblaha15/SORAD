@@ -9,6 +9,7 @@
     import seedrandom from "seedrandom";
     import { newString } from "$lib/utils/constructors";
     import { randomChar } from "$lib/utils/random";
+    import { goto } from "$app/navigation";
 
     const studentPassword = (student: Omit<Student, 'id'>) => {
         const classRandom = seedrandom(student.class.toString())
@@ -73,8 +74,7 @@
     let importing = $state(false);
     const importStudents = async () => {
         importing = true;
-        console.log(oldStudents, newStudents)
-        console.log(added, removed, changed, unchanged)
+
         const toRemove = removed.map(s => s.id)
         if (toRemove.length) await database.admin.removeRatings(toRemove)
         if (toRemove.length) await database.admin.removeStudents(toRemove)
@@ -85,7 +85,7 @@
         if (toAdd.length || toChange.length) await database.admin.setStudents([...toAdd, ...toChange])
         if (toAdd.length) await database.admin.createStudentAccountsAndSavePasswords(generatePasswords(toAdd))
 
-        window.history.back()
+        await goto(`/admin?class=${classId}`, { replaceState: true })
     }
 </script>
 
@@ -142,7 +142,7 @@
     </div>
 {/snippet}
 {#snippet buttons()}
-    <button class="secondary" onclick={() => window.history.back()}>Zpět</button>
+    <button class="secondary" onclick={() => goto(`/admin?class=${classId}`, { replaceState: true })}>Zpět</button>
     <button class="secondary" onclick={database.auth.logOut} style="margin-right: 'auto';">Odhlásit</button>
 {/snippet}
 
