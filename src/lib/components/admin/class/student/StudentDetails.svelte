@@ -65,12 +65,12 @@
     </Collapsible>
     {#if ratingsGot.length}
         <Collapsible label="Hodnocení, která dostal{a}">
-            <RatingsTable ratings={ratingsGot} />
+            <RatingsTable ratings={ratingsGot} mode="by" />
         </Collapsible>
     {/if}
     {#if ratingsWrote.length}
         <Collapsible label="Hodnocení, která dal{a}">
-            <RatingsTable ratings={ratingsWrote} />
+            <RatingsTable ratings={ratingsWrote} mode="about" />
         </Collapsible>
     {/if}
 {/snippet}

@@ -107,14 +107,33 @@
         td {
             border-left: 1px solid white;
             border-right: 1px solid white;
-            padding: .375rem;
+            padding-left: .375rem;
+            padding-right: .375rem;
+        }
+
+        &:first-child td {
+            padding-top: .375rem;
+        }
+
+        &:last-child td {
+            padding-bottom: .375rem;
         }
     }
+
     table.bordersRows tr :global {
         td {
             border-top: 1px solid white;
             border-bottom: 1px solid white;
-            padding: .375rem;
+            padding-top: .375rem;
+            padding-bottom: .375rem;
+
+            &:first-child {
+                padding-left: .375rem;
+            }
+
+            &:last-child {
+                padding-right: .375rem;
+            }
         }
     }
 

@@ -41,9 +41,15 @@
         return { student: s, ...ranks } as StudentScoreWithRanks
     }))
 
-    const average = {...Object.fromEntries(keys.map(key => [key,
-        { value: averageBy(ranked.filter(r => r[key]), r => r[key]!.value), rank: undefined, of: undefined }
-    ])), student: undefined } as StudentScoreWithRanks
+    const average = $derived({
+        ...Object.fromEntries(
+            keys.map(key =>
+                [key, averageBy(ranked.filter(r => r[key]), r => r[key]!.value)]
+            ).map(([key, value]) =>
+                [key, value == undefined ? undefined : { value, rank: undefined, of: undefined }]
+            )
+        ), student: undefined
+    } as StudentScoreWithRanks)
 
     const withAverage = $derived(overview ? [average, ...ranked] : ranked)
 

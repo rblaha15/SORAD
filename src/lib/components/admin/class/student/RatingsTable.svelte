@@ -1,19 +1,15 @@
 <script lang="ts">
     import { type RatingWithStudents } from "$lib/admin";
     import Table from "$lib/components/Table.svelte";
-    import { error } from "@sveltejs/kit";
 
     import { averageBy } from "$lib/utils/sums";
     import { round } from "$lib/utils/arithmetics";
 
-    const { ratings }: { ratings: RatingWithStudents[] } = $props()
-    const bySameStudent = new Set(ratings.map(r => r.by.id)).size == 1
-    const aboutSameStudent = new Set(ratings.map(r => r.about.id)).size == 1
-    const myself = $derived(bySameStudent ? ratings[0].by : ratings[0].about)
-    if (ratings.length > 0 && !bySameStudent && !aboutSameStudent) error(400)
+    const { ratings, mode }: { ratings: RatingWithStudents[], mode: 'by' | 'about' } = $props()
+    const myself = $derived(mode == 'about' ? ratings[0].by : ratings[0].about)
 
     let filter = $state<'all' | 'byGirls' | 'byBoys' | 'aboutGirls' | 'aboutBoys'>('all')
-    const filtered = $derived(filter == 'all' ? ratings : ratings.filter(s => aboutSameStudent
+    const filtered = $derived(filter == 'all' ? ratings : ratings.filter(s => mode == 'by'
         ? s.by.is_girl == (filter == 'byGirls')
         : s.about.is_girl == (filter == 'aboutGirls')))
     const withAverage: RatingWithStudents[] = $derived([
@@ -34,23 +30,23 @@
         Všichni
     </label>
     <label class="btn toggle" style="--btn-color: var(--girl-color)">
-        <input bind:group={filter} type="radio" value={aboutSameStudent ? 'byGirls' : 'aboutGirls'} />
+        <input bind:group={filter} type="radio" value={mode === 'by' ? 'byGirls' : 'aboutGirls'} />
         Pouze dívky
     </label>
     <label class="btn toggle" style="--btn-color: var(--boy-color)">
-        <input bind:group={filter} type="radio" value={aboutSameStudent ? 'byBoys' : 'aboutBoys'} />
+        <input bind:group={filter} type="radio" value={mode === 'by' ? 'byBoys' : 'aboutBoys'} />
         Pouze chlapci
     </label>
 </div>
 
 <Table bordersColumns columns={{
     b: r => r.by.surname, a: r => r.about.surname, i: 'influence', s: 'sympathy', r: 'reasoning'
-}} defaultSort={bySameStudent ? { a: 'ascending' } : { b: 'ascending' }} items={withAverage}>
+}} defaultSort={mode === 'about' ? { a: 'ascending' } : { b: 'ascending' }} items={withAverage}>
     {#snippet header(c, o)}
-        {#if !bySameStudent}
+        {#if mode === 'by'}
             <th class="left {c.b}" onclick={o.b}>Hodnotící</th>
         {/if}
-        {#if !aboutSameStudent}
+        {#if mode === 'about'}
             <th class="left {c.a}" onclick={o.a}>Hodnocený</th>
         {/if}
         <th class={c.i} onclick={o.i}>Vnímaný vliv</th>
@@ -60,11 +56,11 @@
 
     {#snippet row(rating)}
         <td class="left">
-            {#if !bySameStudent && rating.by.surname}
+            {#if mode === 'by' && rating.by.surname}
                 <a style:color={rating.by.is_girl ? 'var(--girl-color)' : 'var(--boy-color)'} data-sveltekit-replacestate
                    tabindex="0" href="/admin?class={rating.by.class}&student={rating.by.id}"
                 >{rating.by.names} <strong>{rating.by.surname}</strong></a>
-            {:else if !aboutSameStudent && rating.about.surname}
+            {:else if mode === 'about' && rating.about.surname}
                 <a style:color={rating.about.is_girl ? 'var(--girl-color)' : 'var(--boy-color)'} data-sveltekit-replacestate
                    tabindex="0" href="/admin?class={rating.about.class}&student={rating.about.id}"
                 >{rating.about.names} <strong>{rating.about.surname}</strong></a>
