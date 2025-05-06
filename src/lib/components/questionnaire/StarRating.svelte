@@ -17,7 +17,7 @@
 <div class="star-row">
     {#each arr as i}
         <label class:error class={type}>
-            <input type="radio" value={i} name="star-rating-{id}" bind:group={value}>
+            <input type="radio" value={i} name="star-rating-{id}" bind:group={value} {readonly}>
             {i}
         </label>
     {/each}
@@ -42,6 +42,10 @@
             font-family: monospace;
             min-width: 2rem;
             text-align: center;
+
+            &:has(> input[readonly]) {
+                pointer-events: none;
+            }
 
             &.influence {
                 color: var(--influence-color);
