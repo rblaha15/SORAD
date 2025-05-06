@@ -56,7 +56,7 @@
     .content {
         flex-grow: 1;
         padding: 0 1rem 1rem;
-        overflow-y: auto;
+        overflow-y: scroll;
     }
     .footer {
         padding: 0 1rem 1rem;

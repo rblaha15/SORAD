@@ -1,17 +1,15 @@
 <script lang="ts">
     import { type RatingWithStudents } from "$lib/admin";
     import Table from "$lib/components/Table.svelte";
-
     import { averageBy } from "$lib/utils/sums";
     import { round } from "$lib/utils/arithmetics";
+    import GenderChooser from "$lib/components/admin/class/GenderChooser.svelte";
 
     const { ratings, mode }: { ratings: RatingWithStudents[], mode: 'by' | 'about' } = $props()
     const myself = $derived(mode == 'about' ? ratings[0].by : ratings[0].about)
 
-    let filter = $state<'all' | 'byGirls' | 'byBoys' | 'aboutGirls' | 'aboutBoys'>('all')
-    const filtered = $derived(filter == 'all' ? ratings : ratings.filter(s => mode == 'by'
-        ? s.by.is_girl == (filter == 'byGirls')
-        : s.about.is_girl == (filter == 'aboutGirls')))
+    let filter = $state<'all' | 'girls' | 'boys'>('all')
+    const filtered = $derived(filter == 'all' ? ratings : ratings.filter(s => s[mode].is_girl == (filter == 'girls')))
     const withAverage: RatingWithStudents[] = $derived([
         {
             influence: averageBy(filtered, r => r.influence)!,
@@ -24,20 +22,11 @@
     ])
 </script>
 
-<div class="filters btn-group">
-    <label class="btn neutral toggle">
-        <input bind:group={filter} type="radio" value="all" />
-        Všichni
-    </label>
-    <label class="btn toggle" style="--btn-color: var(--girl-color)">
-        <input bind:group={filter} type="radio" value={mode === 'by' ? 'byGirls' : 'aboutGirls'} />
-        Pouze dívky
-    </label>
-    <label class="btn toggle" style="--btn-color: var(--boy-color)">
-        <input bind:group={filter} type="radio" value={mode === 'by' ? 'byBoys' : 'aboutBoys'} />
-        Pouze chlapci
-    </label>
-</div>
+<GenderChooser
+    bind:filter
+    showBoys={ratings.some(s => !s[mode].is_girl)}
+    showGirls={ratings.some(s => s[mode].is_girl)}
+/>
 
 <Table bordersColumns columns={{
     b: r => r.by.surname, a: r => r.about.surname, i: 'influence', s: 'sympathy', r: 'reasoning'
@@ -73,13 +62,3 @@
         <td>{rating.reasoning}</td>
     {/snippet}
 </Table>
-
-<style>
-    .filters {
-        margin: .75rem 0;
-
-        label, input {
-            cursor: pointer;
-        }
-    }
-</style>

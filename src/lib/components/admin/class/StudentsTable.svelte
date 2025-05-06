@@ -6,6 +6,8 @@
     import { averageBy } from "$lib/utils/sums";
     import { rankedBy } from "$lib/utils/ranks";
     import { round } from "$lib/utils/arithmetics";
+    import TopScrollable from "$lib/components/TopScrollable.svelte";
+    import GenderChooser from "$lib/components/admin/class/GenderChooser.svelte";
 
     type Rank = { value: number, rank: undefined, of: undefined } | { value: number, rank: number, of: number };
     export type Ranks = {
@@ -19,13 +21,16 @@
         ratings: RatingWithStudents[], students: Student[], allStudents?: Student[], overview?: boolean
     } = $props()
 
-    let filter = $state<'all' | 'girls' | 'boys'>('all')
-    const filtered = $derived(filter == 'all' ? students : students.filter(s => s.is_girl == (filter == 'girls')))
-    const filteredRatings = $derived(filter == 'all' ? ratings : ratings.filter(r => r.by.is_girl == (filter == 'girls') && r.about.is_girl == (filter == 'girls')))
-    const allFiltered = $derived(filter == 'all' ? allStudents : allStudents.filter(s => s.is_girl == (filter == 'girls')))
+    let filterBy = $state<'all' | 'girls' | 'boys'>('all')
+    let filterAbout = $state<'all' | 'girls' | 'boys'>('all')
+    const filteredRatings = $derived(ratings.filter(r => (
+        filterBy == 'all' || r.by.is_girl == (filterBy == 'girls')
+    ) && (
+        filterAbout == 'all' || r.about.is_girl == (filterAbout == 'girls')
+    )))
 
-    const scores = $derived(getStudentsScores(filtered, filteredRatings))
-    const allScores = $derived(getStudentsScores(allFiltered, filteredRatings))
+    const scores = $derived(getStudentsScores(students, filteredRatings))
+    const allScores = $derived(getStudentsScores(allStudents, filteredRatings))
 
     const keys = ['influence', 'popularity', 'affection'] as const
     const rankedScores = $derived(keys.map(key => {
@@ -60,24 +65,24 @@
     )
 </script>
 
-<div class="filters btn-group">
-    <label class="btn toggle neutral">
-        <input bind:group={filter} type="radio" value="all" />
-        Všichni
-    </label>
-    {#if students.some(s => s.is_girl)}
-        <label class="btn toggle" style="--btn-color: var(--girl-color)">
-            <input bind:group={filter} type="radio" value="girls" />
-            Pouze dívky o dívkách
-        </label>
-    {/if}
-    {#if students.some(s => !s.is_girl)}
-        <label class="btn toggle" style="--btn-color: var(--boy-color)">
-            <input bind:group={filter} type="radio" value="boys" />
-            Pouze chlapci o chlapcích
-        </label>
-    {/if}
-</div>
+<TopScrollable>
+    <div class="row">
+        <p>Hodnotící:</p>
+        <GenderChooser
+            bind:filter={filterBy}
+            showBoys={ratings.some(r => !r.by.is_girl)}
+            showGirls={ratings.some(r => r.by.is_girl)}
+        />
+    </div>
+    <div class="row">
+        <p>Hodnocení:</p>
+        <GenderChooser
+            bind:filter={filterAbout}
+            showBoys={ratings.some(r => !r.about.is_girl)}
+            showGirls={ratings.some(r => r.about.is_girl)}
+        />
+    </div>
+</TopScrollable>
 
 <Table bordersColumns columns={{
     s: r => r.student?.student_number, n: r => r.student?.surname,
@@ -117,11 +122,15 @@
 </Table>
 
 <style>
-    .filters {
-        margin: .75rem 0;
 
-        label, input {
-            cursor: pointer;
+    th:nth-child(3), th:nth-child(4), th:nth-child(5) {
+        min-width: 8rem;
+    }
+
+    .row {
+        text-wrap: nowrap;
+        p {
+            min-width: 6rem;
         }
     }
 </style>

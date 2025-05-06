@@ -92,7 +92,7 @@
 
             & > * {
                 margin-right: 0;
-                margin-left: -1px;
+                /*margin-left: -1px;*/
                 border-radius: 0;
                 height: unset;
                 align-content: center;
