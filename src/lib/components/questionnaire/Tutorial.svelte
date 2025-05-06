@@ -16,6 +16,7 @@
     const you2 = grade > 4 ? 'vás' : 'tebe'
     const classmates = isGirl ? 'spolužačkek (a spolužáků)' : 'spolužáků (a spolužaček)'
     const a = isGirl ? 'a' : ''
+    const aa = isGirl ? 'á' : ''
     const ya = isGirl ? 'á' : 'ý'
     const ten = isGirl ? 'ta' : 'ten'
     const or = (a: string, b: string) => isGirl ? `${b}/${a}` : `${a}/${b}`
@@ -59,19 +60,19 @@
                 </p>
             {/if}
             <p class="info I"><span class="icon">!</span>
-                Pracuj{te2} rychle, bez dlouhého rozmýšlení, první názor bývá nejlepší. Jestliže si nejs{i} u někoho jist{i2}, srovnej{te2} je s těmi žáky, které
+                Pracuj{te2} rychle, bez dlouhého rozmýšlení, první názor bývá nejlepší. Jestliže si nejs{i} u někoho jist{ya}, srovnej{te2} je s těmi žáky, které
                 zná{te} lépe. Nedívej{te2} se k sousedovi – když bude{te} chtít, může{te} si promluvit o přestávce o tom, co jste napsali. S hodnocením bude{te}
-                hotov{i2} asi za pět minut.
+                hotov{ya} asi za pět minut.
             </p>
         {:else if phase === "sympathy"}
             <p class="info S"><span class="icon">»</span>
                 Nyní u {your} {classmates} vybere{te} číslo (ze stupnice výše), které ozanačuje, jak moc jsou {you} sympatičtí nebo nesympatičtí.
             </p>
             <p class="info S"><span class="icon">?</span>
-                Sympatick{ya} je pro {you2} {ten}, kdo je {you} příjemn{ya}, s kým se rád{a} stýkáš.
+                Sympatick{ya} je {you} {ten}, kdo je {you} příjemn{ya}, komu rád{a} pomůže{te}, s kým rád{a} tráví{te} čas, s kým se rád{a} baví{te} (ne nutně často).
             </p>
             <p class="info S"><span class="icon">!</span>
-                Sympatie jsou individuální, každý má rád, trochu jiné lidi, takže domlouvání nemá smysl!
+                Sympatie jsou individuální, každý má rád trochu jiné lidi, takže domlouvání nemá smysl!
             </p>
         {:else if phase === "sympathy-reasoning"}
             <p class="info S"><span class="icon">»</span>

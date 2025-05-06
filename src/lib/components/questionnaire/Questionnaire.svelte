@@ -64,10 +64,14 @@
     const send = () => database.rate(Object.values(ratings).filter(r => r).map(r => r!)).then(() => {
         changeState({})
         savedRatings.set({})
+        location.reload()
     })
 
     const tve = data.myClass.grade > 4 ? 'Vaše' : 'Tvé'
+    const vas = data.myClass.grade > 4 ? 'vás' : 'tě'
+    const vasi = data.myClass.grade > 4 ? 'vaší' : 'tvé'
     const te = data.myClass.grade > 4 ? 'te' : 'š'
+    const te2 = data.myClass.grade > 4 ? 'te' : ''
 
     let sending = $state(false);
     let sendDialog = $state() as HTMLDialogElement;
@@ -83,7 +87,8 @@
         {:else if !data.myClass.enabled}
             <p>V této třídě aktuálně neprobíhá sběr dat.</p>
         {:else if progress === 'introduction'}
-            <p>Ahoj!</p>
+            <p>Čeká {vas} vyplnění dotazníku, který se zabývá vztahy ve {vasi} třídě.</p>
+            <p>Postupuj{te2} podle zadaných instrukcí, vše bude řádně vysvětleno.</p>
         {:else if progress === 'tutorial'}
             <Tutorial isGirl={data.myself.is_girl} grade={data.myClass.grade} {phase} />
         {:else}
@@ -98,7 +103,7 @@
                 <button class="secondary" onclick={back}>Zpět</button>
             {/if}
             {#if progress === 'introduction'}
-                <button class="primary" onclick={next}>Začít!</button>
+                <button class="primary" onclick={() => changeState({ phase, progress: 'tutorial', group })}>Začít!</button>
             {:else if phase === 'sympathy-reasoning' && group === groups - 1}
                 <button class="warning" onclick={() => sendDialog.showModal()}>Odeslat</button>
             {:else}
