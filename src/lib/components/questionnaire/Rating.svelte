@@ -1,6 +1,4 @@
 <script lang="ts">
-
-
     import { range } from "$lib/utils/constructors";
 
     let {

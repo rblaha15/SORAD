@@ -1,5 +1,5 @@
 <script lang="ts">
-    import StarRating from "./StarRating.svelte";
+    import NumberRating from "./Rating.svelte";
     import { propertiesValue } from "$lib/stores";
     import type { Rating, Student } from "$lib/database";
 
@@ -22,10 +22,10 @@
 
 {#if type === 'influence'}
     <span class="title I">Vliv:</span>
-    <span class="student-rating I"><StarRating bind:value={r.influence} error={iError} type="influence" /></span>
+    <span class="student-rating I"><NumberRating bind:value={r.influence} error={iError} type="influence" /></span>
 {:else}
     <span class="title S">Sympatie:</span>
-    <span class="student-rating S"><StarRating bind:value={r.sympathy} error={sError} type="sympathy" readonly={type === 'sympathy-reasoning'} /></span>
+    <span class="student-rating S"><NumberRating bind:value={r.sympathy} error={sError} type="sympathy" readonly={type === 'sympathy-reasoning'} /></span>
 {/if}
 {#if type === 'sympathy-reasoning'}
     <span class="title R">Vysvětlení sympatií:</span>
