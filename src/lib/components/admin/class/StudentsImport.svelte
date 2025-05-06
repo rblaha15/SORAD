@@ -114,7 +114,7 @@
         <p>Aktuální seznam žáků:</p>
     {/if}
     {#if allChanges.length}
-        <Table items={allChanges} borders>
+        <Table items={allChanges} bordersColumns bordersRows>
             {#snippet header()}
                 <th class="left">Pořadí v třídní knize</th>
                 <th class="left">Jméno</th>

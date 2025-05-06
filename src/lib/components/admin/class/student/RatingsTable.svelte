@@ -43,7 +43,7 @@
     </label>
 </div>
 
-<Table columns={{
+<Table bordersColumns columns={{
     b: r => r.by.surname, a: r => r.about.surname, i: 'influence', s: 'sympathy', r: 'reasoning'
 }} defaultSort={bySameStudent ? { a: 'ascending' } : { b: 'ascending' }} items={withAverage}>
     {#snippet header(c, o)}

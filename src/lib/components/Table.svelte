@@ -12,7 +12,7 @@
     import TopScrollable from "$lib/components/TopScrollable.svelte";
     import { sortedBy, sortedByDescending } from "$lib/utils/comparisons";
 
-    const { items, header, row, columns, defaultSort, borders = false }: {
+    const { items, header, row, columns, defaultSort, bordersColumns = false, bordersRows = false }: {
         items: T[],
         header: Snippet<[
             classes: {
@@ -29,7 +29,8 @@
         defaultSort?: {
             [C in Column]?: 'ascending' | 'descending';
         },
-        borders?: boolean,
+        bordersColumns?: boolean,
+        bordersRows?: boolean,
     } = $props()
 
     let sort = $state<Column | null>(null)
@@ -56,7 +57,7 @@
     )) as { [C in Column]: T; }
 </script>
 <TopScrollable>
-    <table class:borders class:sortable={columns !== undefined && defaultSort !== undefined}>
+    <table class:bordersColumns class:bordersRows class:sortable={columns !== undefined && defaultSort !== undefined}>
         <thead>
         <tr>
             {@render header(
@@ -80,27 +81,39 @@
         width: fit-content;
         border-spacing: .375rem;
         border-collapse: collapse;
+        border: 1px solid white;
 
-        tr {
-            :global {
-                td, th {
-                    text-align: center;
+        tr :global {
+            td, th {
+                text-align: center;
 
-                    &.left {
-                        text-align: left;
-                    }
+                &.left {
+                    text-align: left;
                 }
+            }
 
-                td {
-                    white-space: nowrap;
-                }
+            td {
+                white-space: nowrap;
             }
         }
     }
 
-    table.borders tr :global {
-        td, th {
-            border: 1px solid white;
+    :global th {
+        border: 1px solid white;
+        padding: .375rem;
+    }
+
+    table.bordersColumns tr :global {
+        td {
+            border-left: 1px solid white;
+            border-right: 1px solid white;
+            padding: .375rem;
+        }
+    }
+    table.bordersRows tr :global {
+        td {
+            border-top: 1px solid white;
+            border-bottom: 1px solid white;
             padding: .375rem;
         }
     }

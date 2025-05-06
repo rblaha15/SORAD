@@ -73,7 +73,7 @@
     {/if}
 </div>
 
-<Table columns={{
+<Table bordersColumns columns={{
     s: r => r.student?.student_number, n: r => r.student?.surname,
     i: r => r.influence?.value, p: r => r.popularity?.value, a: r => r.affection?.value,
 }} defaultSort={ranked.length <= 1 ? undefined : {n: 'ascending'}} items={withAverage}>
