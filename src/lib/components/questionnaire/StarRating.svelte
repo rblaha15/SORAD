@@ -17,7 +17,7 @@
 <div class="star-row">
     {#each arr as i}
         <label class:error class={type}>
-            <input type="radio" value={i} name="star-rating-{id}" bind:group={value} {readonly}>
+            <input type="radio" value={i} name="star-rating-{id}" bind:group={value}>
             {i}
         </label>
     {/each}
