@@ -1,7 +1,8 @@
 <script lang="ts">
-    import {onMount} from "svelte";
+    import { onMount } from "svelte";
     import database from "$lib/database/supabase";
     import { goto } from "$app/navigation";
+    import BasicLayout from "$lib/components/BasicLayout.svelte";
 
     let code = $state('')
     let error = $state<string>()
@@ -16,47 +17,43 @@
     }
 </script>
 
-<div class="content">
-    <form onsubmit={logIn}>
+<BasicLayout>
+    {#snippet title()}
+        Přihlášení
+    {/snippet}
+    {#snippet content()}
+        <form onsubmit={logIn}>
+            <label for="login">Zadejte kód, který vám dal vyučující:</label>
+            <div class="row">
+                <input value={code} type="text" oninput={e => code = e.currentTarget.value.toUpperCase()} id="login" />
+                <button class="primary" type="submit">Potvrdit</button>
+            </div>
+            {#if error}
+            <p>{error}</p>
+            {/if}
+        </form>
         <div class="row">
-            <label>
-                Zadej své ID:
-                <input value={code} type="text" oninput={e => code = e.currentTarget.value.toUpperCase()}/>
-            </label>
-            <button class="primary" type="submit">Potvrdit</button>
+            <hr />
+            <span>nebo</span>
+            <hr />
         </div>
-        <p>{error}</p>
-    </form>
-    <div class="row">
-        <hr/>
-        <span>nebo</span>
-        <hr/>
-    </div>
-    <button class="primary" onclick={database.auth.logInWithMS}>Přihlásit se pomocí školního MS účtu</button>
-</div>
+        <button class="primary" onclick={database.auth.logInWithMS}>Přihlásit se pomocí školního MS účtu</button>
+    {/snippet}
+</BasicLayout>
 
 <style>
-    .content {
-        padding: 1rem;
-
-        form {
-            label {
-                display: block;
-
-                input {
-                    margin: 0 .375rem;
-                }
-            }
-
-            p {
-                margin: .375rem 0 0;
-            }
+    form {
+        label {
+            display: block;
         }
-
-
-        hr {
-            flex-grow: 1;
-            margin: 1rem;
+        input {
+            margin: 0 .375rem 0 0;
         }
+    }
+
+
+    hr {
+        flex-grow: 1;
+        margin: 1rem;
     }
 </style>
