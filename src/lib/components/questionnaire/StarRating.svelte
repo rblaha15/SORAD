@@ -43,10 +43,6 @@
             min-width: 2rem;
             text-align: center;
 
-            &:read-only {
-                pointer-events: none;
-            }
-
             &.influence {
                 color: var(--influence-color);
             }
