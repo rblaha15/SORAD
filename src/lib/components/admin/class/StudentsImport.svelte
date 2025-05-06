@@ -45,7 +45,6 @@
     $effect(() => {
         if (!file) return;
         readXlsxFile(file).then(rows => {
-            console.log(rows);
             newStudents = rows.slice(1).map(
                 ([n, names, surname, email, g]) => ({ student_number: Number(n), names, surname, email, is_girl: g == 'Ano' }) as NewStudent
             )
@@ -104,9 +103,9 @@
         <p>Náhled změn:</p>
         <p>Zeleně zbarvení jsou nově přidaní žáci, červeně jsou odstranění žáci a oranžově jsou upravení žáci.</p>
         {#if removed.length}
-            <p>Po odstranění žáka se nebude moci přihlásit a vyplnit dotazník!</p>
-            <p>Odstraněním žáka odstraníte i všechna hodnocení, které vyplnil i všechna hodnocení, které někdo vyplnil o něm!</p>
-            <p><strong>Tato akce je nevratná!</strong></p>
+            <p style="color: var(--red-color)">Po odstranění žáka se nebude moci přihlásit a vyplnit dotazník!</p>
+            <p style="color: var(--red-color)">Odstraněním žáka odstraníte i všechna hodnocení, které vyplnil i všechna hodnocení, které někdo vyplnil o něm!</p>
+            <p style="color: var(--red-color)"><strong>Tato akce je nevratná!</strong></p>
         {/if}
     {:else if file}
         <p>Soubor neobsahuje žádné změny.</p>
