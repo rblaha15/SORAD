@@ -38,7 +38,7 @@
     const changeState = (state: State | Record<string, never>) => pushState('', state)
 
     const data: QuestionnaireData = $props()
-    const groups = $derived(groupCount(data.students.length, phase))
+    const groups = $derived(groupCount(data.students.length, 'influence'))
 
     let validateRatings = $state(() => true)
     const prevPhase = (phase: Phase) => phase == 'sympathy-reasoning' ? 'sympathy' : 'influence'
@@ -104,7 +104,7 @@
             {/if}
             {#if progress === 'introduction'}
                 <button class="primary" onclick={() => changeState({ phase, progress: 'tutorial', group })}>Začít!</button>
-            {:else if phase === 'sympathy-reasoning' && group === groups - 1}
+            {:else if phase === 'sympathy-reasoning' && progress === 'ratings'}
                 <button class="warning" onclick={() => sendDialog.showModal()}>Odeslat</button>
             {:else}
                 <button class="primary" onclick={next}>Další</button>

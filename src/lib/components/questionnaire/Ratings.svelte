@@ -44,9 +44,8 @@
     let showErrors = $state(false)
 
     validateRatings = () => {
-        const correct = Object.values(ratings).some(r => !validateRating(r, phase))
-        showErrors = !correct
-        return correct
+        showErrors = currentGroup?.some(s => !validateRating(ratings[s.id], phase)) ?? false
+        return !showErrors
     }
 </script>
 
@@ -56,7 +55,7 @@
     <span class="main-title S">Sympatie:</span>
     <span class="main-title R">Vysvětlení sympatií:</span>
     {#each sortedStudents as student}
-        <StudentRow type={phase} {student} bind:rating={ratings[student.id]} {showErrors} />
+        <StudentRow {phase} {student} bind:rating={ratings[student.id]} {showErrors} />
     {/each}
 </div>
 
