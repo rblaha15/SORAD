@@ -10,8 +10,8 @@
     onMount(async () => {
         const email = await database.auth.getEmail()
 
-        if (!email) return await goto('/login', { replaceState: true })
-        if (isAdmin(email)) return await goto('/admin', { replaceState: true })
+        if (!email) return await goto('/login', { replaceState: false })
+        if (isAdmin(email)) return await goto('/admin', { replaceState: false })
         if (!email.endsWith('@student.gymceska.cz')) return data = 'notStudent'
 
         try {

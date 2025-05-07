@@ -17,7 +17,7 @@
     onMount(async () => {
         const email = await database.auth.getEmail()
         if (!email || !isAdmin(email))
-            await goto(`/`, { replaceState: true })
+            await goto(`/`, { replaceState: false })
     })
 </script>
 

@@ -84,7 +84,7 @@
         if (toAdd.length || toChange.length) await database.admin.setStudents([...toAdd, ...toChange])
         if (toAdd.length) await database.admin.createStudentAccountsAndSavePasswords(generatePasswords(toAdd))
 
-        await goto(`/admin?class=${classId}`, { replaceState: true })
+        await goto(`/admin?class=${classId}`, { replaceState: false })
     }
 </script>
 
@@ -132,7 +132,7 @@
     {/if}
 {/snippet}
 {#snippet buttons()}
-    <button class="secondary" onclick={() => goto(`/admin?class=${classId}`, { replaceState: true })}>Zpět</button>
+    <button class="secondary" onclick={() => goto(`/admin?class=${classId}`, { replaceState: false })}>Zpět</button>
     <button class="secondary" onclick={database.auth.logOut} style="margin-right: auto;">Odhlásit</button>
     {#if importing}
         <div class="loader"></div>

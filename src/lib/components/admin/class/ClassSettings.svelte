@@ -44,7 +44,7 @@
         await database.admin.removeRatings(students.map(s => s.id))
         await database.admin.removeStudents(students.map(s => s.id))
         await database.admin.deleteClass(classId)
-        await goto('/admin', { replaceState: true })
+        await goto('/admin', { replaceState: false })
     }
 
     const print = async () => {

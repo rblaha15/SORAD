@@ -10,7 +10,7 @@
     const refresh = async () => {
         const _classes = await database.admin.getClasses()
         const newClass = _classes.find(c => c.grade == -1)
-        if (newClass) return await goto(`/admin/?class=${newClass.id}`, { replaceState: true })
+        if (newClass) return await goto(`/admin/?class=${newClass.id}`, { replaceState: false })
         classes = _classes
     }
     onMount(refresh)
