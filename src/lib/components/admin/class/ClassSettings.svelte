@@ -123,7 +123,7 @@
             display: contents;
 
             input {
-                margin: .75rem;
+                margin: 0 .75rem .75rem;
 
                 &:not([type=checkbox]) {
                     width: 30px;

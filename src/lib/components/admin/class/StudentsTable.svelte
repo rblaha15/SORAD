@@ -68,7 +68,7 @@
 <TopScrollable>
     <div class="filters row">
         <div class="filter row">
-            <p>Hodnotící:</p>
+            <span>Hodnotící:</span>
             <GenderChooser
                 bind:filter={filterBy}
                 showBoys={ratings.some(r => !r.by.is_girl)}
@@ -76,7 +76,7 @@
             />
         </div>
         <div class="filter row">
-            <p>Hodnocení:</p>
+            <span>Hodnocení:</span>
             <GenderChooser
                 bind:filter={filterAbout}
                 showBoys={ratings.some(r => !r.about.is_girl)}
@@ -141,7 +141,6 @@
 </div>
 
 <style>
-
     th:nth-child(1) {
         min-width: 1.6rem;
     }
@@ -151,11 +150,12 @@
 
     .filters.row {
         flex-wrap: wrap;
+
         .filter.row {
             text-wrap: nowrap;
-            margin-right: 1rem;
+            margin: 0 1rem 1rem 0;
 
-            p {
+            span {
                 min-width: 6rem;
             }
         }

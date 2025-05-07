@@ -9,6 +9,7 @@
     import StudentsTable from "$lib/components/admin/class/StudentsTable.svelte";
     import ClassSettings from "$lib/components/admin/class/ClassSettings.svelte";
     import { goto } from "$app/navigation";
+    import TopScrollable from "$lib/components/TopScrollable.svelte";
 
     const { classId }: { classId: number } = $props()
 
@@ -39,7 +40,9 @@
     </Collapsible>
     {#if students.length && ratings.length}
         <Collapsible label="Graf sympatií a vlivu">
-            <ClassChart scores={getStudentsScores(students, ratings)} />
+            <TopScrollable>
+                <ClassChart scores={getStudentsScores(students, ratings)} klass={klass.name} />
+            </TopScrollable>
         </Collapsible>
         <Collapsible label="Seznam žáků">
             <StudentsTable {students} {ratings} allStudents={students} overview />

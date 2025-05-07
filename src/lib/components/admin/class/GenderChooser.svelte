@@ -28,8 +28,6 @@
 
 <style>
     .filters {
-        margin: .75rem 0;
-
         label, input {
             cursor: pointer;
         }

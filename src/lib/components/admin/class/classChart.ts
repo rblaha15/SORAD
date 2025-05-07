@@ -1,8 +1,11 @@
-import type {ChartConfiguration, ScaleOptions} from "chart.js";
+import { Chart, type ChartConfiguration, type ScaleOptions } from "chart.js";
 import type {StudentScore} from "$lib/admin";
 import { round } from "$lib/utils/arithmetics";
+import datalabels from "chartjs-plugin-datalabels";
 
-const scaleOptions: ScaleOptions<'linear'> = {
+Chart.register(datalabels);
+
+const scaleOptions = (print: boolean): ScaleOptions<'linear'> => ({
     type: 'linear',
     position: 'center',
     min: 1,
@@ -14,20 +17,21 @@ const scaleOptions: ScaleOptions<'linear'> = {
         precision: 0,
     },
     border: {
-        color: 'white',
+        color: print ? 'black' : 'white',
         z: -1,
         width: 1,
     },
     grid: {
         display: true,
-        color: '#FFFFFF60',
+        color: print ? '#00000060' : '#FFFFFF60',
         drawTicks: false,
         z: -1,
     },
-}
+})
 
 export const classChart = (
     scores: StudentScore[],
+    print: boolean
 ): ChartConfiguration => ({
     type: 'scatter',
     data: {
@@ -51,8 +55,8 @@ export const classChart = (
             },
         },
         scales: {
-            x: scaleOptions,
-            y: scaleOptions,
+            x: scaleOptions(print),
+            y: scaleOptions(print),
         },
         plugins: {
             tooltip: {
@@ -69,13 +73,24 @@ export const classChart = (
                 caretPadding: 8,
                 backgroundColor: 'rgba(0, 0, 0, 0.8)',
                 yAlign: 'bottom',
+                enabled: !print,
             },
             legend: {
                 display: false,
             },
             datalabels: {
-                display: false,
-            }
+                align: 'end',
+                formatter: (_, ctx) => {
+                    const score = scores[ctx.datasetIndex];
+                    return `${score.names}\n${score.surname}`;
+                },
+                display: print,
+                textAlign: 'center',
+                font: {
+                    weight: 'bold'
+                },
+                color: 'black',
+            },
         },
         animation: false,
     },

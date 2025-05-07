@@ -1,7 +1,6 @@
 import { Chart, type ChartConfiguration } from "chart.js";
 import type { Student } from "$lib/database";
 import datalabels from "chartjs-plugin-datalabels";
-
 import { arrayOf } from "$lib/utils/constructors";
 import { lcm } from "$lib/utils/arithmetics";
 

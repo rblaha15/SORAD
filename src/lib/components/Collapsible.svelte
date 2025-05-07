@@ -25,19 +25,20 @@
         border: 1px solid var(--grey-color);
         border-radius: .75rem;
         margin-top: 1rem;
-    }
-    summary {
-        font-weight: bold;
-        padding: 1rem;
-        cursor: pointer;
+
+        summary {
+            font-weight: bold;
+            padding: 1rem;
+            cursor: pointer;
+        }
     }
 
     details[open] {
         padding: 1rem;
-    }
 
-    details[open] summary {
-        border-bottom: 1px solid var(--grey-color);
-        margin: -1rem -1rem 0;
+        summary {
+            border-bottom: 1px solid var(--grey-color);
+            margin: -1rem -1rem 1rem;
+        }
     }
 </style>

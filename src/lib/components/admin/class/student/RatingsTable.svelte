@@ -22,16 +22,18 @@
     ])
 </script>
 
-<GenderChooser
-    bind:filter
-    showBoys={ratings.some(s => !s[mode].is_girl)}
-    showGirls={ratings.some(s => s[mode].is_girl)}
-/>
+<div class="filter">
+    <GenderChooser
+        bind:filter
+        showBoys={ratings.some(s => !s[mode].is_girl)}
+        showGirls={ratings.some(s => s[mode].is_girl)}
+    />
+</div>
 
-<Table bordersColumns sortColumns={{
+<Table bordersColumns defaultSort={mode === 'about' ? { a: 'ascending' } : { b: 'ascending' }} items={withAverage} sortColumns={{
     b: r => r.by.surname, a: r => r.about.surname,
     i: r => r.influence, s: r => r.sympathy, r: r => r.reasoning,
-}} defaultSort={mode === 'about' ? { a: 'ascending' } : { b: 'ascending' }} items={withAverage}>
+}}>
     {#snippet header(c, o)}
         {#if mode === 'by'}
             <th class="left {c.b}" onclick={o.b}>Hodnotící</th>
@@ -63,3 +65,9 @@
         <td>{rating.reasoning}</td>
     {/snippet}
 </Table>
+
+<style>
+    .filter {
+        margin-bottom: 1rem;
+    }
+</style>
