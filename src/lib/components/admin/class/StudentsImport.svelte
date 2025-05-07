@@ -131,24 +131,19 @@
         </Table>
     {/if}
 {/snippet}
-{#snippet footer()}
-    <div class="row">
-        <div style="margin-right: auto"></div>
-        {#if importing}
-            <div class="loader"></div>
-        {/if}
-        <button disabled={!file} class="danger confirm" onclick={importStudents}>Potvrdit</button>
-    </div>
-{/snippet}
 {#snippet buttons()}
     <button class="secondary" onclick={() => goto(`/admin?class=${classId}`, { replaceState: true })}>Zpět</button>
-    <button class="secondary" onclick={database.auth.logOut} style="margin-right: 'auto';">Odhlásit</button>
+    <button class="secondary" onclick={database.auth.logOut} style="margin-right: auto;">Odhlásit</button>
+    {#if importing}
+        <div class="loader"></div>
+    {/if}
+    <button disabled={!file} class="danger confirm" onclick={importStudents}>Potvrdit</button>
 {/snippet}
 
 {#if klass === undefined}
     <span class="loader"></span>
 {:else}
-    <BasicLayout {buttons} {content} {title} {footer} />
+    <BasicLayout {buttons} {content} {title} />
 {/if}
 
 <style>
@@ -162,9 +157,5 @@
 
     .file {
         margin-bottom: .75rem;
-    }
-
-    .confirm {
-        margin-top: .75rem;
     }
 </style>

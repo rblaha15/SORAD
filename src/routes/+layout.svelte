@@ -24,7 +24,7 @@
 
         --blue-color: deepskyblue;
         --orange-color: orange;
-        --red-color: crimson;
+        --red-color: red;
         --grey-color: darkgrey;
         --white-color: white;
         --green-color: limegreen;
