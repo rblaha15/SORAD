@@ -28,8 +28,9 @@
     showGirls={ratings.some(s => s[mode].is_girl)}
 />
 
-<Table bordersColumns columns={{
-    b: r => r.by.surname, a: r => r.about.surname, i: 'influence', s: 'sympathy', r: 'reasoning'
+<Table bordersColumns sortColumns={{
+    b: r => r.by.surname, a: r => r.about.surname,
+    i: r => r.influence, s: r => r.sympathy, r: r => r.reasoning,
 }} defaultSort={mode === 'about' ? { a: 'ascending' } : { b: 'ascending' }} items={withAverage}>
     {#snippet header(c, o)}
         {#if mode === 'by'}

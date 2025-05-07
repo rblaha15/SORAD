@@ -66,71 +66,103 @@
 </script>
 
 <TopScrollable>
-    <div class="row">
-        <p>Hodnotící:</p>
-        <GenderChooser
-            bind:filter={filterBy}
-            showBoys={ratings.some(r => !r.by.is_girl)}
-            showGirls={ratings.some(r => r.by.is_girl)}
-        />
-    </div>
-    <div class="row">
-        <p>Hodnocení:</p>
-        <GenderChooser
-            bind:filter={filterAbout}
-            showBoys={ratings.some(r => !r.about.is_girl)}
-            showGirls={ratings.some(r => r.about.is_girl)}
-        />
+    <div class="filters row">
+        <div class="filter row">
+            <p>Hodnotící:</p>
+            <GenderChooser
+                bind:filter={filterBy}
+                showBoys={ratings.some(r => !r.by.is_girl)}
+                showGirls={ratings.some(r => r.by.is_girl)}
+            />
+        </div>
+        <div class="filter row">
+            <p>Hodnocení:</p>
+            <GenderChooser
+                bind:filter={filterAbout}
+                showBoys={ratings.some(r => !r.about.is_girl)}
+                showGirls={ratings.some(r => r.about.is_girl)}
+            />
+        </div>
     </div>
 </TopScrollable>
 
-<Table bordersColumns columns={{
-    s: r => r.student?.student_number, n: r => r.student?.surname,
-    i: r => r.influence?.value, p: r => r.popularity?.value, a: r => r.affection?.value,
-}} defaultSort={ranked.length <= 1 ? undefined : {n: 'ascending'}} items={withAverage}>
-    {#snippet header(c, o)}
-        {#if ranked.length > 1}
-            <th class={c.s} onclick={o.s}>#</th>
-            <th class="left {c.n}" onclick={o.n}>Jméno a příjmení</th>
-        {/if}
-        <th class={c.i} onclick={o.i}>Index vlivu</th>
-        <th class={c.p} onclick={o.p}>Index obliby</th>
-        <th class={c.a} onclick={o.a}>Index náklonosti</th>
-    {/snippet}
-
-    {#snippet row(score)}
-        {#if !score.student}
-            <td></td>
-            <td class="left"><strong>Průměr</strong></td>
-            {#each columns(score) as col}
-                <td>{col.split(' (')[0]}</td>
-            {/each}
-        {:else}
+<div class="table-help">
+    <Table bordersColumns defaultSort={ranked.length <= 1 ? undefined : {s: 'ascending'}} items={withAverage} sortColumns={{
+        n: r => r.student?.student_number ?? 0, s: r => r.student?.surname ?? '',
+        i: r => r.influence?.value, p: r => r.popularity?.value, a: r => r.affection?.value,
+    }}>
+        {#snippet additionalHeader()}
             {#if ranked.length > 1}
-                <td>{score.student.student_number}</td>
-                <td class="left">
-                    <a style:color={score.student.is_girl ? 'var(--girl-color)' : 'var(--boy-color)'} data-sveltekit-replacestate="off"
-                       tabindex="0" href="/admin?class={score.student.class}&student={score.student.id}"
-                    >{score.student.names} <strong>{score.student.surname}</strong></a>
-                </td>
+                <th colspan="2"></th>
             {/if}
-            {#each columns(score) as col}
-                <td>{col}</td>
-            {/each}
-        {/if}
-    {/snippet}
-</Table>
+            <th colspan="2">Hodnocení ostatními</th>
+            <th>Hodnocení ostatních</th>
+        {/snippet}
+
+        {#snippet header(c, o)}
+            {#if ranked.length > 1}
+                <th class={c.n} onclick={o.n}>#</th>
+                <th class="left {c.s}" onclick={o.s}>Jméno a příjmení</th>
+            {/if}
+            <th class={c.i} onclick={o.i}>Index vlivu</th>
+            <th class={c.p} onclick={o.p}>Index obliby</th>
+            <th class={c.a} onclick={o.a}>Index náklonosti</th>
+        {/snippet}
+
+        {#snippet row(score)}
+            {#if !score.student}
+                <td></td>
+                <td class="left"><strong>Průměr</strong></td>
+                {#each columns(score) as col}
+                    <td>{col.split(' (')[0]}</td>
+                {/each}
+            {:else}
+                {#if ranked.length > 1}
+                    <td>{score.student.student_number}</td>
+                    <td class="left">
+                        <a style:color={score.student.is_girl ? 'var(--girl-color)' : 'var(--boy-color)'} data-sveltekit-replacestate="off"
+                           tabindex="0" href="/admin?class={score.student.class}&student={score.student.id}"
+                        >{score.student.names} <strong>{score.student.surname}</strong></a>
+                    </td>
+                {/if}
+                {#each columns(score) as col}
+                    <td>{col}</td>
+                {/each}
+            {/if}
+        {/snippet}
+    </Table>
+
+    <ul>
+        <li><strong>Index vlivu</strong> – Aritmetický průměr všech hodnocení vlivu, které daný žák obdržel</li>
+        <li><strong>Index obliby</strong> – Aritmetický průměr všech hodnocení sympatie, které daný žák obdržel</li>
+        <li><strong>Index náklonnosti</strong> – Aritmetický průměr všech hodnocení sympatie, které daný žák udělil<br /><br /></li>
+        <li><var>i (n/t)</var> = Daný index žáka je <var>i</var>; v pořadí má z <var>t</var> žáků <var>n</var>-tou nejnižží hodnotu</li>
+    </ul>
+</div>
 
 <style>
 
+    th:nth-child(1) {
+        min-width: 1.6rem;
+    }
     th:nth-child(3), th:nth-child(4), th:nth-child(5) {
-        min-width: 8rem;
+        min-width: 9rem;
     }
 
-    .row {
-        text-wrap: nowrap;
-        p {
-            min-width: 6rem;
+    .filters.row {
+        flex-wrap: wrap;
+        .filter.row {
+            text-wrap: nowrap;
+            margin-right: 1rem;
+
+            p {
+                min-width: 6rem;
+            }
         }
+    }
+
+    .table-help {
+        display: flex;
+        flex-wrap: wrap;
     }
 </style>

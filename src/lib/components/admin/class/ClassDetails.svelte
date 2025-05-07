@@ -44,13 +44,6 @@
         <Collapsible label="Seznam žáků">
             <StudentsTable {students} {ratings} allStudents={students} overview />
         </Collapsible>
-        <Collapsible label="Třídní indexy">
-            <ul>
-                <li><strong>Index vlivu</strong> – Aritmetický průměr všech hodnocení vlivu, které daný žák obdržel</li>
-                <li><strong>Index obliby</strong> – Aritmetický průměr všech hodnocení sympatie, které daný žák obdržel</li>
-                <li><strong>Index náklonnosti</strong> – Aritmetický průměr všech hodnocení sympatie, které daný žák udělil</li>
-            </ul>
-        </Collapsible>
     {/if}
 {/snippet}
 {#snippet buttons()}
