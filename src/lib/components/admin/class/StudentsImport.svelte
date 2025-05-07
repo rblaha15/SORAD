@@ -143,6 +143,8 @@
     <button class="secondary" onclick={database.auth.logOut} style="margin-right: auto;">Odhlásit se</button>
 {/snippet}
 
+<title>Importovat žáky</title>
+
 {#if klass === undefined}
     <span class="loader"></span>
 {:else}

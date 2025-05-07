@@ -54,6 +54,8 @@
     <button class="secondary" onclick={database.auth.logOut} style="margin-right: auto;">Odhlásit se</button>
 {/snippet}
 
+<title>Třída {klass?.name ?? ''}</title>
+
 {#if klass === undefined}
     <span class="loader"></span>
 {:else}

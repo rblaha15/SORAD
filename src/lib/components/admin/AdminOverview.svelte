@@ -44,6 +44,8 @@
     <button class="secondary" onclick={database.auth.logOut} style="margin-right: auto;">Odhlásit se</button>
 {/snippet}
 
+<title>Administrace: třídy</title>
+
 <BasicLayout {buttons} {content} {title} />
 
 <style>

@@ -17,6 +17,8 @@
     }
 </script>
 
+<title>SORAD</title>
+
 <BasicLayout>
     {#snippet title()}
         Přihlášení

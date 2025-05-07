@@ -28,6 +28,8 @@
     })
 </script>
 
+<title>SORAD</title>
+
 {#if data === 'loading'}
     <span class="loader"></span>
 {:else if data === 'noData' || data === 'notStudent'}
