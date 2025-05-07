@@ -76,7 +76,7 @@
 {/snippet}
 {#snippet buttons()}
     <button class="secondary" onclick={() => goto(`/admin?class=${classId}`, { replaceState: false })}>Zpět</button>
-    <button class="secondary" onclick={database.auth.logOut} style="margin-right: auto;">Odhlásit</button>
+    <button class="secondary" onclick={database.auth.logOut} style="margin-right: auto;">Odhlásit se</button>
 {/snippet}
 
 {#if klass === undefined || score === undefined}

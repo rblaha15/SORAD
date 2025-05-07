@@ -8,16 +8,16 @@
     let classes = $state<Class[]>([])
 
     const refresh = async () => {
-        const _classes = await database.admin.getClasses()
-        const newClass = _classes.find(c => c.grade == -1)
-        if (newClass) return await goto(`/admin/?class=${newClass.id}`, { replaceState: false })
-        classes = _classes
+        classes = await database.admin.getClasses()
+        return classes
     }
     onMount(refresh)
 
     const newClass = async () => {
         await database.admin.setClass({ enabled: false, name: '', grade: -1 })
-        await refresh()
+        const classes = await refresh()
+        const newClass = classes.find(c => c.grade == -1)
+        if (newClass) return await goto(`/admin/?class=${newClass.id}`, { replaceState: false })
     }
 </script>
 
@@ -33,13 +33,15 @@
     <ul>
         {#each classes as klass}
             <li>
-                <a class:enabled={klass.enabled} href="/admin/?class={klass.id}" data-sveltekit-replacestate><strong>{klass.name}</strong></a>
+                <a class:enabled={klass.enabled} href="/admin/?class={klass.id}" data-sveltekit-replacestate="off">
+                    <strong>{klass.name ? klass.name : 'Nová třída'}</strong>
+                </a>
             </li>
         {/each}
     </ul>
 {/snippet}
 {#snippet buttons()}
-    <button class="secondary" onclick={database.auth.logOut} style="margin-right: auto;">Odhlásit</button>
+    <button class="secondary" onclick={database.auth.logOut} style="margin-right: auto;">Odhlásit se</button>
 {/snippet}
 
 <BasicLayout {buttons} {content} {title} />

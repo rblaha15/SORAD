@@ -46,11 +46,11 @@
     {#snippet row(rating)}
         <td class="left">
             {#if mode === 'by' && rating.by.surname}
-                <a style:color={rating.by.is_girl ? 'var(--girl-color)' : 'var(--boy-color)'} data-sveltekit-replacestate
+                <a style:color={rating.by.is_girl ? 'var(--girl-color)' : 'var(--boy-color)'} data-sveltekit-replacestate="off"
                    tabindex="0" href="/admin?class={rating.by.class}&student={rating.by.id}"
                 >{rating.by.names} <strong>{rating.by.surname}</strong></a>
             {:else if mode === 'about' && rating.about.surname}
-                <a style:color={rating.about.is_girl ? 'var(--girl-color)' : 'var(--boy-color)'} data-sveltekit-replacestate
+                <a style:color={rating.about.is_girl ? 'var(--girl-color)' : 'var(--boy-color)'} data-sveltekit-replacestate="off"
                    tabindex="0" href="/admin?class={rating.about.class}&student={rating.about.id}"
                 >{rating.about.names} <strong>{rating.about.surname}</strong></a>
             {:else}

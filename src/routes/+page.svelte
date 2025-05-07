@@ -40,7 +40,7 @@
             {/if}
         {/snippet}
         {#snippet buttons()}
-            <button class="secondary" onclick={database.auth.logOut} style="margin-right: auto;">Odhlásit</button>
+            <button class="secondary" onclick={database.auth.logOut} style="margin-right: auto;">Odhlásit se</button>
         {/snippet}
     </BasicLayout>
 {:else}

@@ -97,7 +97,7 @@
         {/if}
     {/snippet}
     {#snippet buttons()}
-        <button class="secondary" onclick={database.auth.logOut} style="margin-right: auto;">Odhlásit</button>
+        <button class="secondary" onclick={database.auth.logOut} style="margin-right: auto;">Odhlásit se</button>
         {#if data.myClass.enabled && !data.alreadyRated}
             {#if progress === 'ratings' || phase !== 'influence'}
                 <button class="secondary" onclick={back}>Zpět</button>

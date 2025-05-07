@@ -34,7 +34,7 @@
     Administrace: třída {klass.name}
 {/snippet}
 {#snippet content()}
-    <Collapsible label="Nastavení" open={klass ? students.length === 0 : false}>
+    <Collapsible label="Nastavení" open={klass ? students.length === 0 || ratings.length === 0 : false}>
         <ClassSettings {refresh} {classId} {klass} {students} {ratings} />
     </Collapsible>
     {#if students.length && ratings.length}
@@ -55,7 +55,7 @@
 {/snippet}
 {#snippet buttons()}
     <button class="secondary" onclick={() => goto(`/admin`, { replaceState: false })}>Zpět</button>
-    <button class="secondary" onclick={database.auth.logOut} style="margin-right: auto;">Odhlásit</button>
+    <button class="secondary" onclick={database.auth.logOut} style="margin-right: auto;">Odhlásit se</button>
 {/snippet}
 
 {#if klass === undefined}

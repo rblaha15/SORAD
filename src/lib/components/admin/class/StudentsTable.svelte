@@ -109,7 +109,7 @@
             {#if ranked.length > 1}
                 <td>{score.student.student_number}</td>
                 <td class="left">
-                    <a style:color={score.student.is_girl ? 'var(--girl-color)' : 'var(--boy-color)'} data-sveltekit-replacestate
+                    <a style:color={score.student.is_girl ? 'var(--girl-color)' : 'var(--boy-color)'} data-sveltekit-replacestate="off"
                        tabindex="0" href="/admin?class={score.student.class}&student={score.student.id}"
                     >{score.student.names} <strong>{score.student.surname}</strong></a>
                 </td>

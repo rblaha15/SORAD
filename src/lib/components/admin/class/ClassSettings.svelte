@@ -61,7 +61,7 @@
     <div class="row">
         <label>
             Název třídy:
-            <input bind:value={name} type="text" />
+            <input bind:value={name} type="text" required />
         </label>
     </div>
     <div class="row">
@@ -89,14 +89,20 @@
 {#if students.length}
     <button onclick={print} class="primary">Vytisknout jednorázové kódy pro přihlášení</button>
 {/if}
-<a class="btn primary" href="/admin?class={classId}&import" data-sveltekit-replacestate>Importovat seznam žáků</a>
+{#if klass.grade !== -1}
+    <a class="btn primary" href="/admin?class={classId}&import" data-sveltekit-replacestate="off">Importovat seznam žáků</a>
+{/if}
 <button onclick={() => deleteDialog.showModal()} class="warning">Odstranit třídu</button>
 <dialog bind:this={deleteDialog} closedby={deleting ? 'none' : 'any'} onclose={() => deleting && deleteDialog.showModal()}>
     <h2>Odstranit třídu</h2>
-    <p>Opravdu chcete odstranit třídu {klass.name}?</p>
-    <p>Odstraníte všechny žáky v této třídě! ({students.length})</p>
-    <p>Žáci se nebudou moci přihlásit a vyplnit dotazník!</p>
-    <p>Odstraníte všechna hodnocení od všech žáků v této třídě! ({ratings.length})</p>
+    <p>Opravdu chcete odstranit třídu {klass.name ? klass.name : 'bez názvu'}?</p>
+    {#if students.length}
+        <p>Odstraníte všechny žáky v této třídě! ({students.length})</p>
+        <p>Žáci se nebudou moci přihlásit a vyplnit dotazník!</p>
+    {/if}
+    {#if ratings.length}
+        <p>Odstraníte všechna hodnocení od všech žáků v této třídě! ({ratings.length})</p>
+    {/if}
     <p><strong>Tato akce je nevratná!</strong></p>
     <div class="row">
         <button disabled={deleting} class="primary" onclick={() => deleteDialog.close()} style="margin-right: auto;">Zrušit</button>

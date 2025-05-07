@@ -96,15 +96,22 @@
     {#if file}
         <p>Vybraný soubor: {file.name}</p>
     {/if}
-    <button class="btn primary file" onclick={() => {fileInput.value = ''; file = undefined; fileInput?.click()}}>
-        {!file ? 'Vybrat soubor' : 'Vybrat jiný soubor'}
-    </button>
+    <div class="row">
+        <button class="btn primary file" onclick={() => {fileInput.value = ''; file = undefined; newStudents = []; fileInput?.click()}} disabled={importing}>
+            {!file ? 'Vybrat soubor' : 'Vybrat jiný soubor'}
+        </button>
+        {#if importing}
+            <div class="loader"></div>
+        {/if}
+        <button disabled={!file} class="danger confirm" onclick={importStudents}>Potvrdit</button>
+    </div>
     {#if added.length || removed.length || changed.length}
         <p>Náhled změn:</p>
         <p>Zeleně zbarvení jsou nově přidaní žáci, červeně jsou odstranění žáci a oranžově jsou upravení žáci.</p>
         {#if removed.length}
             <p style="color: var(--red-color)">Po odstranění žáka se nebude moci přihlásit a vyplnit dotazník!</p>
-            <p style="color: var(--red-color)">Odstraněním žáka odstraníte i všechna hodnocení, které vyplnil i všechna hodnocení, které někdo vyplnil o něm!</p>
+            <p style="color: var(--red-color)">Odstraněním žáka odstraníte i všechna hodnocení, které vyplnil i všechna hodnocení, které někdo vyplnil o
+                něm!</p>
             <p style="color: var(--red-color)"><strong>Tato akce je nevratná!</strong></p>
         {/if}
     {:else if file}
@@ -133,11 +140,7 @@
 {/snippet}
 {#snippet buttons()}
     <button class="secondary" onclick={() => goto(`/admin?class=${classId}`, { replaceState: false })}>Zpět</button>
-    <button class="secondary" onclick={database.auth.logOut} style="margin-right: auto;">Odhlásit</button>
-    {#if importing}
-        <div class="loader"></div>
-    {/if}
-    <button disabled={!file} class="danger confirm" onclick={importStudents}>Potvrdit</button>
+    <button class="secondary" onclick={database.auth.logOut} style="margin-right: auto;">Odhlásit se</button>
 {/snippet}
 
 {#if klass === undefined}
@@ -155,7 +158,10 @@
         margin-top: 0;
     }
 
-    .file {
+    .row {
         margin-bottom: .75rem;
+        button {
+            margin-right: .5rem;
+        }
     }
 </style>
