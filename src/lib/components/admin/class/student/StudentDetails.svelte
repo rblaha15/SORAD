@@ -23,6 +23,8 @@
     let score = $state() as StudentScore;
 
     const refresh = async () => {
+        ratingsWrote = []
+        ratingsGot = []
         klass = await database.getMyClass(classId)
         const r = await database.admin.getClassRatings(classId)
         students = await database.getStudentsOfClass(classId)
@@ -38,9 +40,10 @@
         )
         score = classScores.find(s => s.id == studentId)!
     }
-    onMount(refresh)
-
-    const a = $derived(score?.is_girl ? 'a' : '')
+    $effect(() => {
+        studentId;
+        refresh();
+    })
 </script>
 
 {#snippet title()}
@@ -63,14 +66,9 @@
     <Collapsible label="Přehled třídních indexů">
         <StudentsTable students={[student]} allStudents={students} {ratings} />
     </Collapsible>
-    {#if ratingsGot.length}
-        <Collapsible label="Hodnocení, která dostal{a}">
-            <RatingsTable ratings={ratingsGot} mode="by" />
-        </Collapsible>
-    {/if}
-    {#if ratingsWrote.length}
-        <Collapsible label="Hodnocení, která dal{a}">
-            <RatingsTable ratings={ratingsWrote} mode="about" />
+    {#if ratingsGot.length || ratingsWrote.length}
+        <Collapsible label="Seznam hodnocení">
+            <RatingsTable {ratingsGot} {ratingsWrote} {students} />
         </Collapsible>
     {/if}
 {/snippet}

@@ -78,6 +78,9 @@
         border: 1px solid white;
         margin-top: 1px;
 
+        tbody tr:nth-child(even) {
+            background: rgb(30 30 30);
+        }
         tr :global {
             td, th {
                 text-align: center;

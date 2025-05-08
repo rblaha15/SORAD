@@ -8,7 +8,7 @@
     import { onMount } from "svelte";
     import database from "$lib/database/supabase";
     import StudentsImport from "$lib/components/admin/class/StudentsImport.svelte";
-    import { afterNavigate, beforeNavigate, goto } from "$app/navigation";
+    import { goto } from "$app/navigation";
 
     const classId = $derived(browser ? page.url.searchParams.get('class') : undefined)
     const importStudents = $derived(browser ? page.url.searchParams.get('import') : undefined)

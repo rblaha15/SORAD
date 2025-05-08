@@ -15,7 +15,7 @@
 
 </script>
 
-<details bind:open>
+<details bind:open name="details">
     <summary>{label}</summary>
     {@render content?.()}
 </details>

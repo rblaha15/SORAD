@@ -164,5 +164,6 @@
     .table-help {
         display: flex;
         flex-wrap: wrap;
+        align-items: start;
     }
 </style>
