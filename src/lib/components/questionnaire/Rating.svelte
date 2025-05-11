@@ -54,14 +54,15 @@
             }
 
             &:has(> input:focus-visible) {
-                color: darkgreen !important;
+                color: var(--blue-color) !important;
             }
         }
 
         &:not(:hover) label:has(input:checked),
         & label:has(input:checked:read-only),
         & label:has(input:hover:not(:read-only)) {
-            color: gold;
+            color: var(--green-color);
+            font-weight: bold;
         }
     }
 </style>

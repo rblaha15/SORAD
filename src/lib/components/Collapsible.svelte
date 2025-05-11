@@ -24,7 +24,6 @@
     details {
         border: 1px solid var(--grey-color);
         border-radius: .75rem;
-        margin-top: 1rem;
 
         summary {
             font-weight: bold;

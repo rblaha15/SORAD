@@ -67,7 +67,7 @@
         ...added.map(s => [s, 'var(--green-color)'] as const),
         ...removed.map(s => [s, 'var(--red-color)'] as const),
         ...changed.map(s => [s, 'var(--orange-color)'] as const),
-        ...unchanged.map(s => [s, 'var(--white-color)'] as const),
+        ...unchanged.map(s => [s, 'var(--black-color)'] as const),
     ]);
 
     let importing = $state(false);
@@ -140,13 +140,13 @@
 {/snippet}
 {#snippet buttons()}
     <button class="secondary" onclick={() => goto(`/admin?class=${classId}`, { replaceState: false })}>Zpět</button>
-    <button class="secondary" onclick={database.auth.logOut} style="margin-right: auto;">Odhlásit se</button>
+    <button class="secondary" onclick={database.auth.logOut} >Odhlásit se</button>
 {/snippet}
 
 <title>Importovat žáky</title>
 
 {#if klass === undefined}
-    <span class="loader"></span>
+    <div><span class="loader"></span></div>
 {:else}
     <BasicLayout {buttons} {content} {title} />
 {/if}

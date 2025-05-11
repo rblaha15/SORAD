@@ -75,11 +75,11 @@
         width: fit-content;
         border-spacing: .375rem;
         border-collapse: collapse;
-        border: 1px solid white;
+        border: 1px solid black;
         margin-top: 1px;
 
         tbody tr:nth-child(even) {
-            background: rgb(30 30 30);
+            background: gainsboro;
         }
         tr :global {
             td, th {
@@ -97,14 +97,14 @@
     }
 
     :global th {
-        border: 1px solid white;
+        border: 1px solid black;
         padding: .375rem;
     }
 
     table.bordersColumns tr :global {
         td {
-            border-left: 1px solid white;
-            border-right: 1px solid white;
+            border-left: 1px solid black;
+            border-right: 1px solid black;
             padding-left: .375rem;
             padding-right: .375rem;
         }
@@ -120,8 +120,8 @@
 
     table.bordersRows tr :global {
         td {
-            border-top: 1px solid white;
-            border-bottom: 1px solid white;
+            border-top: 1px solid black;
+            border-bottom: 1px solid black;
             padding-top: .375rem;
             padding-bottom: .375rem;
 

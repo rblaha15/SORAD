@@ -26,22 +26,26 @@
     Administrace: třídy
 {/snippet}
 {#snippet content()}
-    <div class="title">
+    <div class="row">
         <h4>Třídy:</h4>
         <button class="primary" onclick={newClass}>Nová třída</button>
     </div>
-    <ul>
-        {#each classes as klass}
-            <li>
-                <a class={{enabled: klass.enabled}} href="/admin/?class={klass.id}" data-sveltekit-replacestate="off">
-                    <strong>{klass.name ? klass.name : 'Nová třída'}</strong>
-                </a>
-            </li>
-        {/each}
-    </ul>
+    {#if classes.length}
+        <ul class="class-list">
+            {#each classes as klass}
+                <li>
+                    <a class={{enabled: klass.enabled}} href="/admin/?class={klass.id}" data-sveltekit-replacestate="off">
+                        <strong>{klass.name ? klass.name : 'Nová třída'}</strong>
+                    </a>
+                </li>
+            {/each}
+        </ul>
+    {:else}
+        <p>Zatím nemáte vytvořené žádné třídy</p>
+    {/if}
 {/snippet}
 {#snippet buttons()}
-    <button class="secondary" onclick={database.auth.logOut} style="margin-right: auto;">Odhlásit se</button>
+    <button class="secondary" onclick={database.auth.logOut}>Odhlásit se</button>
 {/snippet}
 
 <title>Administrace: třídy</title>
@@ -49,15 +53,13 @@
 <BasicLayout {buttons} {content} {title} />
 
 <style>
-    .title {
-        display: flex;
-        align-items: center;
+    .class-list {
+        li {
+            padding-bottom: 1rem;
 
-        h4 {
-            margin-right: 1rem;
+            a:not(.enabled) {
+                color: var(--grey-color)
+            }
         }
-    }
-    a:not(.enabled) {
-        color: var(--grey-color)
     }
 </style>

@@ -24,7 +24,7 @@
         Přihlášení
     {/snippet}
     {#snippet content()}
-        <form onsubmit={logIn}>
+        <form onsubmit={logIn} class="column">
             <label for="login">Zadejte kód, který vám dal vyučující:</label>
             <div class="row">
                 <input value={code} type="text" oninput={e => code = e.currentTarget.value.toUpperCase()} id="login" />
@@ -34,28 +34,13 @@
             <p>{error}</p>
             {/if}
         </form>
-        <div class="row">
-            <hr />
-            <span>nebo</span>
-            <hr />
-        </div>
+        <span>nebo</span>
         <button class="primary" onclick={database.auth.logInWithMS}>Přihlásit se pomocí školního MS účtu</button>
     {/snippet}
 </BasicLayout>
 
 <style>
-    form {
-        label {
-            display: block;
-        }
-        input {
-            margin: 0 .375rem 0 0;
-        }
-    }
-
-
-    hr {
-        flex-grow: 1;
-        margin: 1rem;
+    .row {
+        align-items: stretch;
     }
 </style>

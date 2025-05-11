@@ -16,23 +16,29 @@
     let klass = $state() as Class;
     let ratings = $state<RatingWithStudents[]>([]);
     let students = $state<Student[]>([]);
+    let error = $state(false);
 
     const refresh = async () => {
-        const _klass = await database.getMyClass(classId)
-        const _ratings = await database.admin.getClassRatings(classId)
-        const _students = await database.getStudentsOfClass(classId)
+        try {
+            const _klass = await database.getMyClass(classId)
+            const _ratings = await database.admin.getClassRatings(classId)
+            const _students = await database.getStudentsOfClass(classId)
 
-        klass = _klass
-        students = _students
-        ratings = _ratings.map(r => ({
-            ...r, by: students.find(s => s.id == r.by)!, about: students.find(s => s.id == r.about)!
-        }))
+            klass = _klass
+            students = _students
+            ratings = _ratings.map(r => ({
+                ...r, by: students.find(s => s.id == r.by)!, about: students.find(s => s.id == r.about)!
+            }))
+        } catch (e) {
+            console.error(e)
+            error = true
+        }
     }
     onMount(refresh)
 </script>
 
 {#snippet title()}
-    Administrace: třída {klass.name}
+    Administrace: třída {klass?.name ?? ''}
 {/snippet}
 {#snippet content()}
     <Collapsible label="Nastavení" open={klass ? students.length === 0 || ratings.length === 0 : false}>
@@ -50,14 +56,20 @@
     {/if}
 {/snippet}
 {#snippet buttons()}
-    <button class="secondary" onclick={() => goto(`/admin`, { replaceState: false })}>Zpět</button>
-    <button class="secondary" onclick={database.auth.logOut} style="margin-right: auto;">Odhlásit se</button>
+    <button class="secondary" onclick={() => goto(`/admin`)}>Zpět</button>
+    <button class="secondary" onclick={database.auth.logOut}>Odhlásit se</button>
 {/snippet}
 
 <title>Třída {klass?.name ?? ''}</title>
 
-{#if klass === undefined}
-    <span class="loader"></span>
+{#if error}
+    <BasicLayout {buttons} {title}>
+        {#snippet content()}
+            <p>Došlo k chybě při načítání třídy, nejspíše byla odstraněna.</p>
+        {/snippet}
+    </BasicLayout>
+{:else if klass === undefined}
+    <div><span class="loader"></span></div>
 {:else}
     <BasicLayout {buttons} {content} {title} />
 {/if}

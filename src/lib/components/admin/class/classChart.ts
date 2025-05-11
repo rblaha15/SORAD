@@ -5,7 +5,7 @@ import datalabels from "chartjs-plugin-datalabels";
 
 Chart.register(datalabels);
 
-const scaleOptions = (print: boolean): ScaleOptions<'linear'> => ({
+const scaleOptions: ScaleOptions<'linear'> = {
     type: 'linear',
     position: 'center',
     min: 1,
@@ -17,17 +17,17 @@ const scaleOptions = (print: boolean): ScaleOptions<'linear'> => ({
         precision: 0,
     },
     border: {
-        color: print ? 'black' : 'white',
+        color: 'black',
         z: -1,
         width: 1,
     },
     grid: {
         display: true,
-        color: print ? '#00000060' : '#FFFFFF60',
+        color: '#00000060',
         drawTicks: false,
         z: -1,
     },
-})
+}
 
 export const classChart = (
     scores: StudentScore[],
@@ -55,8 +55,8 @@ export const classChart = (
             },
         },
         scales: {
-            x: scaleOptions(print),
-            y: scaleOptions(print),
+            x: scaleOptions,
+            y: scaleOptions,
         },
         plugins: {
             tooltip: {

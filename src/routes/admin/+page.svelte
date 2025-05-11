@@ -22,7 +22,7 @@
 </script>
 
 {#if classId === undefined || importStudents === undefined || studentId === undefined}
-    <span class="loader"></span>
+    <div><span class="loader"></span></div>
 {:else if classId !== null && studentId !== null}
     <StudentDetails classId={Number(classId)} studentId={Number(studentId)} />
 {:else if classId !== null && importStudents !== null}

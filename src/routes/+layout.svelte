@@ -16,22 +16,29 @@
         display: flex;
         flex-direction: column;
         height: 100%;
+        & :global > * {
+            flex-grow: 1;
+        }
     }
 
     :root {
-        --influence-color: lightcyan;
-        --sympathy-color: papayawhip;
+        --foreground-color: black;
+        --background-color: white;
+        --influence-color: midnightblue;
+        --sympathy-color: saddlebrown;
 
-        --blue-color: deepskyblue;
-        --orange-color: orange;
-        --red-color: red;
-        --grey-color: darkgrey;
-        --white-color: white;
-        --green-color: limegreen;
+        --blue-color: mediumblue;
+        --orange-color: chocolate;
+        --red-color: firebrick;
+        --grey-color: dimgray;
+        --green-color: seagreen;
 
         --link-color: var(--blue-color);
         --boy-color: dodgerblue;
         --girl-color: orangered;
+
+        background-color: var(--background-color);
+        color: var(--foreground-color);
     }
 
     :global {
@@ -39,6 +46,7 @@
             font-size: 1rem;
             text-size-adjust: 100%;
             line-height: 1.5;
+            margin: 0;
         }
 
         a {
@@ -76,7 +84,7 @@
             &:not(:disabled) {
                 &:hover, &:focus-visible, &.toggle:has(> input:checked), &.toggle.checked {
                     background: var(--btn-color);
-                    color: black;
+                    color: var(--background-color);
                     outline: none;
                 }
             }
@@ -120,7 +128,7 @@
         }
 
         .neutral {
-            --btn-color: var(--white-color);
+            --btn-color: var(--foreground-color);
         }
 
         .danger {
@@ -190,9 +198,8 @@
         }
 
         dialog {
-            background: black !important;
-            color: white !important;
             border-radius: 1rem;
+            margin: auto;
 
             &::backdrop {
                 background-color: rgb(0 0 0 / 50%);
@@ -202,11 +209,12 @@
         .row {
             display: flex;
             align-items: center;
+            gap: .5rem;
         }
-
-        body:has(> .print) {
-            background: white;
-            color: black;
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
         }
     }
 </style>

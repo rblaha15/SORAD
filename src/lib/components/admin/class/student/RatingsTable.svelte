@@ -121,23 +121,23 @@
         margin-bottom: 1rem;
     }
 
-    .similar.bad {
+    .same.bad {
         background: color-mix(in srgb, DarkRed, black);
     }
 
-    .similar.good {
+    .same.good {
         background: color-mix(in srgb, DarkGreen, black);
     }
 
     .same {
-        color: black
+        color: white;
     }
 
-    .same.bad {
+    .similar.bad {
         background: OrangeRed;
     }
 
-    .same.good {
+    .similar.good {
         background: YellowGreen;
     }
 

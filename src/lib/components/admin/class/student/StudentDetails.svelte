@@ -73,13 +73,13 @@
 {/snippet}
 {#snippet buttons()}
     <button class="secondary" onclick={() => goto(`/admin?class=${classId}`, { replaceState: false })}>Zpět</button>
-    <button class="secondary" onclick={database.auth.logOut} style="margin-right: auto;">Odhlásit se</button>
+    <button class="secondary" onclick={database.auth.logOut} >Odhlásit se</button>
 {/snippet}
 
 <title>{score ? `${score.names} ${score.surname}` : 'Žák'}</title>
 
 {#if klass === undefined || score === undefined}
-    <span class="loader"></span>
+    <div><span class="loader"></span></div>
 {:else}
     <BasicLayout {buttons} {content} {title} />
 {/if}

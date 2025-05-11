@@ -31,7 +31,7 @@
 <title>SORAD</title>
 
 {#if data === 'loading'}
-    <span class="loader"></span>
+    <div><span class="loader"></span></div>
 {:else if data === 'noData' || data === 'notStudent'}
     <BasicLayout>
         {#snippet content()}
@@ -42,7 +42,7 @@
             {/if}
         {/snippet}
         {#snippet buttons()}
-            <button class="secondary" onclick={database.auth.logOut} style="margin-right: auto;">Odhlásit se</button>
+            <button class="secondary" onclick={database.auth.logOut} >Odhlásit se</button>
         {/snippet}
     </BasicLayout>
 {:else}

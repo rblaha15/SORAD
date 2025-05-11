@@ -23,17 +23,16 @@
 
 <style>
     table {
-        color: black;
         border-collapse: collapse;
-        border: 2px solid black;
+        border: 4px solid var(--foreground-color);
 
         td {
-            border: 1px solid black;
+            border: 2px solid var(--foreground-color);
             padding: 5px;
             text-align: center;
         }
         td:nth-of-type(3) {
-            border-left-width: 2px;
+            border-left-width: 4px;
         }
     }
 </style>

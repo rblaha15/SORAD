@@ -76,17 +76,13 @@ export const studentChart = (
                     min: 0,
                     max: 5,
                     ticks: {
-                        color: ctx => print
-                            ? `rgba(0, 0, 0, ${importance(ctx.index)})`
-                            : `rgba(255, 255, 255, ${importance(ctx.index)})`,
-                        backdropColor: print ? 'white' : 'black',
+                        color: ctx => `rgba(0, 0, 0, ${importance(ctx.index)})`,
+                        backdropColor: 'white',
                         precision: 0,
                     },
                     grid: {
                         circular: true,
-                        color: ctx => print
-                            ? `rgba(0, 0, 0, ${importance(ctx.index)})`
-                            : `rgba(255, 255, 255, ${importance(ctx.index)})`,
+                        color: ctx => `rgba(0, 0, 0, ${importance(ctx.index)})`,
                     },
                     pointLabels: {
                         display: false,
