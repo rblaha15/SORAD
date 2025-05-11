@@ -24,7 +24,7 @@
     <h3>{printTitle}</h3>
 {/if}
 
-<div class="chart-root" class:print>
+<div class={['chart-root', {print}]}>
     {#if !print}
         <button
             class="neutral"

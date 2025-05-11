@@ -48,7 +48,7 @@
     )) as { [C in Column]: U; }
 </script>
 <TopScrollable>
-    <table class:bordersColumns class:bordersRows class:sortable={sortColumns !== undefined && defaultSort !== undefined}>
+    <table class={{bordersColumns, bordersRows, sortable: sortColumns !== undefined && defaultSort !== undefined }}>
         <thead>
         <tr>
             {@render additionalHeader?.()}

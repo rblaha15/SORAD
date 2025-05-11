@@ -1,5 +1,4 @@
 import { createClient } from '@supabase/supabase-js';
-import type { GenericSchema } from '@supabase/supabase-js/src/lib/types';
 import type { Class, Database, Rating, Student, StudentPassword } from '$lib/database';
 
 type DatabaseSchema = {

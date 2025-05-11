@@ -10,7 +10,7 @@
 
 <div class="number-row">
     {#each range(1, 6) as i}
-        <label class:error class={type}>
+        <label class={[{error}, type]}>
             <input type="radio" value={i} bind:group={value} {readonly}>
             {i}
         </label>

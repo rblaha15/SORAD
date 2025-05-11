@@ -35,7 +35,7 @@
     <h3>{printTitle}</h3>
 {/if}
 
-<div class="chart-root" class:print>
+<div class={['chart-root', {print}]}>
     {#if !print}
         <div class="title">
             <h4>{bySameStudent ? 'Hodnocení ostatních:' : 'Hodnocení ostatními:'}</h4>

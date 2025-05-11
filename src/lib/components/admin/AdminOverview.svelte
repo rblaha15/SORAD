@@ -33,7 +33,7 @@
     <ul>
         {#each classes as klass}
             <li>
-                <a class:enabled={klass.enabled} href="/admin/?class={klass.id}" data-sveltekit-replacestate="off">
+                <a class={{enabled: klass.enabled}} href="/admin/?class={klass.id}" data-sveltekit-replacestate="off">
                     <strong>{klass.name ? klass.name : 'Nová třída'}</strong>
                 </a>
             </li>
