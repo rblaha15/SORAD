@@ -2,7 +2,6 @@
     import BasicLayout from "$lib/components/BasicLayout.svelte";
     import type { Class, Student } from "$lib/database";
     import database from "$lib/database/supabase";
-    import { onMount } from "svelte";
     import { getStudentScore, type RatingWithStudents, type StudentScore } from "$lib/admin";
     import StudentsTable from "$lib/components/admin/class/StudentsTable.svelte";
     import RatingsTable from "$lib/components/admin/class/student/RatingsTable.svelte";
