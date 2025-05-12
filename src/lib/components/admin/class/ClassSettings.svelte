@@ -4,8 +4,7 @@
     import PrintCodes from "$lib/components/admin/class/PrintCodes.svelte";
     import { printComponent } from "$lib/print.js";
     import { type RatingWithStudents } from "$lib/admin.js";
-    import type { Class, Rating, Student } from "$lib/database";
-
+    import type { Class, Student } from "$lib/database";
     import { sortedBy } from "$lib/utils/comparisons";
     import { goto } from "$app/navigation";
 
