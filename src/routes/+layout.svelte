@@ -28,10 +28,10 @@
         --sympathy-color: saddlebrown;
 
         --blue-color: mediumblue;
-        --orange-color: chocolate;
+        --orange-color: #B75B1AFF;
         --red-color: firebrick;
         --grey-color: dimgray;
-        --green-color: seagreen;
+        --green-color: #128A00FF;
 
         --link-color: var(--blue-color);
         --boy-color: dodgerblue;
