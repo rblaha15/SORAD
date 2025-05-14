@@ -89,6 +89,7 @@
         {:else if progress === 'introduction'}
             <p>Čeká {vas} vyplnění dotazníku, který se zabývá vztahy ve {vasi} třídě.</p>
             <p>Postupuj{te2} podle zadaných instrukcí, vše bude řádně vysvětleno.</p>
+            <p>Všechny odpovědi se průběžně ukládají do prohlížeče, takže o ně nepřijde{te}, pokud např. ztratí{te} připojení k internetu.</p>
         {:else if progress === 'tutorial'}
             <Tutorial isGirl={data.myself.is_girl} grade={data.myClass.grade} {phase} />
         {:else}

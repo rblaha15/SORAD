@@ -11,12 +11,10 @@
     const te = grade > 4 ? 'te' : 'š'
     const ete = grade > 4 ? 'ete' : 'i'
     const te2 = grade > 4 ? 'te' : ''
-    const your = grade > 4 ? 'vašich' : 'tvých'
-    const you = grade > 4 ? 'vám' : 'ti'
-    const you2 = grade > 4 ? 'vás' : 'tebe'
+    const tvych = grade > 4 ? 'vašich' : 'tvých'
+    const vam = grade > 4 ? 'vám' : 'ti'
     const classmates = isGirl ? 'spolužačkek (a spolužáků)' : 'spolužáků (a spolužaček)'
     const a = isGirl ? 'a' : ''
-    const aa = isGirl ? 'á' : ''
     const ya = isGirl ? 'á' : 'ý'
     const ten = isGirl ? 'ta' : 'ten'
     const or = (a: string, b: string) => isGirl ? `${b}/${a}` : `${a}/${b}`
@@ -49,7 +47,7 @@
     {#if !justOverview}
         {#if phase === "influence"}
             <p class="info I"><span class="icon">»</span>
-                Nyní u {your} {classmates} vybere{te} číslo (ze stupnice výše), které ozanačuje, jak velký vliv mají na ostatní.
+                Nyní u {tvych} {classmates} vybere{te} číslo (ze stupnice výše), které ozanačuje, jak velký vliv mají na ostatní.
             </p>
             <p class="info I"><span class="icon">!</span>
                 Hodnoť{te2} podle vlastního nezávislého mínění, které je nejhodnotnější. Vzájemné domlouvání zkresluje výsledky.
@@ -66,28 +64,26 @@
             </p>
         {:else if phase === "sympathy"}
             <p class="info S"><span class="icon">»</span>
-                Nyní u {your} {classmates} vybere{te} číslo (ze stupnice výše), které ozanačuje, jak moc jsou {you} sympatičtí nebo nesympatičtí.
+                Nyní u {tvych} {classmates} vybere{te} číslo (ze stupnice výše), které ozanačuje, jak moc jsou {vam} sympatičtí nebo nesympatičtí.
             </p>
             <p class="info S"><span class="icon">?</span>
-                Sympatick{ya} je {you} {ten}, kdo je {you} příjemn{ya}, komu rád{a} pomůže{te}, s kým rád{a} tráví{te} čas, s kým se rád{a} baví{te} (ne nutně často).
+                Sympatick{ya} je {vam} {ten}, kdo je {vam} příjemn{ya}, komu rád{a} pomůže{te}, s kým rád{a} tráví{te} čas, s kým se rád{a} baví{te} (ne nutně často).
             </p>
             <p class="info S"><span class="icon">!</span>
                 Sympatie jsou individuální, každý má rád trochu jiné lidi, takže domlouvání nemá smysl!
             </p>
         {:else if phase === "sympathy-reasoning"}
             <p class="info S"><span class="icon">»</span>
-                Nyní se zamysl{ete} nad tím, proč je {you} kdo sympatický a nesympatický a napiš{te2} to krátkou větou do políčka vedle hodnocení.
+                Nyní se zamysl{ete} nad tím, proč je {vam} kdo sympatický a nesympatický a napiš{te2} to krátkou větou do políčka vedle hodnocení.
             </p>
             <p class="info S"><span class="icon">+</span>
                 Má{te} příležitost ukázat, jak dovede{te} přemýšlet o lidech a o svých vztazích k nim.
             </p>
             <p class="info S"><span class="icon">!</span>
-                Postupuj{te2} v pořadí, jak se {you} jména objeví na následující obrazovce. Nevadí, jestliže nestihne{te} odůvodnit všechny, ale snaž{te2} se
+                Postupuj{te2} v pořadí, jak se {vam} jména objeví na následující obrazovce. Nevadí, jestliže nestihne{te} odůvodnit všechny, ale snaž{te2} se
                 projít co nejvíce jmen!
             </p>
         {/if}
-
-        <p>Všechny odpovědi se průběžně ukládají do prohlížeče, takže o ně nepřijde{te}, pokud např. ztratí{te} připojení k internetu.</p>
     {/if}
 </div>
 

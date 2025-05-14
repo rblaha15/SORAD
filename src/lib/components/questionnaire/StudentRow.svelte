@@ -11,18 +11,17 @@
         phase: Phase,
     } = $props()
 
-    const sError = $derived(showErrors && rating.sympathy == -1)
-    const iError = $derived(showErrors && rating.influence == -1)
+    const error = $derived(showErrors && (phase == 'influence' ? rating.influence == -1 : rating.sympathy == -1))
 </script>
 
-<span class="student-name">{student.names} {student.surname}</span>
+<span class={['student-name', {error}]}>{student.names} {student.surname}</span>
 
 {#if phase === 'influence'}
     <span class="title I">Vliv:</span>
-    <span class="student-rating I"><NumberRating bind:value={rating.influence} error={iError} type="influence" /></span>
+    <span class="student-rating I"><NumberRating bind:value={rating.influence} type="influence" /></span>
 {:else}
     <span class="title S">Sympatie:</span>
-    <span class="student-rating S"><NumberRating bind:value={rating.sympathy} error={sError} type="sympathy" readonly={phase === 'sympathy-reasoning'} /></span>
+    <span class="student-rating S"><NumberRating bind:value={rating.sympathy} type="sympathy" readonly={phase === 'sympathy-reasoning'} /></span>
 {/if}
 {#if phase === 'sympathy-reasoning'}
     <span class="title R">Vysvětlení sympatií:</span>
@@ -34,6 +33,11 @@
         align-self: start;
         font-size: 1.5rem;
         margin-top: 1rem;
+
+        &.error {
+            color: var(--red-color);
+        }
+
         @media only screen and (min-width: 250px) {
             grid-area: auto / span 2;
         }

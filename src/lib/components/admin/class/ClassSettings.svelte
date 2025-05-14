@@ -56,23 +56,23 @@
     let deleteDialog = $state() as HTMLDialogElement;
 </script>
 
-<form class="settings" onsubmit={confirm}>
+<form class="settings column" onsubmit={confirm}>
     <div class="row">
         <label>
             Název třídy:
-            <input bind:value={name} type="text" required />
+            <input bind:value={name} required type="text" />
         </label>
     </div>
     <div class="row">
         <label>
             Ročník:
-            <input bind:value={grade} type="number" min="1" max="8" />
+            <input max="8" min="1" oninput={e => grade = Number(e.currentTarget.value) ?? -1} type="number" value={grade === -1 ? '' : grade} />
         </label>
         <p>1&nbsp;až&nbsp;8 – u čtyřletých tříd 5&nbsp;až&nbsp;8</p>
     </div>
     <label class="row">
         <input bind:checked={enabled} type="checkbox" />
-        Povolit přijímání odpovědí od studentů
+        Povolit přijímání odpovědí od žáků
     </label>
     <div class="row">
         <button class="danger" type="submit">Uložit</button>
@@ -85,68 +85,47 @@
     </div>
 </form>
 <hr />
-{#if students.length}
-    <button onclick={print} class="primary">Vytisknout jednorázové kódy pro přihlášení</button>
-{/if}
-{#if klass.grade !== -1}
-    <a class="btn primary" href="/admin?class={classId}&import" data-sveltekit-replacestate="off">Importovat seznam žáků</a>
-{/if}
-<button onclick={() => deleteDialog.showModal()} class="warning">Odstranit třídu</button>
-<dialog bind:this={deleteDialog} closedby={deleting ? 'none' : 'any'} onclose={() => deleting && deleteDialog.showModal()}>
-    <h2>Odstranit třídu</h2>
-    <p>Opravdu chcete odstranit třídu {klass.name ? klass.name : 'bez názvu'}?</p>
+<div class="column">
     {#if students.length}
-        <p>Odstraníte všechny žáky v této třídě! ({students.length})</p>
-        <p>Žáci se nebudou moci přihlásit a vyplnit dotazník!</p>
+        <button onclick={print} class="primary">Vytisknout jednorázové kódy pro přihlášení</button>
     {/if}
-    {#if ratings.length}
-        <p>Odstraníte všechna hodnocení od všech žáků v této třídě! ({ratings.length})</p>
+    {#if klass.grade !== -1}
+        <a class="btn primary" href="/admin?class={classId}&import" data-sveltekit-replacestate="off">Importovat seznam žáků</a>
     {/if}
-    <p><strong>Tato akce je nevratná!</strong></p>
-    <div class="row">
-        <button disabled={deleting} class="primary" onclick={() => deleteDialog.close()} style="margin-right: auto;">Zrušit</button>
-        {#if deleting}
-            <div class="loader"></div>
+    <button class="warning" onclick={() => deleteDialog.showModal()}>Odstranit třídu</button>
+</div>
+<dialog bind:this={deleteDialog} closedby={deleting ? 'none' : 'any'} onclose={() => deleting && deleteDialog.showModal()}>
+    <div class="column">
+        <h2>Odstranit třídu</h2>
+        <p>Opravdu chcete odstranit třídu {klass.name ? klass.name : 'bez názvu'}?</p>
+        {#if students.length}
+            <p>Odstraníte všechny žáky v této třídě! ({students.length})</p>
+            <p>Žáci se nebudou moci přihlásit a vyplnit dotazník!</p>
         {/if}
-        <button disabled={deleting} class="danger" onclick={deleteClass}>Odstranit</button>
+        {#if ratings.length}
+            <p>Odstraníte všechna hodnocení od všech žáků v této třídě! ({ratings.length})</p>
+        {/if}
+        <p><strong>Tato akce je nevratná!</strong></p>
+        <div class="row">
+            <button class="primary" disabled={deleting} onclick={() => deleteDialog.close()} style="margin-right: auto;">Zrušit</button>
+            {#if deleting}
+                <div class="loader"></div>
+            {/if}
+            <button class="danger" disabled={deleting} onclick={deleteClass}>Odstranit</button>
+        </div>
     </div>
 </dialog>
 
 <style>
-    button {
-        margin: .375rem 0;
-    }
-
     form.settings {
         label {
-            display: contents;
-
-            input {
-                margin: 0 .75rem .75rem;
-
-                &:not([type=checkbox]) {
-                    width: 30px;
-                }
-            }
-        }
-    }
-
-    dialog {
-        button {
-            margin: .375rem;
-
-            &:first-child {
-                margin-left: 0;
-            }
-
-            &:last-child {
-                margin-right: 0;
+            input:not([type=checkbox]) {
+                width: 30px;
             }
         }
     }
 
     .text-icon {
-        margin: 0 .5rem;
         font-size: 2rem;
         color: var(--green-color);
     }

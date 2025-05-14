@@ -36,7 +36,7 @@
     const currentGroup = $derived(getRatingGroups(data.myself, data.students, phase)[groupIndex])
 
     const sortedStudents = $derived(sortedBy(
-        sortedByDescending(currentGroup,
+        sortedBy(currentGroup,
             s => phase == 'sympathy-reasoning' ? [5, 1, 4, 2, 3].indexOf(ratings[s.id].sympathy) : 0
         ), s => phase == 'sympathy-reasoning' ? s.is_girl : false
     ))

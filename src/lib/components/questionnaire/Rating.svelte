@@ -2,15 +2,15 @@
     import { range } from "$lib/utils/constructors";
 
     let {
-        value = $bindable(), error, type, readonly = false,
+        value = $bindable(), type, readonly = false,
     }: {
-        value: number, error: boolean, type: 'influence' | 'sympathy', readonly?: boolean,
+        value: number, type: 'influence' | 'sympathy', readonly?: boolean,
     } = $props()
 </script>
 
 <div class="number-row">
     {#each range(1, 6) as i}
-        <label class={[{error}, type]}>
+        <label class={[type]}>
             <input type="radio" value={i} bind:group={value} {readonly}>
             {i}
         </label>
@@ -49,12 +49,8 @@
                 color: var(--sympathy-color);
             }
 
-            &.error {
-                color: var(--red-color);
-            }
-
             &:has(> input:focus-visible) {
-                color: var(--blue-color) !important;
+                color: var(--red-color) !important;
             }
         }
 

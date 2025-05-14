@@ -45,9 +45,11 @@
     $effect(() => {
         if (!file) return;
         readXlsxFile(file).then(rows => {
-            newStudents = rows.slice(1).map(
-                ([n, names, surname, email, g]) => ({ student_number: Number(n), names, surname, email, is_girl: g == 'Ano' }) as NewStudent
-            )
+            newStudents = rows.slice(2).map(([_, index, fullName, email, sex]) => ({
+                names: String(fullName).split(' ').slice(0, -1).join(' '),
+                surname: String(fullName).split(' ').at(-1) ?? '',
+                student_number: Number(index), email, is_girl: sex == 'Z'
+            }) as NewStudent)
         })
     })
 
@@ -122,25 +124,25 @@
     {#if allChanges.length}
         <Table items={allChanges} bordersColumns bordersRows>
             {#snippet header()}
-                <th class="left">Pořadí v třídní knize</th>
-                <th class="left">Jméno</th>
+                <th class="left">Číslo v třídním výkazu</th>
+                <th class="left">Jména</th>
                 <th class="left">Příjmení</th>
                 <th class="left">Email</th>
-                <th class="left">Dívka</th>
+                <th class="left">Pohlaví</th>
             {/snippet}
             {#snippet row([student, color])}
                 <td class="left" style:color>{student.student_number}</td>
                 <td class="left" style:color>{student.names}</td>
                 <td class="left" style:color>{student.surname}</td>
                 <td class="left" style:color>{student.email}</td>
-                <td class="left" style:color>{student.is_girl ? 'Ano' : 'Ne'}</td>
+                <td class="left" style:color>{student.is_girl ? 'Z' : 'M'}</td>
             {/snippet}
         </Table>
     {/if}
 {/snippet}
 {#snippet buttons()}
     <button class="secondary" onclick={() => goto(`/admin?class=${classId}`, { replaceState: false })}>Zpět</button>
-    <button class="secondary" onclick={database.auth.logOut} >Odhlásit se</button>
+    <button class="secondary" onclick={database.auth.logOut}>Odhlásit se</button>
 {/snippet}
 
 <title>Importovat žáky</title>
@@ -162,6 +164,7 @@
 
     .row {
         margin-bottom: .75rem;
+
         button {
             margin-right: .5rem;
         }

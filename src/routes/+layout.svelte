@@ -149,7 +149,6 @@
         }
 
         input[type=checkbox] {
-            transform: scale(1.5);
             cursor: pointer;
         }
 
@@ -199,6 +198,7 @@
 
         dialog {
             border-radius: 1rem;
+            padding: 1rem;
             margin: auto;
 
             &::backdrop {
