@@ -2,7 +2,7 @@
     import Table from "$lib/components/Table.svelte";
     import { averageBy } from "$lib/utils/sums";
     import { round } from "$lib/utils/arithmetics";
-    import GenderChooser from "$lib/components/admin/class/GenderChooser.svelte";
+    import GenderSelector from "$lib/components/admin/class/GenderSelector.svelte";
     import type { Student } from "$lib/database";
     import type { RatingWithStudents } from "$lib/admin";
     import { range } from "$lib/utils/constructors";
@@ -53,7 +53,7 @@
 </script>
 
 <div class="filter">
-    <GenderChooser
+    <GenderSelector
         bind:filter
         showBoys={students.some(s => !s.is_girl)}
         showGirls={students.some(s => s.is_girl)}
@@ -61,28 +61,30 @@
 </div>
 
 <div class="table-stats">
-    <Table bordersColumns defaultSort={{ s: 'ascending' }} items={withAverage} sortColumns={{
-    s: s => s.student?.surname ?? '',
-    gi: s => s.ratingGot?.influence, gs: s => s.ratingGot?.sympathy, gr: s => s.ratingGot?.reasoning,
-    wi: s => s.ratingWrote?.influence, ws: s => s.ratingWrote?.sympathy, wr: s => s.ratingWrote?.reasoning,
-}}>
+    <Table items={withAverage} sort={{defaultColumn: 's', columns: {
+        s: s => s.student?.surname ?? '',
+        gi: s => s.ratingGot?.influence, gs: s => s.ratingGot?.sympathy, gr: s => s.ratingGot?.reasoning,
+        wi: s => s.ratingWrote?.influence, ws: s => s.ratingWrote?.sympathy, wr: s => s.ratingWrote?.reasoning,
+    }}}>
         {#snippet additionalHeader()}
             <th></th>
             <th colspan="3">Hodnocení ostatními</th>
             <th colspan="3">Hodnocení ostatních</th>
         {/snippet}
         {#snippet header(c, o)}
-            <th class="left {c.s}" onclick={o.s}>Žák/žákyně</th>
+            <th class={c.s} onclick={o.s} style:text-align="start">Žák/žákyně</th>
+
             <th class={c.gi} onclick={o.gi}>Vnímaný vliv</th>
             <th class={c.gs} onclick={o.gs}>Sympatie</th>
             <th class={c.gr} onclick={o.gr}>Vysvětlení sympatií</th>
+
             <th class={c.wi} onclick={o.wi}>Vnímaný vliv</th>
             <th class={c.ws} onclick={o.ws}>Sympatie</th>
             <th class={c.wr} onclick={o.wr}>Vysvětlení sympatií</th>
         {/snippet}
 
         {#snippet row(s)}
-            <td class="left">
+            <td style:text-align="start">
                 {#if s.student === undefined}
                     <strong>Průměr</strong>
                 {:else}
@@ -95,6 +97,7 @@
             <td>{s.ratingGot?.influence ? round(s.ratingGot.influence).toLocaleString('cs') : '–'}</td>
             <td class={s.klass}>{s.ratingGot?.sympathy ? round(s.ratingGot.sympathy).toLocaleString('cs') : '–'}</td>
             <td>{s.ratingGot?.reasoning ?? ''}</td>
+
             <td>{s.ratingWrote?.influence ? round(s.ratingWrote.influence).toLocaleString('cs') : '–'}</td>
             <td class={s.klass}>{s.ratingWrote?.sympathy ? round(s.ratingWrote.sympathy).toLocaleString('cs') : '–'}</td>
             <td>{s.ratingWrote?.reasoning ?? ''}</td>

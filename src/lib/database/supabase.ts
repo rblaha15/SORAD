@@ -131,7 +131,7 @@ const database: Database = {
     },
 
     auth: {
-        getEmail: async () => (await client.auth.getUser())?.data?.user?.email ?? null,
+        getUserEmail: async () => (await client.auth.getUser())?.data?.user?.email ?? null,
         logInWithMS: async () => {
             const { error } = await client.auth.signInWithOAuth({
                 provider: 'azure',

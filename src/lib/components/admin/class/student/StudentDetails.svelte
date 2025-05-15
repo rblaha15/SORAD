@@ -5,7 +5,7 @@
     import { getStudentScore, type RatingWithStudents, type StudentScore } from "$lib/admin";
     import StudentsTable from "$lib/components/admin/class/StudentsTable.svelte";
     import RatingsTable from "$lib/components/admin/class/student/RatingsTable.svelte";
-    import Collapsible from "$lib/components/Collapsible.svelte";
+    import Details from "$lib/components/Details.svelte";
     import StudentChart from "$lib/components/admin/class/student/StudentChart.svelte";
     import TopScrollable from "$lib/components/TopScrollable.svelte";
     import { goto } from "$app/navigation";
@@ -50,7 +50,7 @@
     <span style="font-size: 1rem">{score.names} {score.surname}</span>
 {/snippet}
 {#snippet content()}
-    <Collapsible label="Grafy sympatií">
+    <Details label="Grafy sympatií">
         <TopScrollable>
             <div class="charts">
                 {#if ratingsGot.length}
@@ -61,14 +61,14 @@
                 {/if}
             </div>
         </TopScrollable>
-    </Collapsible>
-    <Collapsible label="Přehled třídních indexů">
+    </Details>
+    <Details label="Přehled třídních indexů">
         <StudentsTable students={[student]} allStudents={students} {ratings} />
-    </Collapsible>
+    </Details>
     {#if ratingsGot.length || ratingsWrote.length}
-        <Collapsible label="Seznam hodnocení">
+        <Details label="Seznam hodnocení">
             <RatingsTable {ratingsGot} {ratingsWrote} {students} />
-        </Collapsible>
+        </Details>
     {/if}
 {/snippet}
 {#snippet buttons()}

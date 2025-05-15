@@ -1,62 +1,61 @@
-<script generics="T, Column extends string" lang="ts">
+<script generics="T, Columns extends string[]" lang="ts">
     import type { Snippet } from "svelte";
     import TopScrollable from "$lib/components/TopScrollable.svelte";
     import { type Comparable, sortedBy, sortedByDescending } from "$lib/utils/comparisons";
 
-    const { items, header, row, sortColumns, defaultSort, bordersColumns = false, bordersRows = false, additionalHeader }: {
+    type Column = Columns[number];
+
+    const { items, header, row, sort, additionalHeader }: {
         items: T[],
         header: Snippet<[
-            classes: {
-                [C in Column]: string;
+            classes: { // For sorting: adds the sortCol arrow
+                [C in Column]?: 'sort-asc' | 'sort-desc' | '';
             },
-            onClicks: {
-                [C in Column]: () => void;
+            onClicks: { // For sorting: sets the sortCol column
+                [C in Column]?: () => void;
             },
         ]>,
         additionalHeader?: Snippet,
         row: Snippet<[item: T, index: number]>,
-        sortColumns?: {
-            [C in Column]: (item: T) => Comparable;
+        sort?: {
+            disabled?: boolean,
+            columns: {
+                [C in Column]: (item: T) => Comparable;
+            },
+            defaultColumn: Column,
+            defaultDirection?: 'ascending' | 'descending',
         },
-        defaultSort?: {
-            [C in Column]?: 'ascending' | 'descending';
-        },
-        bordersColumns?: boolean,
-        bordersRows?: boolean,
     } = $props()
 
-    let sort = $state<Column | null>(null)
-    let asc = $state<boolean>(defaultSort ? Object.values(defaultSort).at(0) as boolean ?? false : false)
+    let sortCol = $state<Column | undefined>(sort?.defaultColumn)
+    let asc = $state(sort?.defaultDirection != 'descending')
     $effect(() => {
-        if (sort) asc = true
-    })
-    $effect(() => {
-        if (defaultSort)
-            sort = Object.keys(defaultSort).at(0) as Column ?? sort
+        if (sortCol) asc = true
     })
 
     const sorted = $derived.by(() => {
-        [sort, sortColumns, asc, items];
-        if (sort == null || sortColumns == undefined) return items
+        [sortCol, asc, sort, items];
+        if (!sort || sort.disabled) return items
         const sortFn = asc ? sortedBy : sortedByDescending;
-        const compareFn = sortColumns[sort]
+        const compareFn = sort.columns[sortCol!]
         return sortFn(items, compareFn)
     })
 
-    const mapCols = <U>(callback: (c: Column) => U) => (sortColumns == undefined ? undefined : Object.fromEntries(
-        Object.keys(sortColumns).map(c => [c, callback(c as Column)])
-    )) as { [C in Column]: U; }
+    const columns = $derived(sort ? Object.keys(sort.columns) : undefined);
+    const mapCols = <U>(callback: (c: Column) => U) =>
+        !sort ? {} : Object.fromEntries(columns!.map(c => [c, callback(c as Column)]))  as { [C in Column]?: U; }
 </script>
+
 <TopScrollable>
-    <table class={{bordersColumns, bordersRows, sortable: sortColumns !== undefined && defaultSort !== undefined }}>
+    <table class={{sortable: sort && !sort.disabled }}>
         <thead>
         <tr>
             {@render additionalHeader?.()}
         </tr>
         <tr>
             {@render header(
-                mapCols(c => sort === c ? asc ? 'sort-asc' : 'sort-desc' : ''),
-                mapCols(c => () => sort !== c ? sort = c : asc = !asc),
+                /* header class */ mapCols(c => sortCol === c ? asc ? 'sort-asc' : 'sort-desc' : ''),
+                /* header onclick */ mapCols(c => () => sortCol !== c ? sortCol = c : asc = !asc),
             )}
         </tr>
         </thead>
@@ -81,77 +80,39 @@
         tbody tr:nth-child(even) {
             background: gainsboro;
         }
+
         tr :global {
             td, th {
                 text-align: center;
+                border: 1px solid black;
+            }
 
-                &.left {
-                    text-align: left;
-                }
+            th {
+                padding: .300rem;
             }
 
             td {
                 white-space: nowrap;
+                padding: .150rem;
             }
         }
     }
 
-    :global th {
-        border: 1px solid black;
-        padding: .375rem;
-    }
+    table.sortable thead tr:last-child :global th {
+        cursor: pointer;
 
-    table.bordersColumns tr :global {
-        td {
-            border-left: 1px solid black;
-            border-right: 1px solid black;
-            padding-left: .375rem;
-            padding-right: .375rem;
+        &::after {
+            font-size: inherit;
+            margin-left: 0.375rem;
+            color: inherit;
         }
 
-        &:first-child td {
-            padding-top: .375rem;
+        &.sort-asc::after {
+            content: '\025BE';
         }
 
-        &:last-child td {
-            padding-bottom: .375rem;
-        }
-    }
-
-    table.bordersRows tr :global {
-        td {
-            border-top: 1px solid black;
-            border-bottom: 1px solid black;
-            padding-top: .375rem;
-            padding-bottom: .375rem;
-
-            &:first-child {
-                padding-left: .375rem;
-            }
-
-            &:last-child {
-                padding-right: .375rem;
-            }
-        }
-    }
-
-    .sortable tr:last-child {
-        :global th {
-            cursor: pointer;
-
-            &::after {
-                font-size: inherit;
-                margin-left: 0.375rem;
-                color: inherit;
-            }
-
-            &.sort-asc::after {
-                content: '\025BE';
-            }
-
-            &.sort-desc::after {
-                content: '\025B4';
-            }
+        &.sort-desc::after {
+            content: '\025B4';
         }
     }
 </style>

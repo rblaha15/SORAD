@@ -4,7 +4,7 @@
     import database from "$lib/database/supabase.js";
     import { onMount } from "svelte";
     import { getStudentsScores, type RatingWithStudents } from "$lib/admin";
-    import Collapsible from "$lib/components/Collapsible.svelte";
+    import Details from "$lib/components/Details.svelte";
     import ClassChart from "./ClassChart.svelte";
     import StudentsTable from "$lib/components/admin/class/StudentsTable.svelte";
     import ClassSettings from "$lib/components/admin/class/ClassSettings.svelte";
@@ -41,18 +41,18 @@
     Administrace: třída {klass?.name ?? ''}
 {/snippet}
 {#snippet content()}
-    <Collapsible label="Nastavení" open={klass ? students.length === 0 || ratings.length === 0 : false}>
+    <Details label="Nastavení" open={klass ? students.length === 0 || ratings.length === 0 : false}>
         <ClassSettings {refresh} {classId} {klass} {students} {ratings} />
-    </Collapsible>
+    </Details>
     {#if students.length && ratings.length}
-        <Collapsible label="Graf sympatií a vlivu">
+        <Details label="Graf sympatií a vlivu">
             <TopScrollable>
                 <ClassChart scores={getStudentsScores(students, ratings)} klass={klass.name} />
             </TopScrollable>
-        </Collapsible>
-        <Collapsible label="Seznam žáků">
+        </Details>
+        <Details label="Seznam žáků">
             <StudentsTable {students} {ratings} allStudents={students} overview />
-        </Collapsible>
+        </Details>
     {/if}
 {/snippet}
 {#snippet buttons()}

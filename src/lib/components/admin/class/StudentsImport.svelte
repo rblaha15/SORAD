@@ -122,20 +122,20 @@
         <p>Aktuální seznam žáků:</p>
     {/if}
     {#if allChanges.length}
-        <Table items={allChanges} bordersColumns bordersRows>
+        <Table items={allChanges}>
             {#snippet header()}
-                <th class="left">Číslo v třídním výkazu</th>
-                <th class="left">Jména</th>
-                <th class="left">Příjmení</th>
-                <th class="left">Email</th>
-                <th class="left">Pohlaví</th>
+                <th style:text-align="start">Číslo v třídním výkazu</th>
+                <th style:text-align="start">Jména</th>
+                <th style:text-align="start">Příjmení</th>
+                <th style:text-align="start">Email</th>
+                <th style:text-align="start">Pohlaví</th>
             {/snippet}
             {#snippet row([student, color])}
-                <td class="left" style:color>{student.student_number}</td>
-                <td class="left" style:color>{student.names}</td>
-                <td class="left" style:color>{student.surname}</td>
-                <td class="left" style:color>{student.email}</td>
-                <td class="left" style:color>{student.is_girl ? 'Z' : 'M'}</td>
+                <td style:text-align="start" style:color>{student.student_number}</td>
+                <td style:text-align="start" style:color>{student.names}</td>
+                <td style:text-align="start" style:color>{student.surname}</td>
+                <td style:text-align="start" style:color>{student.email}</td>
+                <td style:text-align="start" style:color>{student.is_girl ? 'Z' : 'M'}</td>
             {/snippet}
         </Table>
     {/if}

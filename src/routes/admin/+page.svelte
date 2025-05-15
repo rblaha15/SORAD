@@ -2,7 +2,7 @@
     import { browser } from "$app/environment";
     import { page } from "$app/state";
     import ClassDetails from "$lib/components/admin/class/ClassDetails.svelte";
-    import AdminOverview from "$lib/components/admin/AdminOverview.svelte";
+    import ClassList from "$lib/components/admin/AdminOverview.svelte";
     import StudentDetails from "$lib/components/admin/class/student/StudentDetails.svelte";
     import { isAdmin } from "$lib/admin";
     import { onMount } from "svelte";
@@ -15,9 +15,8 @@
     const studentId = $derived(browser ? page.url.searchParams.get('student') : undefined)
 
     onMount(async () => {
-        const email = await database.auth.getEmail()
-        if (!email || !isAdmin(email))
-            await goto(`/`, { replaceState: false })
+        const email = await database.auth.getUserEmail()
+        if (!email || !isAdmin(email)) await goto(`/`)
     })
 </script>
 
@@ -30,5 +29,5 @@
 {:else if classId !== null}
     <ClassDetails classId={Number(classId)} />
 {:else}
-    <AdminOverview />
+    <ClassList />
 {/if}

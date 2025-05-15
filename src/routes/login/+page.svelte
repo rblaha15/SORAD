@@ -8,7 +8,7 @@
     let error = $state<string>()
 
     onMount(async () => {
-        if (await database.auth.getEmail()) await goto('/', { replaceState: false });
+        if (await database.auth.getUserEmail()) await goto('/');
     })
 
     const logIn = async () => {

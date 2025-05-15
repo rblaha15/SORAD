@@ -4,12 +4,10 @@
     let {
         label,
         children,
-        content = children!,
         open = false,
     }: {
         label: string,
-        children?: Snippet,
-        content?: Snippet,
+        children: Snippet,
         open?: boolean,
     } = $props();
 
@@ -17,7 +15,7 @@
 
 <details bind:open name="details">
     <summary>{label}</summary>
-    {@render content?.()}
+    {@render children()}
 </details>
 
 <style>

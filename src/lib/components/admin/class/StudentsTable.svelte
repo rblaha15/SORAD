@@ -7,7 +7,7 @@
     import { rankedBy } from "$lib/utils/ranks";
     import { round } from "$lib/utils/arithmetics";
     import TopScrollable from "$lib/components/TopScrollable.svelte";
-    import GenderChooser from "$lib/components/admin/class/GenderChooser.svelte";
+    import GenderSelector from "$lib/components/admin/class/GenderSelector.svelte";
 
     type Rank = { value: number, rank: undefined, of: undefined } | { value: number, rank: number, of: number };
     export type Ranks = {
@@ -69,7 +69,7 @@
     <div class="filters row">
         <div class="filter row">
             <span>Hodnotící:</span>
-            <GenderChooser
+            <GenderSelector
                 bind:filter={filterBy}
                 showBoys={ratings.some(r => !r.by.is_girl)}
                 showGirls={ratings.some(r => r.by.is_girl)}
@@ -77,7 +77,7 @@
         </div>
         <div class="filter row">
             <span>Hodnocení:</span>
-            <GenderChooser
+            <GenderSelector
                 bind:filter={filterAbout}
                 showBoys={ratings.some(r => !r.about.is_girl)}
                 showGirls={ratings.some(r => r.about.is_girl)}
@@ -87,10 +87,10 @@
 </TopScrollable>
 
 <div class="table-help">
-    <Table bordersColumns defaultSort={ranked.length <= 1 ? undefined : {s: 'ascending'}} items={withAverage} sortColumns={{
+    <Table items={withAverage} sort={{ disabled: ranked.length <= 1, defaultColumn: 's', columns: {
         n: r => r.student?.student_number ?? 0, s: r => r.student?.surname ?? '',
         i: r => r.influence?.value, p: r => r.popularity?.value, a: r => r.affection?.value,
-    }}>
+    }}}>
         {#snippet additionalHeader()}
             {#if ranked.length > 1}
                 <th colspan="2"></th>
@@ -102,7 +102,7 @@
         {#snippet header(c, o)}
             {#if ranked.length > 1}
                 <th class={c.n} onclick={o.n}>#</th>
-                <th class="left {c.s}" onclick={o.s}>Jméno a příjmení</th>
+                <th class={c.s} onclick={o.s} style:text-align="start">Jméno a příjmení</th>
             {/if}
             <th class={c.i} onclick={o.i}>Index vlivu</th>
             <th class={c.p} onclick={o.p}>Index obliby</th>
@@ -112,14 +112,14 @@
         {#snippet row(score)}
             {#if !score.student}
                 <td></td>
-                <td class="left"><strong>Průměr</strong></td>
+                <td style:text-align="start"><strong>Průměr</strong></td>
                 {#each columns(score) as col}
                     <td>{col.split(' (')[0]}</td>
                 {/each}
             {:else}
                 {#if ranked.length > 1}
                     <td>{score.student.student_number}</td>
-                    <td class="left">
+                    <td style:text-align="start">
                         <a style:color={score.student.is_girl ? 'var(--girl-color)' : 'var(--boy-color)'} data-sveltekit-replacestate="off"
                            tabindex="0" href="/admin?class={score.student.class}&student={score.student.id}"
                         >{score.student.names} <strong>{score.student.surname}</strong></a>
@@ -144,6 +144,7 @@
     th:nth-child(1) {
         min-width: 1.6rem;
     }
+
     th:nth-child(3), th:nth-child(4), th:nth-child(5) {
         min-width: 9rem;
     }

@@ -1,18 +1,18 @@
 <script lang="ts">
     import Questionnaire, { type QuestionnaireData } from "$lib/components/questionnaire/Questionnaire.svelte";
     import { onMount } from "svelte";
-    import { isAdmin } from "$lib/admin";
+    import { isAdmin, isStudent } from "$lib/admin";
     import database from "$lib/database/supabase";
     import BasicLayout from "$lib/components/BasicLayout.svelte";
     import { goto } from "$app/navigation";
 
     let data = $state<QuestionnaireData | 'loading' | 'notStudent' | 'noData'>('loading');
     onMount(async () => {
-        const email = await database.auth.getEmail()
+        const email = await database.auth.getUserEmail()
 
-        if (!email) return await goto('/login', { replaceState: false })
-        if (isAdmin(email)) return await goto('/admin', { replaceState: false })
-        if (!email.endsWith('@student.gymceska.cz')) return data = 'notStudent'
+        if (!email) return await goto('/login')
+        if (isAdmin(email)) return await goto('/admin')
+        if (!isStudent(email)) return data = 'notStudent'
 
         try {
             const myself = await database.getStudentByEmail(email)

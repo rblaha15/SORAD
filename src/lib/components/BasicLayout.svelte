@@ -2,24 +2,20 @@
     import type { Snippet } from "svelte";
 
     const {
-        title,
-        content,
-        buttons,
+        title, content, buttons,
     }: {
-        title?: Snippet,
-        content?: Snippet,
-        buttons?: Snippet,
+        title?: Snippet, content?: Snippet, buttons?: Snippet,
     } = $props();
 </script>
 
-<div class="main-content">
+<div class="main-content column">
     {#if buttons || title}
-        <div class="row header">
+        <div class="header row">
             {#if title}
-                <h1>{@render title?.()}</h1>
+                <h1>{@render title()}</h1>
             {/if}
 
-            <div class="row buttons">
+            <div class="buttons row">
                 {@render buttons?.()}
             </div>
         </div>
@@ -31,28 +27,24 @@
 
 <style>
     .main-content {
-        display: flex;
-        flex-direction: column;
-        padding: 1rem 0;
         gap: 1rem;
         height: calc(100% - 2rem);
+        padding: 1rem 0;
+    }
 
-        .header, .content {
-            padding: 0 1rem;
-        }
+    .header {
+        align-items: start;
+        flex-wrap: wrap;
+        padding: 0 1rem;
+    }
 
-        .header {
-            align-items: start;
-            flex-wrap: wrap;
-        }
+    .buttons {
+        margin-left: auto;
+    }
 
-        .buttons {
-            margin-left: auto;
-        }
-
-        .content {
-            flex-grow: 1;
-            overflow-y: scroll;
-        }
+    .content {
+        flex-grow: 1;
+        overflow-y: scroll;
+        padding: 0 1rem;
     }
 </style>

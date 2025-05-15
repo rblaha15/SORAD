@@ -2,6 +2,7 @@ import { type Rating, type Student } from "$lib/database";
 import { averageBy } from "$lib/utils/sums";
 
 export const isAdmin = (email: string) => email.endsWith('@gymceska.cz') || email == 'rblaha15@student.gymceska.cz'
+export const isStudent = (email: string) => email.endsWith('@student.gymceska.cz')
 
 export type Indexes = {
     /** Index vlivu */

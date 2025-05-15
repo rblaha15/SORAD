@@ -9,7 +9,7 @@ export interface Database {
     rate: (ratings: Rating[]) => Promise<void>
 
     auth: {
-        getEmail: () => Promise<string | null>
+        getUserEmail: () => Promise<string | null>
         logInWithMS: () => Promise<void>
         logInWithStudentPassword: (password: string) => Promise<boolean>
         logOut: () => Promise<void>
@@ -50,11 +50,6 @@ export type Student = {
     email: string
 }
 
-export type StudentPassword = {
-    email: string
-    password: string
-}
-
 export type Rating = {
     about: number
     by: number
@@ -63,4 +58,10 @@ export type Rating = {
     reasoning: string
 }
 
+/** Kombinace email: heslo */
 export type StudentPasswords = Record<string, string>
+
+export type StudentPassword = {
+    email: string
+    password: string
+}
