@@ -1,6 +1,7 @@
 <script lang="ts">
     import NumberRating from "./Rating.svelte";
     import type { Rating, Student } from "$lib/database";
+    import type { Phase } from "$lib/questionnaire";
 
     let {
         student, rating = $bindable(), showErrors, phase,

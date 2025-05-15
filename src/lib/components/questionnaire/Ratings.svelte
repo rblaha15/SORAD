@@ -1,31 +1,7 @@
-<script lang="ts" module>
-    import seedrandom from "seedrandom";
-    import { shuffled } from "$lib/utils/random";
-    import { chunked } from "$lib/utils/splitting";
-    import { groupCount } from "$lib/components/questionnaire/Questionnaire.svelte";
-    import type { Rating, Student } from "$lib/database";
-
-    export const getRatingGroups = (myself: Student, students: Student[], phase: Phase): Student[][] => {
-        const classmates = students.toSpliced(students.findIndex(s => s.id == myself.id), 1);
-
-        const random = seedrandom(`${myself.id}`)
-        const shuffledStudents = shuffled(classmates, random)
-        const orderedStudents = sortedBy(shuffledStudents, s => s.is_girl != myself.is_girl)
-
-        const studentCount = students.length;
-        const chunkCount = groupCount(studentCount, phase);
-        const chunkSize = Math.ceil(studentCount / chunkCount);
-        return chunked(orderedStudents, chunkSize)
-    }
-
-    export const validateRating = (r: Rating, phase: Phase) =>
-        r.influence != -1 && (r.sympathy != -1 || phase == 'influence')
-</script>
-
 <script lang="ts">
     import StudentRow from "$lib/components/questionnaire/StudentRow.svelte";
-    import { sortedBy, sortedByDescending } from "$lib/utils/comparisons";
-    import { type QuestionnaireData, type Ratings } from "$lib/components/questionnaire/Questionnaire.svelte";
+    import { sortedBy } from "$lib/utils/comparisons";
+    import { getRatingGroups, type Phase, type QuestionnaireData, type Ratings, validateRating } from "$lib/questionnaire";
 
     let {
         phase, validateRatings = $bindable(), data, groupIndex, ratings = $bindable(),

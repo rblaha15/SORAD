@@ -1,25 +1,3 @@
-<script lang="ts" module>
-    import type { Class, Rating, Student } from "$lib/database";
-
-    export type QuestionnaireData = {
-        myself: Student
-        myClass: Class
-        students: Student[]
-        alreadyRated: boolean
-    }
-    export type Ratings = { [about: number]: Rating }
-
-    const maxGroupSize = (phase: string) => phase == 'sympathy-reasoning' ? Number.POSITIVE_INFINITY : 7
-    export const groupCount = (studentCount: number, phase: Phase) => Math.ceil(studentCount / maxGroupSize(phase))
-
-    export const defaultRating = (by: number, about: number): Rating => ({
-        by, about,
-        influence: -1, sympathy: -1, reasoning: ''
-    })
-    export const defaultRatings = (myself: Student, others: Student[]): Ratings =>
-        Object.fromEntries(others.map(student => [student.id, defaultRating(myself.id, student.id)]))
-</script>
-
 <script lang="ts">
     import { browser } from "$app/environment";
     import { page } from "$app/state";
@@ -30,6 +8,7 @@
     import database from "$lib/database/supabase";
     import RatingsComponent from "$lib/components/questionnaire/Ratings.svelte";
     import { get } from "svelte/store";
+    import { defaultRatings, groupCount, type Phase, type QuestionnaireData, type Ratings, type State } from "$lib/questionnaire";
 
     const { phase, progress, group }: State = $derived({
         phase: 'influence', progress: 'introduction', group: undefined,

@@ -1,4 +1,5 @@
 <script lang='ts'>
+    import type { Phase } from "$lib/questionnaire";
 
     const {
         isGirl, grade, justOverview = false, phase,
