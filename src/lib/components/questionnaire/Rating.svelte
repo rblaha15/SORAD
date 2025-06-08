@@ -11,7 +11,7 @@
 <div class="number-row">
     {#each range(1, 6) as i}
         <label class={[type]}>
-            <input type="radio" value={i} bind:group={value} {readonly}>
+            <input type="radio" value={i} bind:group={value} {readonly} tabindex={readonly ? -1 : 0}>
             {i}
         </label>
     {/each}
