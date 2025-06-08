@@ -14,7 +14,7 @@
     const sortedStudents = $derived(sortedBy(
         sortedBy(currentGroup,
             s => phase == 'sympathy-reasoning' ? [5, 1, 4, 2, 3].indexOf(ratings[s.id].sympathy) : 0
-        ), s => phase == 'sympathy-reasoning' ? s.is_girl : false
+        ), s => phase == 'sympathy-reasoning' ? s.is_girl != data.myself.is_girl : false
     ))
 
     let showErrors = $state(false)
