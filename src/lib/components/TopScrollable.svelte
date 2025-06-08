@@ -1,15 +1,20 @@
-<div class="outer">
-    <div class="inner">
-        <slot />
+<div class="A">
+    <div class="B">
+        <div class="C">
+            <slot />
+        </div>
     </div>
 </div>
 
 
 <style>
-    .outer, .inner {
+    .B, .C {
         transform: rotateX(180deg);
     }
-    .outer {
+    .B {
         overflow-x: auto;
+    }
+    .A {
+        overflow-y: visible;
     }
 </style>

@@ -44,7 +44,7 @@
 
     .content {
         flex-grow: 1;
-        overflow-y: scroll;
+        overflow-y: auto;
         padding: 0 1rem;
     }
 </style>
