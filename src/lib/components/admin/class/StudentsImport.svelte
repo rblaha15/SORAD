@@ -46,14 +46,14 @@
         if (!file) return;
         readXlsxFile(file).then(rows => {
             newStudents = rows.slice(2).map(([_, index, fullName, email, sex]) => ({
-                names: String(fullName).split(' ').slice(0, -1).join(' '),
-                surname: String(fullName).split(' ').at(-1) ?? '',
+                names: String(fullName).split(' ').slice(1).join(' '),
+                surname: String(fullName).split(' ')[0] ?? '',
                 student_number: Number(index), email, is_girl: sex == 'Z'
             }) as NewStudent)
         })
     })
 
-    const keys = ['email', 'student_number', 'names', 'surname', 'is_girl'] as const;
+    const keys = ['email', 'student_number', 'names', 'surname', 'is_girl'] as const satisfies (keyof NewStudent)[];
     const same = (s1: Student, s2: NewStudent) => keys.every(k => s1[k] == s2[k]);
     const oldEmails = $derived(oldStudents.map(s => s.email));
     const newEmails = $derived(newStudents.map(s => s.email));
