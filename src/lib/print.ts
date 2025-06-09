@@ -6,5 +6,6 @@ export const printComponent = <Props extends Record<string, any>>(component: Com
     setTimeout(() => {
         w.document.body.innerHTML = '';
         mount(component, { props, target: w.document.body })
-    }, 100);
+        w.print();
+    }, 200);
 }
